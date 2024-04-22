@@ -472,7 +472,9 @@ const handleUserInput = (
         if(newString.includes("ENDOFSTREAM")){
           aiMessage.value.isTyping = false;
           isGeneratingResponse.value = false;
-          socket.close();
+          // close the connection once done streaming
+          socket.disconnect();
+        
         }
         //if not ENDOFSTREAM get the response and assign message
         else{
