@@ -21,16 +21,7 @@ const chatbot = useChatbotStore()
 const router = useRouter()
 //establish connections with socket io
 const socket = io('ws://3.11.13.199')
-// socket.disconnect();
-// socket.connect();
-// socket.on('connect', () => {
-//   console.log('connected successfully!')
-// })
 
-//incase of a disconnection
-// socket.on('disconnect', () => {
-//   console.log('disconnected')
-// })
 
 const appIsFetching = ref(true)
 
@@ -481,7 +472,7 @@ const handleUserInput = (
         if(newString.includes("ENDOFSTREAM")){
           aiMessage.value.isTyping = false;
           isGeneratingResponse.value = false;
-          socket.disconnect();
+          socket.close();
         }
         //if not ENDOFSTREAM get the response and assign message
         else{
