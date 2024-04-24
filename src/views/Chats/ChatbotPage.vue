@@ -19,9 +19,17 @@ const route = useRoute()
 const pageContentStore = usePageContentStore()
 const chatbot = useChatbotStore()
 const router = useRouter()
+
+// mesRes declaration
+// step 1
+
+const mesRes = ref('');
+
 //establish connections with socket io
 const socket = io('ws://3.11.13.199')
-
+socket.on("connect", ()=>{
+      console.log("Connected successfully!!")
+})
 
 const appIsFetching = ref(true)
 
@@ -268,6 +276,7 @@ const handleUserInput = (
   // add the user's response to the conversation
   // scroll to the bottom of the conversation
   scrollToBottom()
+ 
 
   // console.log('handle-user-input -> audioData', audioData);
 
@@ -290,204 +299,24 @@ const handleUserInput = (
     uniqueId: _.uniqueId('ai-')
   })
 
- 
-
-  isGeneratingResponse.value = true
-
   setTimeout(() => {
     conversation.value.push(aiMessage)
     console.log(conversation.value)
   }, 500)
 
-  // try {
-  //   // send the user's response to the server
-  //   // and wait for the server to send the AI's response
-  //   chatbot.establishConnection(pageId.value, formatted)
-  //       .then((responseStream: Response) => {
-
-  //         // create a new reader
-  //         const reader2 = responseStream.body?.getReader();
-
-  //         // read the stream
-  //         return reader2?.read().then((result) => {
-
-  //           // convert the stream to a string
-  //           const decoder = new TextDecoder();
-
-  //           let newMessage = decoder.decode(result.value);
-
-  //           // console.log(newMessage);
-  //           console.log('Start');
-
-  //           const lastKnownTextTokens = lastKnownText.value.split('~~~NEWLINE~~~');
-  //           // const currentTextTokens = currentText.value.split('~~~NEWLINE~~~');
-  //           const newMessageTokens = newMessage.split('~~~NEWLINE~~~');
-  //           // console.log(newMessageTokens);
-
-  //           const newTokens = newMessageTokens.filter((token) => {
-  //             return !lastKnownTextTokens.includes(token);
-  //           });
-
-  //           // for each token in the new message
-  //           newTokens.forEach((token) => {
-
-  //             // console.log(token)
-  //             // if the token is not in the last known text
-  //             if (!lastKnownTextTokens.includes(token)) {
-
-  //               const previousToken = currentText.value;
-
-  //               if (previousToken.length <= token.length) {
-  //                 // add the token to the AI message
-  //                 aiMessage.value.message = marked.parse(token);
-  //                 // add the original message to the AI message
-  //                 aiMessage.value.originalMessage = token;
-  //                 // + blinkingCursor.value;
-  //                 currentText.value = token;
-
-  //                 // add the token to the last known text
-  //                 lastKnownTextTokens.push(token);
-  //               }
-  //             } else {
-  //               // add the token to the last known text
-  //               lastKnownTextTokens.push(token);
-
-  //               // console.log(lastKnownTextTokens)
-  //               // console.log(lastKnownTextTokens[lastKnownTextTokens.length - 1])
-  //             }
-  //           });
-
-  //           aiResponses.value.push(newMessage);
-
-  //           // listen for new data
-  //           return reader2.read().then(function processText({done, value}) {
-  //             // Result objects contain two properties:
-  //             // done  - true if the stream has already given you all its data.
-  //             // value - some data. Always undefined when done is true.
-  //             if (done) {
-  //               console.log("Stream complete");
-
-  //               console.log(aiResponses.value)
-
-  //               isGeneratingResponse.value = false;
-
-  //               aiMessage.value.isTyping = false;
-
-  //               lastKnownText.value = '';
-
-  //               currentText.value = '';
-  //               return;
-  //             }
-
-  //             newMessage = decoder.decode(value);
-
-  //             // value for fetch streams is a Uint8Array
-
-  //             const lastKnownTextTokens = lastKnownText.value.split('~~~NEWLINE~~~');
-  //             const newMessageTokens = newMessage.split('~~~NEWLINE~~~');
-
-  //             const newTokens = newMessageTokens.filter((token) => {
-  //               return !lastKnownTextTokens.includes(token);
-  //             });
-
-  //             newTokens.forEach((token) => {
-
-  //               // console.log(token)
-  //               // if the token is not in the last known text
-  //               if (!lastKnownTextTokens.includes(token)) {
-  //                 // add the token to the ai message
-  //                 // const previousToken = aiMessage.value.message;
-  //                 const previousToken = currentText.value;
-
-  //                 if (previousToken.length <= token.length) {
-  //                   // add the token to the ai message
-  //                   aiMessage.value.message = marked.parse(token);
-  //                   // add the original message to the ai message
-  //                   aiMessage.value.originalMessage = token;
-  //                   // + blinkingCursor.value;
-  //                   currentText.value = token;
-
-  //                   // add the token to the last known text
-  //                   lastKnownTextTokens.push(token);
-  //                 }
-  //               } else {
-  //                 // add the token to the last known text
-  //                 lastKnownTextTokens.push(token);
-
-  //                 // console.log(lastKnownTextTokens)
-  //               }
-  //             });
-
-  //             // debouncedUpdateResponse(newMessage);
-  //             // console.log(aiMessage.value.message)
-
-  //             scrollToBottom();
-  //             // Read some more, and call this function again
-  //             return reader2.read().then(processText);
-  //           });
-  //         })
-  //       }).catch((error: Error) => {
-  //     console.log(error);
-
-  //     scrollToBottom();
-
-  //     aiMessage.value.hasError = true;
-  //     aiMessage.value.message += `
-  //       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative text-sm" role="alert">
-  //           <strong class="font-bold">Oops!</strong>
-  //           <span class="block sm:inline">Something went wrong. Please try again.</span>
-  //       </div>
-  //   `;
-  //     aiMessage.value.isTyping = false;
-
-  //     isGeneratingResponse.value = false;
-
-  //     notificationsStore.addNotification('Oops! Something went wrong. Please try again.', 'error');
-
-  //   }).finally(() => {
-  //     // console.log('finally')
-  //     aiMessage.value.isTyping = false;
-
-  //     isGeneratingResponse.value = false;
-  //   });}
-
   // ****************************
 
   try {  
-
-    //set connection
-    socket.on("connect", ()=>{
-      console.log("Connected successfully!!")
-    })
     //emit request to the server
     socket.emit('message', formatted);
-    console.log("emitted!");
 
-    //wait for response from sserver
-    socket.on("message",(response)=>{
-      console.log(response);
-      //check if the ENDOFSTREAM
-      watch(response, (value)=>{
-        const newString =  value.split("ENDOFSTREAM");
-        if(newString.includes("ENDOFSTREAM")){
-          aiMessage.value.isTyping = false;
-          isGeneratingResponse.value = false;
-          // close the connection once done streaming
-          socket.disconnect();
-        
-        }
-        //if not ENDOFSTREAM get the response and assign message
-        else{
-          const newResponse = newString[newString.length - 1];
-          aiMessage.value = newResponse;
-        }
-      })      
-    })    
+    console.log("emitted!");
   } catch (error) {
     // socket.on("connect", )
     console.log(error)
 
-    scrollToBottom()
+    scrollToBottom();
+    
 
     aiMessage.value.hasError = true
     aiMessage.value.message += `
@@ -503,6 +332,36 @@ const handleUserInput = (
     notificationsStore.addNotification('Oops! Something went wrong. Please try again.', 'error')
   }
 }
+
+socket.on("message",(response)=>{
+      console.log(response);
+     
+
+    mesRes.value += response;
+
+    })
+
+watch(() => mesRes.value, (value) => {
+  console.log(value)
+
+  if (!value) return
+
+  const responsesArr = value.split('~~~ENDOFSTREAM~~~');
+
+  console.log('responseArr: ' , responsesArr)
+
+  const currentMsg = responsesArr[0];
+
+  const aiResponses = conversation.value.filter(convo => !convo.value.isUser);
+
+  const currentAiMsg = aiResponses[aiResponses.length - 1];
+
+  currentAiMsg.value.message = currentMsg
+
+  console.log(currentMsg);
+
+  if (value.includes('~~~ENDOFSTREAM~~~')) mesRes.value = ''
+});
 
 const isScrollable = ref(false)
 const isScrolling = ref(false)
@@ -781,7 +640,7 @@ watch(conversation.value, () => {
                     <!-- :key="message.value.uniqueId" -->
                     <ChatbotBubble
                       v-else-if="!message.value.isUser"
-                      :key="message.value.uniqueId"
+                      :key="message.value.uniqueId"                    
                       :icon-name="pageContent?.iconName"
                       :chatbot-message="marked.parse(message.value.message)"
                       :chatbot-name="chatbotName"
