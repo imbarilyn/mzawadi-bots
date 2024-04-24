@@ -355,12 +355,18 @@ watch(() => mesRes.value, (value) => {
   const aiResponses = conversation.value.filter(convo => !convo.value.isUser);
 
   const currentAiMsg = aiResponses[aiResponses.length - 1];
+  console.log(aiResponses);
 
   currentAiMsg.value.message = currentMsg
 
-  console.log(currentMsg);
+  // console.log(currentMsg);
 
-  if (value.includes('~~~ENDOFSTREAM~~~')) mesRes.value = ''
+  if (value.includes('~~~ENDOFSTREAM~~~')) {
+    mesRes.value = ''
+    isGeneratingResponse.value = false;
+    currentAiMsg.value.isTyping = false;
+  // console.log(mesRes.value);
+  }
 });
 
 const isScrollable = ref(false)
