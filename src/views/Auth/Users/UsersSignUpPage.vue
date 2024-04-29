@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {computed, reactive, ref, watch} from "vue";
-import {CreateAccountPayload, useAuthStore} from "../../../stores/auth.ts";
+import {type CreateAccountPayload, useAuthStore} from "../../../stores/auth";
 import {useField} from "vee-validate";
 import {useRouter} from "vue-router";
 
@@ -74,6 +74,7 @@ const {
 } = useField('email', emailValidator);
 
 watch(() => signUpData.email, (value) => {
+  if(value)
   email.value = value;
 });
 

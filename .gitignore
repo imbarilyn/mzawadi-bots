@@ -30,3 +30,4 @@ public/assets/*.ttf
 public/assets/*.woff
 public/assets/*.woff2
 deploy.zip
+/public.zip
