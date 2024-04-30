@@ -1,109 +1,129 @@
 <script lang="ts" setup>
-import {useRouter} from "vue-router";
-import {useTabsStore} from "../../stores/admin/tabs.ts";
-import {useAdminHomeStore} from "../../stores/admin/home.ts";
-import {useColorGenerator} from "../../composables/color-generator.ts";
-import {onMounted} from "vue";
+import { useRouter } from 'vue-router'
+import { useTabsStore } from '../../stores/admin/tabs'
+import { useAdminHomeStore } from '../../stores/admin/home'
+import { useColorGenerator } from '../../composables/color-generator'
+import { onMounted } from 'vue'
 
 interface PageItem {
-  name: string;
-  path: string;
-  id: string;
+  name: string
+  path: string
+  id: string
 }
 
 const props = defineProps<{
-  page: PageItem;
-}>();
+  page: PageItem
+}>()
 
-const {
-  bgColor,
-  textColor,
-  setColor,
-} = useColorGenerator(props.page.name);
+const { bgColor, textColor, setColor } = useColorGenerator(props.page.name)
 
 onMounted(() => {
-  setColor();
-});
+  setColor()
+})
 
-const router = useRouter();
+const router = useRouter()
 
-const tabsStore = useTabsStore();
-const homeStore = useAdminHomeStore();
+const tabsStore = useTabsStore()
+const homeStore = useAdminHomeStore()
 
 const onClick = () => {
   setTimeout(async () => {
     try {
-
       // activate the tab
-      await tabsStore.updateActiveTab(props.page.name);
+      await tabsStore.updateActiveTab(props.page.name)
 
-      if (props.page.name === "Home") {
-        await router.push({name: "AdminHome", params: {page: props.page.path}, query: {pageId: props.page.id}});
-        return;
-      } else if (props.page.name === "Settings") {
-        await router.push({name: "AdminSettingsTab", params: {tab: "general"}, query: {pageId: props.page.id}});
-        return;
+      if (props.page.name === 'Home') {
+        await router.push({
+          name: 'AdminHome',
+          params: { page: props.page.path },
+          query: { pageId: props.page.id }
+        })
+        return
+      } else if (props.page.name === 'Settings') {
+        await router.push({
+          name: 'AdminSettingsTab',
+          params: { tab: 'general' },
+          query: { pageId: props.page.id }
+        })
+        return
       }
 
-      await router.push({name: "DynamicPage", params: {page: props.page.path}, query: {pageId: props.page.id}});
+      await router.push({
+        name: 'DynamicPage',
+        params: { page: props.page.path },
+        query: { pageId: props.page.id }
+      })
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  }, 300);
-};
+  }, 300)
+}
 
 const dropdownItems = [
   {
-    name: "Edit",
-    path: "#",
+    name: 'Edit',
+    path: '#'
   },
   {
-    name: "Delete",
-    path: "#",
-  },
-];
-
-const onDropdownItemClick = (_e: Event, item: {
-  name: string;
-  path: string
-}) => {
-  console.log(item);
-
-  if (item.name === "Edit") {
-    handleEditClick();
-  } else if (item.name === "Delete") {
-    handleDeleteClick();
+    name: 'Delete',
+    path: '#'
   }
-};
+]
+
+const onDropdownItemClick = (
+  _e: Event,
+  item: {
+    name: string
+    path: string
+  }
+) => {
+  console.log(item)
+
+  if (item.name === 'Edit') {
+    handleEditClick()
+  } else if (item.name === 'Delete') {
+    handleDeleteClick()
+  }
+}
 
 const handleEditClick = () => {
-  router.push({name: "DynamicPage", params: {page: props.page.path}, query: {pageId: props.page.id, editPage: 'true'}});
-};
+  router.push({
+    name: 'DynamicPage',
+    params: { page: props.page.path },
+    query: { pageId: props.page.id, editPage: 'true' }
+  })
+}
 
 const handleDeleteClick = () => {
-  homeStore.openDeleteDialog();
+  homeStore.openDeleteDialog()
 
-  homeStore.setPageToDelete(props.page.id);
-};
-
+  homeStore.setPageToDelete(props.page.id)
+}
 </script>
 
 <template>
   <div
-      class="card overflow-hidden shadow rounded-lg hover:shadow-lg hover:scale-110 border-primary transition duration-300 ease-in-out h-48 md:h-52 page-item-bg animate-scale-up-center active:scale-95">
-    <div
-        class="relative flex items-center justify-center h-40" :class="bgColor"
-        @click="onClick">
+    class="card overflow-hidden shadow rounded-lg hover:shadow-lg hover:scale-110 border-primary transition duration-300 ease-in-out h-48 md:h-52 page-item-bg animate-scale-up-center active:scale-95"
+  >
+    <div class="relative flex items-center justify-center h-40" :class="bgColor" @click="onClick">
       <div class="absolute inset-y-0 -right-4 flex items-center justify-center">
-        <svg class="rounded-t-lg w-28 drop-shadow-lg opacity-20" :class="textColor" xmlns="http://www.w3.org/2000/svg"
-             width="512.000000pt" height="512.000000pt" viewBox="0 0 512.000000 512.000000"
-             preserveAspectRatio="xMidYMid meet">
-          <metadata>
-            Created by potrace 1.16, written by Peter Selinger 2001-2019
-          </metadata>
-          <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
-             fill="currentColor" stroke="none">
-            <path d="M3770 5106 c-413 -87 -715 -420 -748 -824 -16 -189 9 -334 87 -497
+        <svg
+          class="rounded-t-lg w-28 drop-shadow-lg opacity-20"
+          :class="textColor"
+          xmlns="http://www.w3.org/2000/svg"
+          width="512.000000pt"
+          height="512.000000pt"
+          viewBox="0 0 512.000000 512.000000"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <metadata>Created by potrace 1.16, written by Peter Selinger 2001-2019</metadata>
+          <g
+            transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
+            fill="currentColor"
+            stroke="none"
+          >
+            <path
+              d="M3770 5106 c-413 -87 -715 -420 -748 -824 -16 -189 9 -334 87 -497
 130 -273 389 -468 685 -515 107 -18 311 -8 404 19 156 45 279 117 395 230 122
 117 215 272 252 418 9 37 19 74 21 81 6 21 61 -13 81 -51 17 -30 18 -104 21
 -1164 l2 -1133 -2410 0 -2410 0 2 1133 c3 1060 4 1134 21 1164 36 67 -54 63
@@ -121,8 +141,10 @@ l-1279 0 -61 -31 c-66 -33 -116 -86 -138 -147 -18 -51 -19 -2750 -1 -2799 22
 -68 191 l-5 113 2413 0 2413 0 -5 -113z m-1778 -667 l0 -300 -630 0 -630 0 0
 184 0 185 -26 20 c-30 24 -52 26 -88 10 -43 -20 -47 -49 -44 -293 3 -226 3
 -228 27 -247 22 -18 50 -19 761 -19 711 0 739 1 761 19 l24 19 3 361 3 361 54
-0 55 0 0 -435 0 -435 -900 0 -900 0 0 435 0 435 765 0 765 0 0 -300z"/>
-            <path d="M3770 4752 c-22 -18 -26 -30 -30 -108 l-5 -88 -33 -7 c-44 -9 -99
+0 55 0 0 -435 0 -435 -900 0 -900 0 0 435 0 435 765 0 765 0 0 -300z"
+            />
+            <path
+              d="M3770 4752 c-22 -18 -26 -30 -30 -108 l-5 -88 -33 -7 c-44 -9 -99
 -63 -114 -110 l-11 -37 -84 -4 c-75 -3 -87 -6 -104 -27 -26 -32 -25 -82 4
 -109 20 -19 35 -22 105 -22 l82 0 0 -50 0 -50 -80 0 c-73 0 -83 -3 -105 -25
 -33 -32 -33 -78 0 -110 21 -22 33 -25 103 -25 l79 0 12 -39 c15 -51 61 -97
@@ -134,52 +156,53 @@ l-1279 0 -61 -31 c-66 -33 -116 -86 -138 -147 -18 -51 -19 -2750 -1 -2799 22
 -75 0 -81 2 -81 20 0 50 -46 104 -107 125 l-38 13 -5 82 c-5 74 -9 85 -33 106
 -34 29 -66 30 -101 3 -24 -19 -26 -26 -26 -105 l0 -84 -49 0 -49 0 -3 85 c-4
 95 -14 112 -70 121 -26 4 -41 1 -59 -14z m380 -562 l0 -210 -205 0 -205 0 0
-203 c0 112 3 207 7 210 3 4 96 7 205 7 l198 0 0 -210z"/>
-            <path d="M815 3499 c-134 -19 -277 -121 -342 -244 -42 -80 -54 -130 -55 -224
+203 c0 112 3 207 7 210 3 4 96 7 205 7 l198 0 0 -210z"
+            />
+            <path
+              d="M815 3499 c-134 -19 -277 -121 -342 -244 -42 -80 -54 -130 -55 -224
 0 -137 37 -232 133 -338 83 -91 89 -110 89 -267 0 -209 19 -226 257 -226 233
 0 253 19 253 233 0 152 6 170 86 259 97 106 133 199 134 339 1 295 -255 510
 -555 468z m190 -176 c36 -12 67 -33 111 -77 76 -77 99 -135 92 -240 -6 -87
 -28 -134 -107 -221 -32 -36 -67 -85 -77 -110 l-19 -45 -110 0 -110 0 -18 43
 c-10 24 -49 78 -87 121 -78 88 -102 143 -101 234 0 82 31 159 88 216 98 99
-201 124 338 79z m-15 -908 l0 -55 -95 0 -95 0 0 55 0 55 95 0 95 0 0 -55z"/>
-            <path d="M1695 3393 c-75 -39 -114 -105 -115 -191 0 -84 20 -116 165 -262
+201 124 338 79z m-15 -908 l0 -55 -95 0 -95 0 0 55 0 55 95 0 95 0 0 -55z"
+            />
+            <path
+              d="M1695 3393 c-75 -39 -114 -105 -115 -191 0 -84 20 -116 165 -262
 l135 -135 -131 -130 c-72 -72 -139 -147 -150 -167 -28 -54 -26 -142 4 -199 34
 -64 93 -102 167 -107 106 -8 120 2 377 261 241 242 253 258 253 342 0 84 -12
 100 -248 338 -125 126 -244 237 -264 248 -47 24 -150 25 -193 2z m332 -355
 c132 -132 213 -220 213 -232 0 -26 -417 -446 -443 -446 -33 0 -57 20 -57 47 0
 22 34 62 165 193 157 159 165 168 165 206 0 37 -7 47 -165 204 -168 168 -186
-195 -153 228 34 34 58 16 275 -200z"/>
-            <path d="M2737 2617 c-93 -29 -147 -107 -147 -210 0 -56 4 -71 33 -113 19 -29
+195 -153 228 34 34 58 16 275 -200z"
+            />
+            <path
+              d="M2737 2617 c-93 -29 -147 -107 -147 -210 0 -56 4 -71 33 -113 19 -29
 49 -57 76 -71 l44 -23 899 0 c788 0 903 2 936 15 79 33 124 104 124 194 0 70
 -12 99 -58 150 -66 74 -29 71 -1003 70 -633 0 -876 -4 -904 -12z m1781 -163
 c24 -17 30 -62 10 -82 -17 -17 -1749 -17 -1766 0 -20 20 -14 65 10 82 20 14
-119 16 873 16 754 0 853 -2 873 -16z"/>
+119 16 873 16 754 0 853 -2 873 -16z"
+            />
           </g>
         </svg>
       </div>
     </div>
     <div class="absolute top-1/3 left-5 flex flex-row w-full justify-between items-center">
       <h6
-          class="text-lg hover:scale-110 md:text-xl font-poppins-semi-bold leading-tight tracking-wide" :class="[textColor]">
+        class="text-lg hover:scale-110 md:text-xl font-poppins-semi-bold leading-tight tracking-wide"
+        :class="[textColor]"
+      >
         {{ props.page.name }}
       </h6>
     </div>
     <div class="py-3 px-4 flex flex-row w-full justify-between items-center">
       <div class="dropdown dropdown-top dropdown-end">
         <label class="btn btn-circle btn-xs btn-ghost m-1" tabindex="0">
-        <span
-            aria-expanded="false"
-            class="material-icons-round text-gray-400">
-            more_vert
-        </span>
+          <span aria-expanded="false" class="material-icons-round text-gray-400"> more_vert </span>
         </label>
         <ul class="z-30 shadow menu dropdown-content bg-base-100 rounded-box w-24" tabindex="0">
-          <li v-for="(item) in dropdownItems" :key="item.name">
-            <a
-                class="menu-item text-xs"
-                href="#"
-                @click.stop="onDropdownItemClick($event, item)"
-            >
+          <li v-for="item in dropdownItems" :key="item.name">
+            <a class="menu-item text-xs" href="#" @click.stop="onDropdownItemClick($event, item)">
               {{ item.name }}
             </a>
           </li>
