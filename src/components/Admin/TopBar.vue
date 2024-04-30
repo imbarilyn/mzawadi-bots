@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import {Tab, useTabsStore} from "../..//stores/admin/tabs.ts";
+import {type Tab, useTabsStore} from "../..//stores/admin/tabs";
 import {onUpdated, ref} from "vue";
-import {useAdminHomeStore} from "../../stores/admin/home.ts";
+import {useAdminHomeStore} from "../../stores/admin/home";
 import {useRouter} from "vue-router";
 
 const tabsStore = useTabsStore();
