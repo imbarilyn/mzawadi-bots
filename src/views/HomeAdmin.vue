@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import TopBar from "../components/Admin/TopBar.vue";
-import {useAdminHomeStore} from "../stores/admin/home.ts";
+import {useAdminHomeStore} from "../stores/admin/home";
 import DialogModal from "../components/DialogModal.vue";
 import {useRouter} from "vue-router";
-import {useTabsStore} from "../stores/admin/tabs.ts";
-import {usePageContentStore} from "../stores/admin/page-data.ts";
+import {useTabsStore} from "../stores/admin/tabs";
+import {usePageContentStore} from "../stores/admin/page-data";
 import {useField} from "vee-validate";
 import ToastContainer from "../views/Admin/toasts/ToastContainer.vue";
 import ToastAlert from "../views/Admin/toasts/ToastAlert.vue";
-import {useNotificationsStore} from "../stores/notifications.ts";
+import {useNotificationsStore} from "../stores/notifications";
 import PagesSidebar from "./Admin/PagesSidebar.vue";
-import {computed, ref} from "vue";
+import {computed, ref } from "vue";
 import PageSearchItem from "./Admin/PageSearchItem.vue";
 import {gsap} from "gsap";
 
@@ -111,7 +111,7 @@ const deletePage = async () => {
 
 // let's implement searching for the pages
 
-const pagesToDisplay = ref([]);
+const pagesToDisplay = ref<{   id: string,  name: string,  path: string,  title: string} []>([]);
 
 if (homeStore.getPages.length > 0) {
   pagesToDisplay.value = homeStore.getPages.slice(0, 5);
@@ -145,7 +145,7 @@ const pagesToDisplayLength = computed(() => {
   return pagesToDisplay.value.length;
 });
 
-function onEnter(el, done) {
+function onEnter(el: any, done: any) {
   gsap.to(el, {
     opacity: 1,
     height: '1.6em',
@@ -154,7 +154,7 @@ function onEnter(el, done) {
   })
 }
 
-function onLeave(el, done) {
+function onLeave(el: any, done: any) {
   gsap.to(el, {
     opacity: 0,
     height: 0,
@@ -316,7 +316,7 @@ function onLeave(el, done) {
               </div>
               <div v-else class="flex flex-col space-y-2">
                 <TransitionGroup :css="false" @enter="onEnter" @leave="onLeave" name="fade" tag="div" class="flex flex-col space-y-2">
-                  <PageSearchItem v-for="(page, index) in pagesToDisplay" :key="page.pageId" :page="page"
+                  <PageSearchItem v-for="(page, index) in pagesToDisplay" :key="page.id" :page="page"
                                   :data-index="index"/>
                 </TransitionGroup>
               </div>
@@ -327,9 +327,11 @@ function onLeave(el, done) {
 
       <ToastContainer v-if="notificationsStore.hasNotifications">
         <!--        <ToastAlert text="Page name is required" type="error" id=""/>-->
-        <ToastAlert v-for="(notification) in notificationsStore.getNotifications" :id="notification.id"
-                    :key="notification.id" :is-shown="notification.isShown" :message="notification.message"
+        <template v-for="(notification) in notificationsStore.getNotifications" :key="notification.id">
+        <ToastAlert v-if="notification.id && notification.isShown" :id ="notification.id"
+                    :is-shown="notification.isShown" :message="notification.message"
                     :type="notification.type"/>
+        </template>
       </ToastContainer>
     </Teleport>
   </div>
