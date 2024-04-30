@@ -2,7 +2,7 @@
 import {useField} from "vee-validate";
 import {useRouter} from "vue-router";
 import {reactive, watch, ref} from "vue";
-import {useAuthStore} from "../../stores/auth.ts";
+import {useAuthStore} from "../../stores/auth";
 
 const router = useRouter();
 const authStore = useAuthStore();
