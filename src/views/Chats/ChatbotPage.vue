@@ -4,13 +4,13 @@ import UserInput from '../../components/Chat/UserInput.vue'
 import ChatbotBubble from '../../components/Chat/ChatbotBubble.vue'
 import { computed, onBeforeMount, onMounted, type Ref, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { PageContent, usePageContentStore } from '../../stores/admin/page-data'
-import { useChatbotStore } from '../../stores/chatbot'
+import { type PageContent, usePageContentStore } from '@/stores/admin/page-data'
+import { useChatbotStore } from '@/stores/chatbot'
 import { marked } from 'marked'
 import LoadingOverlay from '../../components/LoadingOverlay.vue'
 import _ from 'lodash'
 import hljs from 'highlight.js'
-import { useNotificationsStore } from '../../stores/notifications'
+import { useNotificationsStore } from '@/stores/notifications'
 import { io } from 'socket.io-client'
 
 const notificationsStore = useNotificationsStore()
@@ -23,12 +23,12 @@ const router = useRouter()
 // mesRes declaration
 // step 1
 
-const mesRes = ref('');
+const mesRes = ref('')
 
 //establish connections with socket io
 const socket = io('ws://3.11.13.199')
-socket.on("connect", ()=>{
-      console.log("Connected successfully!!")
+socket.on('connect', () => {
+  console.log('Connected successfully!!')
 })
 
 const appIsFetching = ref(true)
@@ -37,9 +37,9 @@ const appIsFetching = ref(true)
 const pageId = ref(route.params.pageId as string)
 const pageContent = ref<PageContent | null>(null)
 
-const chatbotName = ref<string | null>(null)
-const promptPlaceholder = ref<string | null>(null)
-const staticGreeting = ref<string | null>(null)
+const chatbotName = ref<string>('')
+const promptPlaceholder = ref<string>('')
+const staticGreeting = ref<string>('')
 
 // color customization
 
@@ -49,9 +49,9 @@ const chatTextColor = ref('text-neutral-800')
 const titleTextColor = ref('text-gray-800')
 const inputRingColor = ref('ring-primary')
 const inputBtnColor = ref('text-primary')
-const inputBg = ref('bg-requested-color')
+const inputBg = ref<string>('bg-requested-color')
 
-const bgImg = ref(null)
+const bgImg = ref('')
 
 const chatbotMessageResponse = ref('')
 
@@ -63,22 +63,26 @@ onBeforeMount(() => {
       router.replace({ name: 'not-found' })
     }
 
+    if (!pageContent.value) return
+
     chatbotName.value = pageContent.value.chatbotName
     promptPlaceholder.value = pageContent.value.promptPlaceholder
     staticGreeting.value = pageContent.value.staticGreeting
 
     window.document.title = pageContent.value.chatbotName
 
-    if (pageContent.value.pageSlug === 'gilbert') {
-      titleTextColor.value = 'text-[#A42035]'
-      chatTextColor.value = 'text-[#650B10]'
-      inputRingColor.value = 'ring-[#B61D3A]'
-      inputBtnColor.value = 'text-[#B61D3A]'
+    if (pageContent.value)
+      if (pageContent.value.pageSlug === 'gilbert') {
+        titleTextColor.value = 'text-[#A42035]'
+        chatTextColor.value = 'text-[#650B10]'
+        inputRingColor.value = 'ring-[#B61D3A]'
+        inputBtnColor.value = 'text-[#B61D3A]'
 
-      // bgImg.value = '/Homepage_Grouse_Hero.png';
-      bgImg.value = 'url("/Homepage_Grouse_Hero.png")'
-      inputBg.value = 'bg-transparent'
-    }
+        // bgImg.value = '/Homepage_Grouse_Hero.png';
+
+        bgImg.value = 'url("/Homepage_Grouse_Hero.png")'
+        inputBg.value = 'bg-transparent'
+      }
 
     setTimeout(() => {
       appIsFetching.value = false
@@ -276,7 +280,6 @@ const handleUserInput = (
   // add the user's response to the conversation
   // scroll to the bottom of the conversation
   scrollToBottom()
- 
 
   // console.log('handle-user-input -> audioData', audioData);
 
@@ -288,7 +291,6 @@ const handleUserInput = (
   })
 
   conversation.value.push(userMessage)
-
 
   // ai message
 
@@ -306,17 +308,16 @@ const handleUserInput = (
 
   // ****************************
 
-  try {  
+  try {
     //emit request to the server
-    socket.emit('message', formatted);
+    socket.emit('message', formatted)
 
-    console.log("emitted!");
+    console.log('emitted!')
   } catch (error) {
     // socket.on("connect", )
     console.log(error)
 
-    scrollToBottom();
-    
+    scrollToBottom()
 
     aiMessage.value.hasError = true
     aiMessage.value.message += `
@@ -333,41 +334,42 @@ const handleUserInput = (
   }
 }
 
-socket.on("message",(response)=>{
-      console.log(response);
-     
+socket.on('message', (response) => {
+  console.log(response)
 
-    mesRes.value += response;
+  mesRes.value += response
+})
 
-    })
+watch(
+  () => mesRes.value,
+  (value) => {
+    console.log(value)
 
-watch(() => mesRes.value, (value) => {
-  console.log(value)
+    if (!value) return
 
-  if (!value) return
+    const responsesArr = value.split('~~~ENDOFSTREAM~~~')
 
-  const responsesArr = value.split('~~~ENDOFSTREAM~~~');
+    console.log('responseArr: ', responsesArr)
 
-  console.log('responseArr: ' , responsesArr)
+    const currentMsg = responsesArr[0]
 
-  const currentMsg = responsesArr[0];
+    const aiResponses = conversation.value.filter((convo) => !convo.value.isUser)
 
-  const aiResponses = conversation.value.filter(convo => !convo.value.isUser);
+    const currentAiMsg = aiResponses[aiResponses.length - 1]
+    console.log(aiResponses)
 
-  const currentAiMsg = aiResponses[aiResponses.length - 1];
-  console.log(aiResponses);
+    currentAiMsg.value.message = currentMsg
 
-  currentAiMsg.value.message = currentMsg
+    console.log(currentMsg)
 
-  // console.log(currentMsg);
-
-  if (value.includes('~~~ENDOFSTREAM~~~')) {
-    mesRes.value = ''
-    isGeneratingResponse.value = false;
-    currentAiMsg.value.isTyping = false;
-  // console.log(mesRes.value);
+    if (value.includes('~~~ENDOFSTREAM~~~')) {
+      mesRes.value = ''
+      isGeneratingResponse.value = false
+      currentAiMsg.value.isTyping = false
+      // console.log(mesRes.value);
+    }
   }
-});
+)
 
 const isScrollable = ref(false)
 const isScrolling = ref(false)
@@ -433,82 +435,72 @@ const currentScrollPosition = ref(0)
 const conversationContainerHeight = ref(0)
 
 onMounted(() => {
-  
   // socket.connect()
-
   // socket.on('connect', () => {
   //   console.log('connected!')
   // })
-
   // // socket.emit('message', formatted)
   // socket.on('message', (response) => {
-  //   console.log(response) 
-    
+  //   console.log(response)
   //   // stop generating ressponse if end of string
   //   if (response === '~~~ENDOFSTREAM~~~') {
   //     isGeneratingResponse.value = false
-     
   //   }
   //   // else {
   //   // isGeneratingResponse.value = true;
   //   // }
-
   //   chatbotMessageResponse.value += response
   //   // else{
+  //   aiMessage.value.isTyping = false;
+  //   socket.disconnect();
+  //   socket.on("disconnect", ()=>{
+  //     console.log("disconnect!")
+  //     aiMessage.value.message += '|| -- last message -- ||';
+  //   })
+  //   console.log("**disconnected**!")
+  // }
+})
 
-    //   aiMessage.value.isTyping = false;
+// document.querySelector('#main-container')?.addEventListener('scroll', (evt) => {
+document.addEventListener('scroll', (_evt) => {
+  // console.log(evt)
+  // console.log('scrolling')
 
-    //   socket.disconnect();
+  currentScrollPosition.value = document.documentElement.scrollTop
 
-    //   socket.on("disconnect", ()=>{
-    //     console.log("disconnect!")
-    //     aiMessage.value.message += '|| -- last message -- ||';
-    //   })
-
-    //   console.log("**disconnected**!")
-    // }
-  })
-
-  // document.querySelector('#main-container')?.addEventListener('scroll', (evt) => {
-  document.addEventListener('scroll', (_evt) => {
-    // console.log(evt)
-    // console.log('scrolling')
-
-    currentScrollPosition.value = document.documentElement.scrollTop
-
-    // we know that the user has reached at the bottom if the current scroll position is greater than or equal to the conversation container height minus the viewport height
-    // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
+  // we know that the user has reached at the bottom if the current scroll position is greater than or equal to the conversation container height minus the viewport height
+  // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
+  if (conversationContainerRef.value)
     isBottom.value =
       conversationContainerRef.value?.scrollTop >=
       conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight
 
-    // console.log({
-    //   'scrollHeight': document.documentElement.scrollHeight,
-    //   'clientHeight': document.documentElement.clientHeight,
-    //   'scrollTop': document.documentElement.scrollTop,
-    // });
+  // console.log({
+  //   'scrollHeight': document.documentElement.scrollHeight,
+  //   'clientHeight': document.documentElement.clientHeight,
+  //   'scrollTop': document.documentElement.scrollTop,
+  // });
 
-    // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
-    // isScrolling.value = true;
+  // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
+  // isScrolling.value = true;
 
-    // set is scrolling to true if the user is scrolling to the top and has not reached 0
-    isScrolling.value = currentScrollPosition.value > 0 && !isBottom.value
+  // set is scrolling to true if the user is scrolling to the top and has not reached 0
+  isScrolling.value = currentScrollPosition.value > 0 && !isBottom.value
 
-    // console.log('isBottom', isBottom.value);
-    // console.log('isScrolling', isScrolling.value);
-    // console.log('conversationContainerHeight', conversationContainerHeight.value);
-    // console.log('userInputContainerHeight', userInputContainerHeight.value);
-    // console.log('currentScrollPosition', currentScrollPosition.value)
-  })
-
-  // conversationContainerHeight.value = conversationContainerRef.value?.clientHeight || 0;
-
+  // console.log('isBottom', isBottom.value);
+  // console.log('isScrolling', isScrolling.value);
   // console.log('conversationContainerHeight', conversationContainerHeight.value);
+  // console.log('userInputContainerHeight', userInputContainerHeight.value);
+  // console.log('currentScrollPosition', currentScrollPosition.value)
+})
 
-  setTimeout(() => {
-    scrollToBottom()
-  }, 800)
+// conversationContainerHeight.value = conversationContainerRef.value?.clientHeight || 0;
 
+// console.log('conversationContainerHeight', conversationContainerHeight.value);
+
+setTimeout(() => {
+  scrollToBottom()
+}, 800)
 
 // watch over the conversation array
 watch(conversation.value, () => {
@@ -622,7 +614,11 @@ watch(conversation.value, () => {
                 <ChatbotBubble
                   :icon-name="pageContent?.iconName"
                   :key="1"
-                  :chatbot-message="staticGreeting"
+                  :chatbot-message="
+                    staticGreeting
+                      ? marked.parse(staticGreeting)
+                      : 'Hello there! How can I help you today?'
+                  "
                   :chatbot-name="chatbotName"
                   :chat-text-color="chatTextColor"
                   :is-typing="false"
@@ -644,9 +640,10 @@ watch(conversation.value, () => {
                     />
                     <!-- <div class="ai-respose"> -->
                     <!-- :key="message.value.uniqueId" -->
+
                     <ChatbotBubble
                       v-else-if="!message.value.isUser"
-                      :key="message.value.uniqueId"                    
+                      :key="message.value.uniqueId"
                       :icon-name="pageContent?.iconName"
                       :chatbot-message="marked.parse(message.value.message)"
                       :chatbot-name="chatbotName"
@@ -658,6 +655,7 @@ watch(conversation.value, () => {
                       :chat-text-color="chatTextColor"
                       :is-typing="message.value?.isTyping"
                     />
+
                     <!-- </div> -->
                   </template>
                 </ul>
