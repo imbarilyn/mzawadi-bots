@@ -1,11 +1,11 @@
 <script setup lang="ts">
 interface LinkBar {
-  name: string;
-  text: string;
-  url: string;
+  name: string
+  text: string
+  url: string
 }
 
-const props = defineProps<LinkBar>();
+const props = defineProps<LinkBar>()
 </script>
 
 <template>
@@ -18,15 +18,16 @@ const props = defineProps<LinkBar>();
       <div class="text-sm text-neutral-400 ml-2 flex flex-row items-center gap-1.5">
         <i class="material-icons !text-sm transition transform rotate-[135deg]">link</i>
 
-        <a :href="props.url" target="_blank"
-           class="text-xs text-neutral-400 ml-2 hover:text-neutral-600 underline">
+        <RouterLink
+          :to="props.url"
+          target="_blank"
+          class="text-xs text-neutral-400 ml-2 hover:text-neutral-600 underline"
+        >
           {{ props.text }}
-        </a>
+        </RouterLink>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
