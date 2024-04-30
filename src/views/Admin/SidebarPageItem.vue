@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useRouter} from "vue-router";
-import {useTabsStore} from "../../stores/admin/tabs.ts";
+import {useTabsStore} from "../../stores/admin/tabs";
 
 interface SidebarPageItem {
   name: string;
