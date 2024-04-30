@@ -101,6 +101,7 @@ export const useAuthStore = defineStore('auth', () => {
         const {result, message, profile} = data;
 
         if (result === 'ok' && profile === false) {
+            if (profileData.phone)
             createProfilePhone.value = profileData.phone;
 
             // if (!profile) {
