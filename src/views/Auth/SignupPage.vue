@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useField} from "vee-validate";
 import {computed, reactive, ref, watch} from "vue";
-import {useAuthStore} from "../../stores/auth.ts";
+import {useAuthStore} from "../../stores/auth";
 
 const authStore = useAuthStore();
 // const router = useRouter();
