@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {useTabsStore} from "../../stores/admin/tabs.ts";
-import {useAdminHomeStore} from "../../stores/admin/home.ts";
+import {useTabsStore} from "../../stores/admin/tabs";
+import {useAdminHomeStore} from "../../stores/admin/home";
 import SidebarPageItem from "./SidebarPageItem.vue";
 
 const tabsStore = useTabsStore();
