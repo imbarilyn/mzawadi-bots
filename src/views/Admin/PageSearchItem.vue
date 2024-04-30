@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {useAdminHomeStore} from "../../stores/admin/home.ts";
-import {useTabsStore} from "../../stores/admin/tabs.ts";
+import {useAdminHomeStore} from "../../stores/admin/home";
+import {useTabsStore} from "../../stores/admin/tabs";
 import {useRouter} from "vue-router";
-import {useColorGenerator} from "../../composables/color-generator.ts";
+import {useColorGenerator} from "../../composables/color-generator";
 import {onMounted} from "vue";
 
 interface PageItem {
@@ -54,7 +54,7 @@ const visitClick = () => {
   }, 300);
 };
 
-const deleteClick = (e) => {
+const deleteClick = (e: any) => {
   e.stopPropagation();
 
   homeStore.closeSearchDialog();
