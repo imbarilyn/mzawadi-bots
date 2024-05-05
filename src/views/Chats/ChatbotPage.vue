@@ -11,14 +11,18 @@ import LoadingOverlay from '../../components/LoadingOverlay.vue'
 import _ from 'lodash'
 import hljs from 'highlight.js'
 import { useNotificationsStore } from '@/stores/notifications'
+import { useAuthStore } from '@/stores/auth'
+
 import { io } from 'socket.io-client'
 
 const notificationsStore = useNotificationsStore()
+const tokenStore = useAuthStore()
 
 const route = useRoute()
 const pageContentStore = usePageContentStore()
 const chatbot = useChatbotStore()
 const router = useRouter()
+const sesh_id = ref('')
 
 // mesRes declaration
 // step 1
@@ -26,9 +30,16 @@ const router = useRouter()
 const mesRes = ref('')
 
 //establish connections with socket io
-const socket = io('ws://3.11.13.199')
+const socket = io('wss://botsockets.mzawadi.com/')
 socket.on('connect', () => {
   console.log('Connected successfully!!')
+})
+
+//getting session id for established session
+
+socket.on('connected', (sesh) => {
+  console.log(sesh)
+  sesh_id.value = sesh.sessionId
 })
 
 const appIsFetching = ref(true)
@@ -309,8 +320,14 @@ const handleUserInput = (
   // ****************************
 
   try {
+    console.log('page id', pageId.value)
     //emit request to the server
-    socket.emit('message', formatted)
+    socket.emit('message', {
+      //sending request to the socket
+      message: formatted,
+      page_id: pageId.value,
+      token: tokenStore.token
+    })
 
     console.log('emitted!')
   } catch (error) {
@@ -335,15 +352,24 @@ const handleUserInput = (
 }
 
 socket.on('message', (response) => {
-  console.log(response)
-
-  mesRes.value += response
+  // console.log(response)
+  const parsedResponse = JSON.parse(response)
+  // console.log(parsedResponse.sessionId)
+  // console.log('sesh_id: ', sesh_id.value)
+  console.log(parsedResponse.message)
+  if (parsedResponse.sessionId === sesh_id.value) {
+    mesRes.value += parsedResponse.message
+    // console.log(mesRes.value)
+  } else {
+    return
+  }
+  // mesRes.value += response
 })
 
 watch(
   () => mesRes.value,
   (value) => {
-    console.log(value)
+    // console.log(value)
 
     if (!value) return
 
