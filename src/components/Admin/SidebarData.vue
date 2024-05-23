@@ -5,6 +5,7 @@ import MyListBox from '../../components/form/MyListBox.vue'
 import { type PageContent, usePageContentStore } from '@/stores/admin/page-data'
 import { useField } from 'vee-validate'
 import { useAdminHomeStore } from '@/stores/admin/home'
+import ChatBotMeasurement from '@/components/Admin/ChatBotMeasurement.vue'
 
 // interface PageContent {
 //   pageId: string
@@ -304,6 +305,7 @@ function toggleTab(tab: string) {
           targets: tabIn,
           opacity: 1,
           duration: 300,
+
           easing: 'easeInOutQuad'
         })
       }
@@ -841,6 +843,10 @@ const onUploadImg = () => {
 
   emit('img-upload', uploadedImg.value as File, thisPage.id)
 }
+
+const onAddUrl = () => {
+  // add url links to the chatbot
+}
 </script>
 
 <template>
@@ -849,7 +855,7 @@ const onUploadImg = () => {
   <div
     v-if="props.isOpen"
     aria-hidden="true"
-    class="absolute inset-0 z-30 bg-black bg-opacity-10 cursor-pointer"
+    class=" absolute inset-0 z-30 bg-black bg-opacity-10 cursor-pointer"
     @click="emit('close-sidebar-data')"
     @keyup.esc="emit('close-sidebar-data')"
   ></div>
@@ -868,8 +874,9 @@ const onUploadImg = () => {
           class="tab tab-bordered grow h-8 sm:h-10 md:h-12 lg:h-14"
           role="presentation"
           @click="toggleTab(<string>tab.value)"
+
         >
-          <p>{{ tab.name }}</p>
+          <p :class="{'text-blue-500': activeSidebarDataTab === tab.value}">{{ tab.name }}</p>
         </li>
       </ul>
 
@@ -909,6 +916,8 @@ const onUploadImg = () => {
                   should be short and descriptive.
                 </small>
               </div>
+              <!--              <ChatBotMeasurement />-->
+
               <div class="flex flex-col space-y-2">
                 <label class="label text-xs font-semibold" for="meta-title"> Meta Title </label>
                 <input
@@ -963,6 +972,7 @@ const onUploadImg = () => {
                   https://mydomain.com/about
                 </small>
               </div>
+
               <div
                 class="sticky bottom-0 z-30 h-24 flex flex-col justify-between items-center w-full"
               >
@@ -1267,7 +1277,7 @@ const onUploadImg = () => {
                 <input
                   id="data-file"
                   ref="dataFileEl"
-                  accept=".csv, .txt, .pdf, .docx"
+                  accept=".pdf"
                   class="file-input file-input-ghost w-full max-w-xs"
                   type="file"
                   @change="onFileChange"
@@ -1286,7 +1296,6 @@ const onUploadImg = () => {
                   Upload Data
                 </button>
               </div>
-
               <hr class="my-3 h-0.5" />
 
               <div class="flex flex-col rounded bg-slate-200 p-3 w-full">
@@ -1316,6 +1325,20 @@ const onUploadImg = () => {
                   Upload Image
                 </button>
               </div>
+              <hr class="my-3 h-0.5" />
+<!--              <div class="flex flex-col rounded bg-slate-200 p-3">-->
+<!--                <p class="text-sm">-->
+<!--                  Click on the below link to add url for your chatbot to add on the data, it can be-->
+<!--                  link to your website for example-->
+<!--                </p>-->
+<!--                <button-->
+<!--                  :disabled="!imgUploadBtnEnabled"-->
+<!--                  class="btn btn-primary btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm w-full"-->
+<!--                  @click="onAddUrl"-->
+<!--                >-->
+<!--                  Add Url-->
+<!--                </button>-->
+<!--              </div>-->
             </div>
           </div>
         </Transition>
@@ -1337,5 +1360,8 @@ const onUploadImg = () => {
 
 .sidebar-con {
   height: calc(100% - 3.5rem);
+}
+.underline{
+  border-bottom: 2px solid #3B82F6;
 }
 </style>
