@@ -40,6 +40,9 @@ onBeforeMount(() => {
 
 const openModal = () => {
   adminHome.openCreateDialog()
+  router.push({
+    name: 'CreateBot'
+  })
 }
 
 const onViewAllPagesClick = () => {
