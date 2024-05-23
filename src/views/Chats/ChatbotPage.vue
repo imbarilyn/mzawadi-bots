@@ -11,18 +11,22 @@ import LoadingOverlay from '../../components/LoadingOverlay.vue'
 import _ from 'lodash'
 import hljs from 'highlight.js'
 import { useNotificationsStore } from '@/stores/notifications'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore, type UserInfo } from '@/stores/auth'
 
 import { io } from 'socket.io-client'
 
 const notificationsStore = useNotificationsStore()
 const tokenStore = useAuthStore()
+const authStore = useAuthStore()
 
 const route = useRoute()
 const pageContentStore = usePageContentStore()
 const chatbot = useChatbotStore()
 const router = useRouter()
 const sesh_id = ref('')
+const chatbotImg = ref('')
+
+
 
 // mesRes declaration
 // step 1
@@ -30,14 +34,26 @@ const sesh_id = ref('')
 const mesRes = ref('')
 
 //establish connections with socket io
-const socket = io('wss://botsockets.mzawadi.com/')
-socket.on('connect', () => {
-  console.log('Connected successfully!!')
+const socket = io('wss://botsockets.mzawadi.com/', {
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+  // timeout: 20000,
+}
+)
+socket.on('disconnect', () => {
+  console.log('connection failed-disconnected')
 })
 
+//listen to connection error
+socket.on('connect_error', (error) => {
+  console.log('Connection error', error)
+})
 //getting session id for established session
 
 socket.on('connected', (sesh) => {
+  console.log('connected successfully!!')
   console.log(sesh)
   sesh_id.value = sesh.sessionId
 })
@@ -51,6 +67,10 @@ const pageContent = ref<PageContent | null>(null)
 const chatbotName = ref<string>('')
 const promptPlaceholder = ref<string>('')
 const staticGreeting = ref<string>('')
+// const iconImg = pageContent.value?.iconName
+// const imgUrl = `${import.meta.env.VITE_IMG_BASE_URL}/${iconImg}`
+
+
 
 // color customization
 
@@ -64,46 +84,132 @@ const inputBg = ref<string>('bg-requested-color')
 
 const bgImg = ref('')
 
-const chatbotMessageResponse = ref('')
+const chatbotMessageResponse = ref('');
+
+
 
 onBeforeMount(() => {
-  pageContentStore.fetchPageContentItems().then(() => {
-    pageContent.value = pageContentStore.getPageContentByPageId(pageId.value)
-    console.log('pageContent', pageContent.value)
-    if (!pageContent.value) {
-      router.replace({ name: 'not-found' })
-    }
 
-    if (!pageContent.value) return
+  console.log('Inside the before mount')
+  if (authStore.chatBotUser === '') {
+    console.log('No user data')
+    router.push({ name: 'lets-chat' })
+  }
+  if (authStore.userRole === 'user') {
+    console.log(authStore.chatBotUser)
+    console.log((JSON.parse(authStore.chatBotUser).iconName))
+    const userChatbotImg = JSON.parse(authStore.chatBotUser).iconName
+      chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${userChatbotImg}`
+    // chatbotImg.value = JSON.parse(authStore.chatBotUser)
+    window.addEventListener('beforeunload', ()=>{
+      authStore.chatBotUser = '';
+    })
+  // if (authStore.chatBotUser === '') {
+  //   console.log('No user data')
+  //   router.push({ name: 'lets-chat' })
+  // }
 
-    chatbotName.value = pageContent.value.chatbotName
-    promptPlaceholder.value = pageContent.value.promptPlaceholder
-    staticGreeting.value = pageContent.value.staticGreeting
+    console.log('Hey it user user!' )
+    try {
+      pageContent.value = pageContentStore.getPageContentByPageId(pageId.value)
+      console.log('pageContent', pageContent.value)
+      console.log('user details', authStore.chatBotUser)
+      // if (!pageContent.value) {
+      //   router.replace({ name: 'not-found' })
+      // }
 
-    window.document.title = pageContent.value.chatbotName
+      if (!pageContent.value) return
 
-    if (pageContent.value)
-      if (pageContent.value.pageSlug === 'gilbert') {
-        titleTextColor.value = 'text-[#A42035]'
-        chatTextColor.value = 'text-[#650B10]'
-        inputRingColor.value = 'ring-[#B61D3A]'
-        inputBtnColor.value = 'text-[#B61D3A]'
+      chatbotName.value = pageContent.value.chatbotName
+      promptPlaceholder.value = pageContent.value.promptPlaceholder
+      staticGreeting.value = pageContent.value.staticGreeting
 
-        // bgImg.value = '/Homepage_Grouse_Hero.png';
+      window.document.title = pageContent.value.chatbotName
 
-        bgImg.value = 'url("/Homepage_Grouse_Hero.png")'
-        inputBg.value = 'bg-transparent'
-      }
+      if (pageContent.value)
+        if (pageContent.value.pageSlug === 'gilbert') {
+          titleTextColor.value = 'text-[#A42035]'
+          chatTextColor.value = 'text-[#650B10]'
+          inputRingColor.value = 'ring-[#B61D3A]'
+          inputBtnColor.value = 'text-[#B61D3A]'
 
-    setTimeout(() => {
+          // bgImg.value = '/Homepage_Grouse_Hero.png';
+
+          bgImg.value = 'url("/Homepage_Grouse_Hero.png")'
+          inputBg.value = 'bg-transparent'
+        }
+
+      setTimeout(() => {
+        appIsFetching.value = false
+      }, 500)
+    } catch (error: any) {
+      console.log(error)
       appIsFetching.value = false
-    }, 500)
-  })
+
+      notificationsStore.addNotification(
+        error ?? 'Oops! Something went wrong. Please try again.',
+        'error'
+      )
+    }
+  }
+  else if(authStore.adminIsLoggedIn){
+    console.log("Hey it admin user!")
+    pageContentStore
+      .fetchPageContentItems()
+      .then(() => {
+        pageContent.value = pageContentStore.getPageContentByPageId(pageId.value);
+        console.log('admin details -', pageContent.value)
+        const chatbotUrl = pageContent.value?.iconName
+        console.log(chatbotUrl);
+        chatbotImg.value  = `${import.meta.env.VITE_IMG_BASE_URL}/${chatbotUrl}`
+
+        console.log('pageContent', pageContent.value)
+        // if (!pageContent.value) {
+        //   router.replace({ name: 'not-found' })
+        // }
+
+        if (!pageContent.value) return
+
+        chatbotName.value = pageContent.value.chatbotName
+        promptPlaceholder.value = pageContent.value.promptPlaceholder
+        staticGreeting.value = pageContent.value.staticGreeting
+
+        window.document.title = pageContent.value.chatbotName
+
+        if (pageContent.value)
+          if (pageContent.value.pageSlug === 'gilbert') {
+            titleTextColor.value = 'text-[#A42035]'
+            chatTextColor.value = 'text-[#650B10]'
+            inputRingColor.value = 'ring-[#B61D3A]'
+            inputBtnColor.value = 'text-[#B61D3A]'
+
+            // bgImg.value = '/Homepage_Grouse_Hero.png';
+
+            bgImg.value = 'url("/Homepage_Grouse_Hero.png")'
+            inputBg.value = 'bg-transparent'
+          }
+
+        setTimeout(() => {
+          appIsFetching.value = false
+        }, 500)
+      })
+      .catch((error) => {
+        console.log(error)
+        appIsFetching.value = false
+
+        notificationsStore.addNotification(
+          error ?? 'Oops! Something went wrong. Please try again.',
+          'error'
+        )
+      })
+  }
+
+
 })
 
 interface Conversation {
-  message: string
   originalMessage?: string
+  message: string
   isUser: boolean
   isTyping?: boolean
   hasError?: boolean
@@ -321,13 +427,30 @@ const handleUserInput = (
 
   try {
     console.log('page id', pageId.value)
+
+    // const userData
     //emit request to the server
-    socket.emit('message', {
-      //sending request to the socket
-      message: formatted,
-      page_id: pageId.value,
-      token: tokenStore.token
-    })
+    if (authStore.userRole === 'user') {
+      const userData = JSON.parse(authStore.chatBotUser) as UserInfo
+
+
+      socket.emit('message', {
+        //sending request to the socket
+        message: formatted,
+        page_id: pageId.value,
+        // token: tokenStore.token,
+        conversationId: userData.conversationId
+      })
+    } else {
+      socket.emit('message', {
+        //sending request to the socket
+        message: formatted,
+        page_id: pageId.value,
+        // token: tokenStore.token,
+        // conversationId: userData.conversationId
+        conversationId: null
+      })
+    }
 
     console.log('emitted!')
   } catch (error) {
@@ -355,7 +478,7 @@ socket.on('message', (response) => {
   // console.log(response)
   const parsedResponse = JSON.parse(response)
   // console.log(parsedResponse.sessionId)
-  // console.log('sesh_id: ', sesh_id.value)
+  console.log('sesh_id: ', sesh_id.value)
   console.log(parsedResponse.message)
   if (parsedResponse.sessionId === sesh_id.value) {
     mesRes.value += parsedResponse.message
@@ -553,7 +676,7 @@ watch(conversation.value, () => {
       <nav class="hs-accordion-group w-full h-full flex flex-col" data-hs-accordion-always-open>
         <div class="flex items-center justify-center pt-4 pe-4 ps-7">
           <div class="h-10 sm:h-14 p-2 sm:p-3">
-            <img src="/icon.png" class="w-full h-full object-center" alt="Bot Icon Img" />
+            <img alt="Bot Icon Img" class="w-full h-full object-center" src="/icon.png" />
           </div>
           <!-- Logo -->
         </div>
@@ -568,15 +691,15 @@ watch(conversation.value, () => {
               >
                 <svg
                   class="flex-shrink-0 w-4 h-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
                   fill="none"
+                  height="24"
                   stroke="currentColor"
-                  stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
                   <path d="M5 12h14" />
                   <path d="M12 5v14" />
@@ -617,16 +740,24 @@ watch(conversation.value, () => {
     <!-- End Sidebar -->
 
     <div
-      ref="conversationContainerRef"
       id="main-container"
+      ref="conversationContainerRef"
       class="relative min-h-screen w-full lg:ps-64"
     >
       <div class="py-10 lg:py-14">
         <!-- Title -->
         <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
-          <h1 class="text-3xl font-bold sm:text-4xl" :class="titleTextColor">
-            {{ chatbotName }} AI
-          </h1>
+          <div class="flex justify-center">
+            <img  class="w-10 h-10 rounded-full"  :src="chatbotImg">
+
+
+            <h1 :class="titleTextColor" class="text-3xl font-bold sm:text-4xl ps-2">
+
+              {{ chatbotName }} AI
+            </h1>
+
+          </div>
+
           <p class="mt-3 text-gray-600 dark:text-gray-400">
             <!--            Your AI-powered copilot for the web-->
             Here to help you with your questions
@@ -638,15 +769,15 @@ watch(conversation.value, () => {
             <template v-if="!appIsFetching">
               <div class="">
                 <ChatbotBubble
-                  :icon-name="pageContent?.iconName"
                   :key="1"
+                  :chat-text-color="chatTextColor"
                   :chatbot-message="
                     staticGreeting
                       ? marked.parse(staticGreeting)
                       : 'Hello there! How can I help you today?'
                   "
                   :chatbot-name="chatbotName"
-                  :chat-text-color="chatTextColor"
+                  :icon-name="pageContent?.iconName"
                   :is-typing="false"
                 />
 
@@ -659,9 +790,9 @@ watch(conversation.value, () => {
                         message.value.message.length > 0
                       "
                       :key="message.value.uniqueId"
-                      :user-message="message.value.message"
                       :audio-data="message.value?.audioData"
                       :chat-text-color="chatTextColor"
+                      :user-message="message.value.message"
                       user-name="John Doe"
                     />
                     <!-- <div class="ai-respose"> -->
@@ -669,17 +800,17 @@ watch(conversation.value, () => {
 
                     <ChatbotBubble
                       v-else-if="!message.value.isUser"
-                      :key="message.value.uniqueId"
-                      :icon-name="pageContent?.iconName"
+                      :key="index"
+                      :chat-text-color="chatTextColor"
                       :chatbot-message="marked.parse(message.value.message)"
                       :chatbot-name="chatbotName"
                       :disclosure-message="pageContent?.closureMessage"
                       :has-disclosure-message="pageContent?.displayClosureMessage"
                       :has-error="message.value?.hasError"
+                      :icon-name="pageContent?.iconName"
                       :is-copyable="index !== 0"
-                      :original-message="message.value?.originalMessage"
-                      :chat-text-color="chatTextColor"
                       :is-typing="message.value?.isTyping"
+                      :original-message="message.value?.originalMessage"
                     />
 
                     <!-- </div> -->
@@ -723,11 +854,11 @@ watch(conversation.value, () => {
             <div class="grid grid-cols-1 w-11/12 md:w-10/12 mx-auto">
               <UserInput
                 :disabled="false"
+                :input-btn-color="inputBtnColor"
                 :is-generating="isGeneratingResponse"
                 :prompt-placeholder="promptPlaceholder"
-                user-input=""
                 :ring-color="inputRingColor"
-                :input-btn-color="inputBtnColor"
+                user-input=""
                 @userInput="handleUserInput"
               />
             </div>
