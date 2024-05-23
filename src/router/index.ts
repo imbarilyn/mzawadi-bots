@@ -7,6 +7,11 @@ const routes = [
     name: 'Home',
     redirect: '/admin'
   },
+  // {
+  //   path: '/checkbox',
+  //   name: 'Checkbox',
+  //   component: () => import('../components/Admin/SaccoCheckbox.vue')
+  // },
   {
     path: '/auth',
     name: 'auth',
@@ -53,12 +58,12 @@ const routes = [
       },
       {
         path: 'forgot-password',
-        name: 'ForgotPassword',
+        name: 'forgot-password',
         component: () => import('../views/Auth/ForgotPasswordPage.vue')
       },
       {
         path: 'reset-password',
-        name: 'ResetPassword',
+        name: 'reset-password',
         component: () => import('../views/Auth/ResetPasswordPage.vue')
       }
     ]
@@ -72,6 +77,11 @@ const routes = [
         path: 'pages',
         name: 'AdminPages',
         component: () => import('../views/Admin/PagesPage.vue')
+      },
+      {
+        path: 'create-bot',
+        name: 'CreateBot',
+        component: () => import('../views/Admin/CreateChatbotPage.vue')
       },
       {
         path: 'settings',
@@ -96,6 +106,7 @@ const routes = [
       },
       {
         path: '',
+
         name: 'AdminHome',
         component: () => import('../views/Admin/HomePage.vue')
       },
@@ -127,24 +138,93 @@ const routes = [
             pageId: route.params.pageId
           }
         },
+        children: [],
+        // beforeEnter: (to: any, _from: any, next: any) => {
+        //   const chatbotId = to.params.chatbotId
+        //   const pageId = to.params.pageId
+        //   const authStore = useAuthStore()
+        //
+        //   console.log('chatbot-page', chatbotId, pageId)
+        //   //
+        //   // if (!chatbotId || !pageId) {
+        //   //   console.log('No pageId or ChatbotId')
+        //   //   next({ name: 'not-found' })
+        //   // }
+        //   // else if (authStore.chatBotUser || authStore.adminIsLoggedIn) {
+        //   //   console.log('user-login', pageId, chatbotId)
+        //   //   console.log('to', to.name)
+        //   //   next()
+        //   // }
+        //   // next({ name: 'chatbot-signup', params: { pageId, chatbotId } })
+        //
+        //   // else if (!authStore.adminIsLoggedIn) {
+        //   //   next({ name: 'admin-login' })
+        //   // }else {
+        //   // next()
+        //   // }
+        //   if (authStore.chatBotUser || authStore.adminIsLoggedIn) {
+        //     next()
+        //   }
+        //   next()
+        // }
+
+        // beforeEnter: (to:any, from:any, next:any) =>{
+        //   const chatbotId = to.params.chatbotId;
+        //   const pageId = to.params.pageId;
+        //   const authStore = useAuthStore();
+        //   // if(!chatbotId || !pageId){
+        //   //   next({name: 'not-found'})
+        //   // }else if(!authStore.chatBotUser || !authStore.adminIsLoggedIn){
+        //   //   next({name: 'lets-chat', params: {pageId, chatbotId}})
+        //   // }
+        //   // else if(authStore.adminIsLoggedIn){
+        //   //   next({name: 'chatbot-page', params: {pageId, chatbotId}})
+        //   // }
+        //   if(!authStore.chatBotUser){
+        //     console.log("Loading chatbot page")
+        //     next({name: 'lets-chat', params: {pageId, chatbotId}})
+        //   }
+        //   next()
+        //
+        // }
+
+
+      },
+      {
+        // path: 'sign-up',
+        path: ':chatbotId/:pageId/lets-chat',
+        name: 'lets-chat',
+        component: () => import('../views/Auth/Users/UserLoginPage.vue'),
+        props: (route: any) => {
+          return {
+            pageId: route.params.pageId,
+            chatbotId: route.params.chatbotId
+          }
+        },
         beforeEnter: (to: any, _from: any, next: any) => {
           const chatbotId = to.params.chatbotId
           const pageId = to.params.pageId
           const authStore = useAuthStore()
 
+          console.log('chatbot-signup', chatbotId, pageId)
+          //
           if (!chatbotId || !pageId) {
             next({ name: 'not-found' })
-          } else if (!authStore.userIsLoggedIn()) {
-            if (authStore.userIsAdmin()) {
-              next({ name: 'admin-login' })
-            } else {
-              console.log('user-login', pageId, chatbotId)
-              next({ name: 'user-login', query: { pageId, chatbotId } })
-            }
-          } else {
-            next()
+            console.log('No pageId or ChatbotId')
+          } else if (authStore.chatBotUser || authStore.adminIsLoggedIn) {
+            console.log('admin is logged in')
+            next({
+              name: 'chatbot-page',
+              params: { chatbotId: to.params.chatbotId, pageId: to.params.pageId }
+            })
+            }else if (!authStore.chatBotUser && !authStore.adminIsLoggedIn) {
+              next()
           }
+          //console.log('chat-bot beforeEnter')
+          // next()
+          // next()
         }
+
       }
     ]
   },
@@ -184,44 +264,58 @@ router.beforeEach((to, _from, next) => {
     'otp',
     'not-found',
     'forgot-password',
-    'reset-password'
+    'reset-password',
+    'lets-chat',
+     'chatbot-page'
   ]
 
   const isExcludedRoute = excludedRoutes.includes(to.name as string)
 
   // is the user accessing the admin area?
-  const isAdminRoute = to.path.includes('/admin')
+  // const isAdminRoute = to.path.includes('/admin')
 
-  if (!authStore.userIsLoggedIn()) {
+  if (!authStore.adminIsLoggedIn) {
+    console.log('admin is not logged in')
+    console.log('to.name', to.name)
+    console.log('from.name', _from.name)
     if (!isExcludedRoute) {
-      // if the user is not logged in, redirect to login page
-      if (isAdminRoute) {
-        next({ name: 'admin-login' })
-      } else {
-        next({
-          name: 'user-login',
-          params: { pageId: to.params.pageId, chatbotId: to.params.chatbotId }
-        })
-      }
+      console.log('not excluded route')
+      // if the admin is not logged in, redirect to login page
+      next({ name: 'admin-login' })
     } else {
-      next()
-    }
-  } else {
-    // if the user is logged in and is trying to access the login page, redirect to home page
-    if (isExcludedRoute) {
-      if (isAdminRoute) {
-        next({ name: 'AdminHome' })
-      } else {
-        if (authStore.userIsAdmin()) {
-          next({ name: 'AdminHome' })
-        } else {
-          next({ name: 'chatbot-page' })
-        }
-      }
-    } else {
-      next()
+      console.log('excluded route')
+
+         if (to.name === 'chatbot-page') {
+
+           console.log('chatbot-page')
+           const chatbotId = to.params.chatbotId
+           const pageId = to.params.pageId
+
+           console.log('user is not logged in', authStore.chatBotUser, authStore.adminIsLoggedIn)
+
+           if (!chatbotId || !pageId) {
+             next({name: 'not-found'})
+           }
+           else if(authStore.chatBotUser || authStore.adminIsLoggedIn){
+             console.log('toxx', to.name)
+             next();
+           }
+           // else if (!authStore.chatBotUser || !authStore.adminIsLoggedIn) {
+           //   console.log('load chatbot page')
+           //   console.log('to', to.name)
+           //   next()
+           // }
+         }
+
+
+
     }
   }
+    else {
+
+    next()
+  }
+  next()
 })
 
 export default router
