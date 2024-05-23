@@ -1,87 +1,116 @@
-<script setup lang="ts">
-import {useField} from "vee-validate";
-import {useRouter} from "vue-router";
-import {reactive, watch, ref, onMounted} from "vue";
+<script lang="ts" setup>
+import { useField } from 'vee-validate'
+import { useRoute, useRouter } from 'vue-router'
+import { onMounted, reactive, ref, watch } from 'vue'
 // import {googleTokenLogin} from "vue3-google-login"
-import {useAuthStore} from "../../../stores/auth";
+import { useAuthStore } from '../../../stores/auth'
+import { useAdminHomeStore } from '../../../stores/admin/home'
 
-const router = useRouter();
-const authStore = useAuthStore();
+const router = useRouter()
+const authStore = useAuthStore()
+const homeStore = useAdminHomeStore()
 
-// const route = useRoute();
-// const pageId = ref(route.query.pageId as string)
+const route = useRoute()
+const page = ref(route.query.pageId as string)
 
 interface UserLoginPageProps {
-  pageId: string;
+  pageId: string
   chatbotId: string
 }
 
-const props = defineProps<UserLoginPageProps>();
+const props = defineProps<UserLoginPageProps>()
 
 const loginData = reactive({
-  email: '',
-  password: '',
-  pageId: '',
-});
+  fullNames: '',
+  phoneNo: '',
+  memberNo: '',
+  pageId: ''
+})
 
 onMounted(() => {
   loginData.pageId = props.pageId
 })
 
-const emailValidator = (value: string) => {
+const phoneNoValidator = (value: string) => {
   if (!value) {
-    return 'Email is required';
+    return 'Phone NUmber required'
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const phoneNoRegex = /^[0-9]{10}$/
 
-  if (!emailRegex.test(value)) {
-    return 'Email must be valid';
+  if (!phoneNoRegex.test(value)) {
+    return 'Phone number must be valid'
   }
 
-  if (value.length > 50) {
-    return 'Email must be less than 50 characters';
+  if (value.length > 10 && value.length < 10) {
+    return 'Phone number must be 10 digits'
   }
 
-  return true;
-};
+  return true
+}
 
 const {
-  value: email,
-  errorMessage: emailErrorMessage,
-  meta: emailMeta,
-} = useField('email', emailValidator);
+  value: phoneNo,
+  errorMessage: phoneNoErrorMessage,
+  meta: phoneNoMeta
+} = useField('phoneNo', phoneNoValidator)
 
-watch(() => loginData.email, (value) => {
-  email.value = value;
-});
+watch(
+  () => loginData.phoneNo,
+  (value) => {
+    phoneNo.value = value
+  }
+)
 
-
-const passwordValidator = (value: string) => {
+const fullNamesValidator = (value: string) => {
   if (!value) {
-    return 'Password is required';
+    return 'Full names required'
   }
 
   // if (value.length < 4) {
   //   return 'Password must be at least 4 characters';
   // }
 
-  if (value.length > 50) {
-    return 'Password must be less than 50 characters';
+  if (value.length < 3) {
+    return 'Full names too short'
   }
 
-  return true;
-};
+  return true
+}
 
 const {
-  value: password,
-  errorMessage: passwordErrorMessage,
-  meta: passwordMeta,
-} = useField('password', passwordValidator);
+  value: fullNames,
+  errorMessage: fullNamesErrorMessage,
+  meta: fullNamesMeta
+} = useField('fullName', fullNamesValidator)
 
-watch(() => loginData.password, (value) => {
-  password.value = value;
-});
+watch(
+  () => loginData.fullNames,
+  (value) => {
+    fullNames.value = value
+  }
+)
+
+const memberNumberValidator = (value: string) => {
+  if (!value) {
+    return 'Member number is required'
+  }
+  return true
+}
+
+const {
+  value: memberNumber,
+  errorMessage: memberNumberErrorMessage,
+  meta: memberNumberMeta
+} = useField('memberNo', memberNumberValidator)
+
+watch(
+  () => loginData.memberNo,
+  (value) => {
+    memberNumber.value = value
+  }
+)
 
 // const BASE_URL = import.meta.env.VITE_API_URL as string;
 
@@ -126,109 +155,177 @@ watch(() => loginData.password, (value) => {
 // }
 //
 
-const isLoadingResource = ref(false);
-const loginFailed = ref(false);
+const isLoadingResource = ref(false)
+const loginFailed = ref(false)
 
 const onLoginClick = () => {
-  if (!emailMeta.valid || !passwordMeta.valid) {
-    return;
+  if (!fullNamesMeta.valid || !phoneNoMeta.valid) {
+    return
   }
 
-  loginFailed.value = false;
-  isLoadingResource.value = true;
+  loginFailed.value = false
+  isLoadingResource.value = true
+  // console.log(loginData)
 
+  loginData.pageId = props.pageId as string
+  console.log(loginData)
 
-  authStore.adminLogin(loginData)
-      .then((response) => {
-        if (response.success) {
-          if (response.pageIds) {
-            // check if the user has access to this chatbot
-            if (response.pageIds.includes(props.pageId)) {
-              router.push({name: 'chatbot-page', params: {pageId: props.pageId, chatbotId: props.chatbotId}});
-            } else {
-              // the user may not have access
-              router.push({name: 'not-found'});
-              // router.push({name: 'chatbot-page', params: {pageId: props.pageId, chatbotId: props.chatbotId}});
-            }
-          } else {
-            // the user may be an admin
-            router.push({name: 'HomeAdmin'});
-          }
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        isLoadingResource.value = false;
-      })
-};
+  //let's create account and post payload for user to use chatbot
+  authStore
+    .createAccount(loginData)
 
+    .then((resp) => {
+      console.log('resp- ', resp)
+      if (resp.success) {
+        console.log(resp.response?.pageOptions)
+        router.push({
+          name: 'chatbot-page',
+          params: { pageId: props.pageId, chatbotId: props.chatbotId }
+        })
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+    .finally(() => {
+      isLoadingResource.value = false
+    })
+
+  // authStore
+  //   .adminLogin(loginData)
+  //   .then((response) => {
+  //     if (response.success) {
+  //       if (response.pageIds) {
+  //         // check if the user has access to this chatbot
+  //         if (response.pageIds.includes(props.pageId)) {
+  //           router.push({
+  //             name: 'chatbot-page',
+  //             params: { pageId: props.pageId, chatbotId: props.chatbotId }
+  //           })
+  //         } else {
+  //           // the user may not have access
+  //           router.push({ name: 'not-found' })
+  //           // router.push({name: 'chatbot-page', params: {pageId: props.pageId, chatbotId: props.chatbotId}});
+  //         }
+  //       } else {
+  //         // the user may be an admin
+  //         router.push({ name: 'HomeAdmin' })
+  //       }
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     console.log(error)
+  //   })
+  //   .finally(() => {
+  //     isLoadingResource.value = false
+  //   })
+}
 </script>
 
 <template>
   <main class="w-full mx-auto p-6 flex items-center justify-center h-screen">
     <div
-        class="w-full md:w-6/12 lg:w-5/12 xl:w-4/12 px-4 md:px-2 lg:px-0 mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
+      class="w-full md:w-6/12 lg:w-5/12 xl:w-4/12 px-4 md:px-2 lg:px-0 mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700"
+    >
       <div class="p-4 sm:p-7">
         <div class="text-center">
-          <h1 class="block text-2xl font-bold text-gray-800 dark:text-white">Login</h1>
+          <h1 class="block text-2xl font-bold text-gray-800 dark:text-white">Let's Chat</h1>
           <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Don't have an account yet?
-            <router-link
-                class="text-blue-600 decoration-2 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                :to="`/auth/users/${chatbotId}/${pageId}/signup`">
-              Create account
-            </router-link>
+            Fill in the form to access chatbot
+            <!--            <router-link-->
+            <!--              class="text-blue-600 decoration-2 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"-->
+            <!--              :to="`/auth/users/${chatbotId}/${pageId}/signup`"-->
+            <!--            >-->
+            <!--              Create account-->
+            <!--            </router-link>-->
           </p>
         </div>
 
         <div class="mt-5">
           <!-- Form -->
-          <form @submit.prevent="onLoginClick" class="my-4">
+          <form class="my-4" @submit.prevent="onLoginClick">
             <div class="grid gap-y-4">
               <div class="flex flex-col space-y-1">
                 <div class="flex justify-between items-center">
-                  <label class="label font-semibold text-sm" for="email">
-                    Email Address
-                  </label>
+                  <label class="label font-semibold text-sm" for="email"> Full Names </label>
                   <!--                  <router-link-->
                   <!--                      class="text-sm text-blue-600 decoration-2 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"-->
                   <!--                      to="forgot-password">Forgot password?-->
                   <!--                  </router-link>-->
                 </div>
                 <input
-                    id="email"
-                    v-model="loginData.email"
-                    :class="{'input-error': (emailMeta.validated && !emailMeta.valid), 'input-primary': emailMeta.validated && emailMeta.valid}"
-                    class="input input-primary input-bordered w-full text-sm" placeholder="Email" type="text"/>
-                <small v-if="(emailMeta.validated && !emailMeta.valid)"
-                       class="text-sm text-rose-500">
-                  {{ emailErrorMessage }}
+                  id="email"
+                  v-model="loginData.fullNames"
+                  :class="{
+                    'input-error': fullNamesMeta.validated && !fullNamesMeta.valid,
+                    'input-primary': fullNamesMeta.validated && fullNamesMeta.valid
+                  }"
+                  class="input input-primary input-bordered w-full text-sm"
+                  placeholder="John Doe"
+                  type="text"
+                />
+                <small
+                  v-if="fullNamesMeta.validated && !fullNamesMeta.valid"
+                  class="text-sm text-rose-500"
+                >
+                  {{ fullNamesErrorMessage }}
                 </small>
               </div>
 
               <div class="flex flex-col space-y-1">
-                <label class="label font-semibold text-sm" for="password">
-                  Password
-                </label>
+                <label class="label font-semibold text-sm" for="password">Phone Number</label>
                 <input
-                    id="password"
-                    v-model="loginData.password"
-                    :class="{'input-error': (passwordMeta.validated && !passwordMeta.valid), 'input-primary': passwordMeta.validated && passwordMeta.valid}"
-                    class="input input-primary input-bordered w-full text-sm" placeholder="Password" type="password"/>
-                <small v-if="(passwordMeta.validated && !passwordMeta.valid)"
-                       class="text-sm text-rose-500">
-                  {{ passwordErrorMessage }}
+                  id="phoneNumber"
+                  v-model="loginData.phoneNo"
+                  :class="{
+                    'input-error': phoneNoMeta.validated && !phoneNoMeta.valid,
+                    'input-primary': phoneNoMeta.validated && phoneNoMeta.valid
+                  }"
+                  class="input input-primary input-bordered w-full text-sm"
+                  placeholder="Phone Number"
+                  type="text"
+                />
+                <small
+                  v-if="phoneNoMeta.validated && !phoneNoMeta.valid"
+                  class="text-sm text-rose-500"
+                >
+                  {{ phoneNoErrorMessage }}
+                </small>
+              </div>
+
+              <div class="flex flex-col space-y-1">
+                <label class="label font-semibold text-sm" for="password">Member Number</label>
+                <input
+                  id="text"
+                  v-model="loginData.memberNo"
+                  :class="{
+                    'input-error': memberNumberMeta.validated && !memberNumberMeta.valid,
+                    'input-primary': memberNumberMeta.validated && memberNumberMeta.valid
+                  }"
+                  class="input input-primary input-bordered w-full text-sm"
+                  placeholder="Member Number"
+                  type="text"
+                />
+                <small
+                  v-if="memberNumberMeta.validated && !memberNumberMeta.valid"
+                  class="text-sm text-rose-500"
+                >
+                  {{ memberNumberErrorMessage }}
                 </small>
               </div>
 
               <div class="flex flex-col space-y-1 my-1">
-                <button @click="onLoginClick" :disabled="isLoadingResource"
-                        type="submit" class="btn btn-primary btn-sm md:btn-md normal-case text-xs md:text-sm w-full">
-                  <span v-if="isLoadingResource" class="loading loading-md loading-spinner text-neutral-400"></span>
-                  Sign
-                  in
+                <button
+                  :disabled="isLoadingResource"
+                  class="btn btn-primary btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
+                  type="submit"
+                  @click="onLoginClick"
+                >
+                  <span
+                    v-if="isLoadingResource"
+                    class="loading loading-md loading-spinner text-neutral-400"
+                  ></span>
+                  Get Started
                 </button>
               </div>
             </div>
@@ -240,6 +337,4 @@ const onLoginClick = () => {
   </main>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
