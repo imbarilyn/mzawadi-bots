@@ -1,9 +1,15 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+import { usePageContentStore } from '@/stores/admin/page-data'
+
 interface LinkBar {
   name: string
   text: string
   url: string
+  chatbotId: string
+  pageId: string
 }
+
+const usepageContentStore = usePageContentStore()
 
 const props = defineProps<LinkBar>()
 </script>
@@ -20,11 +26,15 @@ const props = defineProps<LinkBar>()
 
         <RouterLink
           :to="props.url"
-          target="_blank"
           class="text-xs text-neutral-400 ml-2 hover:text-neutral-600 underline"
+          target="_blank"
         >
           {{ props.text }}
         </RouterLink>
+
+        <!--        <RouterView>-->
+        <!--          <component  :is ="UsersPage"/>-->
+        <!--        </RouterView>-->
       </div>
     </div>
   </div>
