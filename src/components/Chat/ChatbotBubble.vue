@@ -77,22 +77,22 @@ const smallChatbotName = computed(() => {
 // const chatbotMsgRef: Ref<HTMLElement | null> = ref(null);
 const chatbotImgUrl = ref('')
 
-// onMounted(() => {
-//   if (chatbotMsgRef.value) {
-//     cursorLeftOffset.value = chatbotMsgRef.value.offsetWidth;
-//   }
+onMounted(() => {
+  // if (chatbotMsgRef.value) {
+  //   cursorLeftOffset.value = chatbotMsgRef.value.offsetWidth;
+  // }
 
-//   if (props.iconName) {
-//     console.log('iconName', props.iconName);
-//     chatbotImgUrl.value = `${import.meta.env.VITE_IMG_BASE_URL}/${props.iconName}`;
-//   }
-// });
+  if (props.iconName) {
+    console.log('iconName', props.iconName);
+    chatbotImgUrl.value = `${import.meta.env.VITE_IMG_BASE_URL}/${props.iconName}`;
+  }
+});
 
-// watch(() => props.chatbotMessage, () => {
-//   if (chatbotMsgRef.value) {
-//     cursorLeftOffset.value = chatbotMsgRef.value.offsetWidth;
-//   }
-// });
+watch(() => props.chatbotMessage, () => {
+  // if (chatbotMsgRef.value) {
+  //   cursorLeftOffset.value = chatbotMsgRef.value.offsetWidth;
+  // }
+});
 
 // const cursorLeftOffset = ref(0);
 
