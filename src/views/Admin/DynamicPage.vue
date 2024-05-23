@@ -4,7 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import LinkBar from '../../components/Admin/LinkBar.vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import SidebarData from '../../components/Admin/SidebarData.vue'
-import { type PageContent, type PageOptions, usePageContentStore } from '@/stores/admin/page-data'
+import { type PageContent, usePageContentStore } from '@/stores/admin/page-data'
 import ChatbotBubble from '../../components/Chat/ChatbotBubble.vue'
 import UserBubble from '../../components/Chat/UserBubble.vue'
 import UserInput from '../../components/Chat/UserInput.vue'
@@ -84,7 +84,7 @@ onMounted(() => {
 
         tab.value = tabsStore.getTabByTo(page.value as string)
 
-        url.value = `/chat/${currentPage.value?.path}/${currentPage.value?.id}`
+        url.value = `/chat/${currentPage.value?.path}/${currentPage.value?.id}/lets-chat`
 
         if (!pageContent.value) {
           router.replace({ name: 'not-found' })
@@ -327,16 +327,18 @@ const handleSidebarDataChanged = (value: boolean) => {
           :name="currentPage?.name"
           :text="`/chat/${currentPage?.path}/${currentPage?.id}`"
           :url="url"
+          chatbot-id=""
+          page-id=""
         />
         <div class="relative flex flex-col h-full">
           <div class="flex-1 overflow-auto h-screen">
             <SidebarData
               v-if="currentPage && pageContent"
               :current-page="currentPage"
-              :is-open="isSidebarDataOpen"
-              :page-content="pageContent"
               :file-upload-btn-enabled="fileUploadBtnEnabled"
               :img-upload-btn-enabled="imgUploadBtnEnabled"
+              :is-open="isSidebarDataOpen"
+              :page-content="pageContent"
               @closeSidebarData="onCloseSidebarData"
               @chatbot-name-change="handleChatbotNameChange"
               @prompt-placeholder-change="handlePromptPlaceholderChange"
@@ -376,6 +378,7 @@ const handleSidebarDataChanged = (value: boolean) => {
                     :disclosure-message="pageContent?.closureMessage"
                     :has-disclosure-message="pageContent?.displayClosureMessage"
                     :is-typing="false"
+                    :icon-name="pageContent?.iconName"
                     is-copyable
                   />
                   <UserInput :prompt-placeholder="promptPlaceholder" disabled user-input="" />
@@ -424,8 +427,8 @@ const handleSidebarDataChanged = (value: boolean) => {
                   Upload
                 </button>
                 <button
-                  class="grow btn btn-sm md:btn-md btn-ghost normal-case border border-1 border-gray-400"
                   :class="isUploadingFile ? 'hidden' : ''"
+                  class="grow btn btn-sm md:btn-md btn-ghost normal-case border border-1 border-gray-400"
                   @click="onCloseUploadWaitModal"
                 >
                   Cancel
@@ -464,8 +467,8 @@ const handleSidebarDataChanged = (value: boolean) => {
                   Upload
                 </button>
                 <button
-                  class="grow btn btn-sm md:btn-md btn-ghost normal-case border border-1 border-gray-400"
                   :class="isUploadingImg ? 'hidden' : ''"
+                  class="grow btn btn-sm md:btn-md btn-ghost normal-case border border-1 border-gray-400"
                   @click="onCloseImgUploadWaitModal"
                 >
                   Cancel
