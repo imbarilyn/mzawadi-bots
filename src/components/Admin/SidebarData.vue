@@ -5,7 +5,7 @@ import MyListBox from '../../components/form/MyListBox.vue'
 import { type PageContent, usePageContentStore } from '@/stores/admin/page-data'
 import { useField } from 'vee-validate'
 import { useAdminHomeStore } from '@/stores/admin/home'
-import ChatBotMeasurement from '@/components/Admin/ChatBotMeasurement.vue'
+import { useRouter} from 'vue-router'
 
 // interface PageContent {
 //   pageId: string
@@ -51,6 +51,7 @@ const props = defineProps<SidebarDataProps>()
 
 const pageContentStore = usePageContentStore()
 const adminHomeStore = useAdminHomeStore()
+const homeStore = useAdminHomeStore()
 
 const activePageContentItem = ref<PageContent>(props.pageContent)
 
@@ -847,6 +848,14 @@ const onUploadImg = () => {
 const onAddUrl = () => {
   // add url links to the chatbot
 }
+
+const router = useRouter();
+
+const moreSetting = () => {
+  router.push({
+    name: 'DynamicPageSettings'
+  })
+}
 </script>
 
 <template>
@@ -1339,7 +1348,9 @@ const onAddUrl = () => {
 <!--                  Add Url-->
 <!--                </button>-->
 <!--              </div>-->
+              <button @click="moreSetting" type="button" class="btn bg-blue-500 hover:bg-blue-400 w-[120px]">more</button>
             </div>
+
           </div>
         </Transition>
       </div>
