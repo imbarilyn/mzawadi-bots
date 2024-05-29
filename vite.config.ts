@@ -16,5 +16,6 @@ export default defineConfig({
   define: {
     'process.env': process.env
   },
-  base: process.env.VITE_APP_BASE_URL || '/'
+  // base: process.env.VITE_APP_BASE_URL || '/'
+  base: '/'
 })
