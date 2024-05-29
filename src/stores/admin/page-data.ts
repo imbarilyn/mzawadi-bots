@@ -110,6 +110,7 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
       })
 
       const res = await response.json()
+      console.log(res)
 
       const { options: pageOptions, content: pageContent } = res.data
 
@@ -370,9 +371,13 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
     }
   }
 
+  // products
+
+
   async function uploadFile(file: File, pageId: string) {
     const formData = new FormData()
     formData.append('file', file)
+    console.log(formData)
 
     const appHomeStore = useAppHomeStore()
     const notificationStore = useNotificationsStore()
@@ -393,6 +398,7 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
 
       const { file } = data
 
+
       return file
     } catch (error) {
       console.error(error)
@@ -410,6 +416,7 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
   async function uploadImg(file: File, pageId: string) {
     const formData = new FormData()
     formData.append('file', file)
+    console.log(formData)
 
     const appHomeStore = useAppHomeStore()
     const notificationStore = useNotificationsStore()
@@ -429,6 +436,7 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
       const data = await response.json()
 
       const { file } = data
+      console.log(file)
 
       return file
     } catch (error) {
