@@ -1,17 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
+
 const routes = [
   {
     path: '/',
     name: 'Home',
     redirect: '/admin'
   },
-  // {
-  //   path: '/checkbox',
-  //   name: 'Checkbox',
-  //   component: () => import('../components/Admin/SaccoCheckbox.vue')
-  // },
   {
     path: '/auth',
     name: 'auth',
@@ -111,15 +107,33 @@ const routes = [
         component: () => import('../views/Admin/HomePage.vue')
       },
       {
-        path: ':page',
-        name: 'DynamicPage',
-        component: () => import('../views/Admin/DynamicPage.vue'),
-        props: (route: any) => {
-          return {
-            page: route.params.page,
-            pageId: route.query.pageId
+        path: '/page',
+        name: 'DynamicSection',
+        component: ()=> import('../views/Admin/DynamicParent.vue'),
+        children: [
+          {
+            path: ':pageId',
+            name: 'DynamicPage',
+            component: () => import('../views/Admin/DynamicPage.vue'),
+            props: (route: any) => {
+              return {
+                // page: route.params.page,
+                // pageId: route.query.pageId
+                pageId: route.params.pageId,
+              }
+            }
+          },
+          {
+            path: ':pageId/settings',
+            name: 'DynamicPageSettings',
+            component: () => import('../views/Admin/DynamicPageSettings.vue'),
+            props: (route: any) => {
+              return {
+                pageId: route.params.pageId
+              }
+            }
           }
-        }
+        ]
       }
     ]
   },
@@ -300,7 +314,7 @@ router.beforeEach((to, _from, next) => {
              console.log('toxx', to.name)
              next();
            }
-           // else if (!authStore.chatBotUser || !authStore.adminIsLoggedIn) {
+           // else if (!authStore.chat=BotUser || !authStore.adminIsLoggedIn) {
            //   console.log('load chatbot page')
            //   console.log('to', to.name)
            //   next()
