@@ -33,10 +33,6 @@ const openSearchModal = () => {
   homeStore.openSearchDialog()
 }
 
-const onOpenProductDialog = () => {
-  homeStore.openProductDialog()
-  // console.log('Products clicked')
-}
 
 const onSettingsClick = () => {
   // navigate to the tab
@@ -100,15 +96,6 @@ const activeTab = tabsStore.getActiveTab
           >
             <i class="material-icons text-neutral-400 !text-2xl">settings</i>
             <span class="hidden md:inline-block"> Settings </span>
-          </button>
-          <button
-            class="btn btn-sm btn-ghost rounded-full md:rounded-md normal-case font-medium"
-            @click="onOpenProductDialog"
-
-          >
-            <span class="material-icons-outlined text-neutral-400">inventory_2</span>
-<!--            <i class="material-icons text-neutral-400 !text-2xl">settings</i>-->
-            <span class="hidden md:inline-block"> Products </span>
           </button>
         </div>
       </div>
