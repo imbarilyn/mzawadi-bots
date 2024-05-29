@@ -192,8 +192,8 @@ const handleFileUpload = (file: File, pageId: string) => {
   fileUploadBtnEnabled.value = false
 
   onOpenUploadWaitModal(
-    'Confirm Upload',
-    `
+      'Confirm Upload',
+      `
     <div class="flex flex-col space-y-2">
       <div>Are you sure you want to upload this file?</div>
       <div class="text-sm text-gray-500">File Name: ${file.name}</div>
@@ -209,8 +209,8 @@ const handleImgUpload = (file: File, pageId: string) => {
   imgUploadBtnEnabled.value = false
 
   onOpenImgUploadWaitModal(
-    'Confirm Image Upload',
-    `
+      'Confirm Image Upload',
+      `
     <div class="flex flex-col space-y-2">
       <div>Are you sure you want to upload this image?</div>
       <div class="text-sm text-gray-500">File Name: ${file.name}</div>
@@ -230,8 +230,8 @@ const onUploadFileClick = () => {
   // change the modal title and description
 
   onOpenUploadWaitModal(
-    'Uploading File',
-    `
+      'Uploading File',
+      `
     <div class="flex flex-col items-center justify-center space-y-3.5">
       <progress class="progress w-56 my-4"></progress>
       <div class="text-sm">Uploading ${fileToUpload.value.name}...</div>
@@ -242,20 +242,20 @@ const onUploadFileClick = () => {
   isUploadingFile.value = true
 
   pageContentStore
-    .uploadFile(fileToUpload.value, pageIdUpload.value)
-    .then((fileName) => {
-      notificationsStore.addNotification(`${fileName} uploaded successfully.`, 'success')
+      .uploadFile(fileToUpload.value, pageIdUpload.value)
+      .then((fileName) => {
+        notificationsStore.addNotification(`${fileName} uploaded successfully.`, 'success')
 
-      onCloseUploadWaitModal()
-    })
-    .catch((error) => {
-      notificationsStore.addNotification(error, 'error')
-      onCloseUploadWaitModal()
-    })
-    .finally(() => {
-      isUploadingFile.value = false
-      // fileUploadBtnEnabled.value = true;
-    })
+        onCloseUploadWaitModal()
+      })
+      .catch((error) => {
+        notificationsStore.addNotification(error, 'error')
+        onCloseUploadWaitModal()
+      })
+      .finally(() => {
+        isUploadingFile.value = false
+        // fileUploadBtnEnabled.value = true;
+      })
 }
 
 const onUploadImgClick = () => {
@@ -268,8 +268,8 @@ const onUploadImgClick = () => {
   // change the modal title and description
 
   onOpenImgUploadWaitModal(
-    'Uploading Image',
-    `
+      'Uploading Image',
+      `
     <div class="flex flex-col items-center justify-center space-y-3.5">
       <progress class="progress w-56 my-4"></progress>
       <div class="text-sm">Uploading ${imgToUpload.value.name}...</div>
@@ -280,20 +280,20 @@ const onUploadImgClick = () => {
   isUploadingImg.value = true
 
   pageContentStore
-    .uploadImg(imgToUpload.value, pageIdUpload.value)
-    .then((fileName) => {
-      notificationsStore.addNotification(`${fileName} uploaded successfully.`, 'success')
+      .uploadImg(imgToUpload.value, pageIdUpload.value)
+      .then((fileName) => {
+        notificationsStore.addNotification(`${fileName} uploaded successfully.`, 'success')
 
-      onCloseImgUploadWaitModal()
-    })
-    .catch((error) => {
-      notificationsStore.addNotification(error, 'error')
-      onCloseImgUploadWaitModal()
-    })
-    .finally(() => {
-      isUploadingImg.value = false
-      // fileUploadBtnEnabled.value = true;
-    })
+        onCloseImgUploadWaitModal()
+      })
+      .catch((error) => {
+        notificationsStore.addNotification(error, 'error')
+        onCloseImgUploadWaitModal()
+      })
+      .finally(() => {
+        isUploadingImg.value = false
+        // fileUploadBtnEnabled.value = true;
+      })
 }
 
 const handleEnableUploadBtn = () => {
@@ -323,63 +323,63 @@ const handleSidebarDataChanged = (value: boolean) => {
     <template v-if="!appIsFetching">
       <div class="flex-1 overflow-hidden">
         <LinkBar
-          v-if="currentPage && url"
-          :name="currentPage?.name"
-          :text="`/chat/${currentPage?.path}/${currentPage?.id}`"
-          :url="url"
-          chatbot-id=""
-          page-id=""
+            v-if="currentPage && url"
+            :name="currentPage?.name"
+            :text="`/chat/${currentPage?.path}/${currentPage?.id}`"
+            :url="url"
+            chatbot-id=""
+            page-id=""
         />
         <div class="relative flex flex-col h-full">
           <div class="flex-1 overflow-auto h-screen">
             <SidebarData
-              v-if="currentPage && pageContent"
-              :current-page="currentPage"
-              :file-upload-btn-enabled="fileUploadBtnEnabled"
-              :img-upload-btn-enabled="imgUploadBtnEnabled"
-              :is-open="isSidebarDataOpen"
-              :page-content="pageContent"
-              @closeSidebarData="onCloseSidebarData"
-              @chatbot-name-change="handleChatbotNameChange"
-              @prompt-placeholder-change="handlePromptPlaceholderChange"
-              @greeting-change="handleStaticGreetingChange"
-              @save-page-options="handleSavePageOptions"
-              @save-page-content="handleSavePageContent"
-              @sidebar-data-changed="handleSidebarDataChanged"
-              @file-upload="handleFileUpload"
-              @enable-upload-btn="handleEnableUploadBtn"
-              @img-upload="handleImgUpload"
-              @enable-img-upload-btn="handleEnableImgUploadBtn"
+                v-if="currentPage && pageContent"
+                :current-page="currentPage"
+                :file-upload-btn-enabled="fileUploadBtnEnabled"
+                :img-upload-btn-enabled="imgUploadBtnEnabled"
+                :is-open="isSidebarDataOpen"
+                :page-content="pageContent"
+                @closeSidebarData="onCloseSidebarData"
+                @chatbot-name-change="handleChatbotNameChange"
+                @prompt-placeholder-change="handlePromptPlaceholderChange"
+                @greeting-change="handleStaticGreetingChange"
+                @save-page-options="handleSavePageOptions"
+                @save-page-content="handleSavePageContent"
+                @sidebar-data-changed="handleSidebarDataChanged"
+                @file-upload="handleFileUpload"
+                @enable-upload-btn="handleEnableUploadBtn"
+                @img-upload="handleImgUpload"
+                @enable-img-upload-btn="handleEnableImgUploadBtn"
             />
             <div
-              :class="[showEditButton ? 'cursor-pointer' : '']"
-              class="container mx-auto px-10 md:px-18 lg:px-24 py-14 flex flex-col items-center relative"
-              @click="toggleSidebarData"
-              @mouseleave="onMainContainerMouseLeave"
-              @mouseover="onMainContainerMouseOver"
+                :class="[showEditButton ? 'cursor-pointer' : '']"
+                class="container mx-auto px-10 md:px-18 lg:px-24 py-14 flex flex-col items-center relative"
+                @click="toggleSidebarData"
+                @mouseleave="onMainContainerMouseLeave"
+                @mouseover="onMainContainerMouseOver"
             >
               <!--              <div class="grid grid-cols-1 gap-7 w-9/12 mx-auto">-->
               <ul class="mt-16 space-y-5">
                 <template v-if="staticGreeting && chatbotName && promptPlaceholder">
                   <ChatbotBubble
-                    :key="1"
-                    :chatbot-message="staticGreeting"
-                    :chatbot-name="chatbotName"
-                    :disclosure-message="pageContent?.closureMessage"
-                    :has-disclosure-message="pageContent?.displayClosureMessage"
-                    :is-typing="false"
+                      :key="1"
+                      :chatbot-message="staticGreeting"
+                      :chatbot-name="chatbotName"
+                      :disclosure-message="pageContent?.closureMessage"
+                      :has-disclosure-message="pageContent?.displayClosureMessage"
+                      :is-typing="false"
                   />
 
                   <UserBubble :user-message="`What is this?`" user-name="John Doe" />
                   <ChatbotBubble
-                    :key="2"
-                    :chatbot-message="`Sorry! I can't help you with that at the moment. Please try again later.`"
-                    :chatbot-name="chatbotName"
-                    :disclosure-message="pageContent?.closureMessage"
-                    :has-disclosure-message="pageContent?.displayClosureMessage"
-                    :is-typing="false"
-                    :icon-name="pageContent?.iconName"
-                    is-copyable
+                      :key="2"
+                      :chatbot-message="`Sorry! I can't help you with that at the moment. Please try again later.`"
+                      :chatbot-name="chatbotName"
+                      :disclosure-message="pageContent?.closureMessage"
+                      :has-disclosure-message="pageContent?.displayClosureMessage"
+                      :is-typing="false"
+                      :icon-name="pageContent?.iconName"
+                      is-copyable
                   />
                   <UserInput :prompt-placeholder="promptPlaceholder" disabled user-input="" />
                 </template>
@@ -388,10 +388,10 @@ const handleSidebarDataChanged = (value: boolean) => {
 
               <!-- Toggler -->
               <button
-                v-if="showEditButton"
-                class="absolute top-10 right-5 md:right-36 btn btn-primary btn-sm normal-case text-xs md:text-sm"
-                type="button"
-                @click.stop="toggleSidebarData"
+                  v-if="showEditButton"
+                  class="absolute top-10 right-5 md:right-36 btn btn-primary btn-sm normal-case text-xs md:text-sm"
+                  type="button"
+                  @click.stop="toggleSidebarData"
               >
                 <span class="material-icons-round text-xs">edit</span> Edit
               </button>
@@ -416,20 +416,20 @@ const handleSidebarDataChanged = (value: boolean) => {
             <template #footer>
               <div class="flex flex-row items-center space-x-2 w-full">
                 <button
-                  :disabled="isUploadingFile"
-                  class="grow btn btn-sm md:btn-md btn-primary normal-case transition-all duration-500 delay-75"
-                  @click="onUploadFileClick"
+                    :disabled="isUploadingFile"
+                    class="grow btn btn-sm md:btn-md btn-primary normal-case transition-all duration-500 delay-75"
+                    @click="onUploadFileClick"
                 >
                   <span
-                    v-if="isUploadingFile"
-                    class="loading loading-md loading-spinner text-neutral-400"
+                      v-if="isUploadingFile"
+                      class="loading loading-md loading-spinner text-neutral-400"
                   ></span>
                   Upload
                 </button>
                 <button
-                  :class="isUploadingFile ? 'hidden' : ''"
-                  class="grow btn btn-sm md:btn-md btn-ghost normal-case border border-1 border-gray-400"
-                  @click="onCloseUploadWaitModal"
+                    :class="isUploadingFile ? 'hidden' : ''"
+                    class="grow btn btn-sm md:btn-md btn-ghost normal-case border border-1 border-gray-400"
+                    @click="onCloseUploadWaitModal"
                 >
                   Cancel
                 </button>
@@ -438,8 +438,8 @@ const handleSidebarDataChanged = (value: boolean) => {
           </DialogModal>
 
           <DialogModal
-            :is-open="isImgUploadWaitingModalOpen"
-            @closeModal="onCloseImgUploadWaitModal"
+              :is-open="isImgUploadWaitingModalOpen"
+              @closeModal="onCloseImgUploadWaitModal"
           >
             <template #title>
               <span class="text-lg font-poppins-semi-bold">
@@ -456,20 +456,20 @@ const handleSidebarDataChanged = (value: boolean) => {
             <template #footer>
               <div class="flex flex-row items-center space-x-2 w-full">
                 <button
-                  :disabled="isUploadingImg"
-                  class="grow btn btn-sm md:btn-md btn-primary normal-case transition-all duration-500 delay-75"
-                  @click="onUploadImgClick"
+                    :disabled="isUploadingImg"
+                    class="grow btn btn-sm md:btn-md btn-primary normal-case transition-all duration-500 delay-75"
+                    @click="onUploadImgClick"
                 >
                   <span
-                    v-if="isUploadingImg"
-                    class="loading loading-md loading-spinner text-neutral-400"
+                      v-if="isUploadingImg"
+                      class="loading loading-md loading-spinner text-neutral-400"
                   ></span>
                   Upload
                 </button>
                 <button
-                  :class="isUploadingImg ? 'hidden' : ''"
-                  class="grow btn btn-sm md:btn-md btn-ghost normal-case border border-1 border-gray-400"
-                  @click="onCloseImgUploadWaitModal"
+                    :class="isUploadingImg ? 'hidden' : ''"
+                    class="grow btn btn-sm md:btn-md btn-ghost normal-case border border-1 border-gray-400"
+                    @click="onCloseImgUploadWaitModal"
                 >
                   Cancel
                 </button>
