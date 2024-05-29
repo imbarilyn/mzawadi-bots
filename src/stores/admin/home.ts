@@ -15,6 +15,13 @@ export interface Page {
   title: string
 }
 
+interface Products {
+  productOne: string
+  productTwo: string
+  productThree: string
+  pageId: string
+}
+
 export const useAdminHomeStore = defineStore('adminHomeStore', () => {
   // state
 
@@ -25,11 +32,18 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
   const searchDialog = ref({
     isOpen: false
   })
+  const productDialog = ref({
+    isOpen: false
+  })
+
+  const addProductBtnEnabled = ref<boolean>(true)
+
   const enabledCreateDialogBtn = ref<boolean>(true)
   const deleteDialog = ref({
     isOpen: false
   })
   const enabledDeleteDialogBtn = ref<boolean>(true)
+
   // will be set when the user clicks the delete button
   const pageIdToDelete = ref<string>('')
 
@@ -113,21 +127,69 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     }
   }
 
-  async function createNewPage(pageName: string) {
+  async function addProduct (products: Products){
+    const appHomeStore = useAppHomeStore();
+    const notificationStore = useNotificationsStore();
+    const authStore = useAuthStore();
+    appHomeStore.setIsAppFetching(false)
+    addProductBtnEnabled.value = false;
+    try{
+      const response = await fetch(`${BASE_URL}/pages/products/${products.pageId}`, {
+        method: 'POST',
+        body: JSON.stringify({
+              products: [
+                {
+                  productName: products.productOne
+                },
+                {
+                  productName: products.productTwo
+                },
+                {
+                  productName: products.productThree
+                }
+              ]
+            }
+
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${authStore.token}`,
+          mode: 'cors'
+        }
+    })
+      if(response.ok){
+        const prd = await response.json();
+        console.log(prd)
+        notificationStore.addNotification('Product added successfully', 'success')
+        return prd
+      }
+    }
+    catch (e){
+      console.log(e)
+      notificationStore.addNotification('An error occurred while adding product', 'error')
+    }
+    finally {
+      setTimeout(()=>{
+        appHomeStore.setIsAppFetching(false)
+        addProductBtnEnabled.value = true
+      }, 500)
+
+    }
+  }
+
+  async function createNewPage(pageName: string, chatBotType: string) {
     const appHomeStore = useAppHomeStore()
     const notificationStore = useNotificationsStore()
     const authStore = useAuthStore()
-
     appHomeStore.setIsAppFetching(true)
-
     // disable the create button
     enabledCreateDialogBtn.value = false
-
     try {
       const response = await fetch(`${BASE_URL}/pages/`, {
         method: 'POST',
         body: JSON.stringify({
-          pageName
+          pageName,
+          chatBotType
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -135,7 +197,6 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
           mode: 'cors'
         }
       })
-
       if (response.ok) {
         const page = await response.json()
 
@@ -224,6 +285,7 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
 
     const appHomeStore = useAppHomeStore()
     const notificationStore = useNotificationsStore()
+    const authStore = useAuthStore()
 
     appHomeStore.setIsAppFetching(true)
 
@@ -231,7 +293,8 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
       const response = await fetch(`${BASE_URL}/pages/${newPageOptions.pageId}/options/`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `${authStore.token}`,
         },
         body: JSON.stringify(newPageOptions)
       })
@@ -333,8 +396,16 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     searchDialog.value.isOpen = true
   }
 
+  function openProductDialog(){
+    productDialog.value.isOpen = true
+  }
+
   function closeSearchDialog() {
     searchDialog.value.isOpen = false
+  }
+
+  function closeProductDialog(){
+    productDialog.value.isOpen = false
   }
 
   function setPageToDelete(pageId: string) {
@@ -366,6 +437,11 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     openSearchDialog,
     closeSearchDialog,
     setPageToDelete,
-    deletePage
+    deletePage,
+    openProductDialog,
+    productDialog,
+    closeProductDialog,
+    addProduct,
+    addProductBtnEnabled
   }
 })
