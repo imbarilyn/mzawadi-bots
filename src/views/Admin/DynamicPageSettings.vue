@@ -69,17 +69,15 @@ const toggleDynamicSettings = (tab:string)=>{
   // fetching.value = true
 
   activeTab.value = tab
-if(tab === 'files'){
-  pageContentStore.getUploadedPdf(props.pageId)
-      .then((resp)=>{
-        console.log(resp)
-        files.value = resp
-        console.log(files.value)
+  if (tab === 'files') {
+    pageContentStore.getUploadedPdf(props.pageId).then((resp) => {
+      console.log(resp)
+      files.value = resp
+      // console.log(files.value.documentUrl)
 
-        setTimeout(()=>{
-        }, 500)
-      })
-}
+      setTimeout(() => {}, 500)
+    })
+  }
 }
 
 const addProduct =()=>{
