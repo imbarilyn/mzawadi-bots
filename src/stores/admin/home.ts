@@ -295,7 +295,7 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `${authStore.token}`,
+          Authorization: `${authStore.token}`
         },
         body: JSON.stringify(newPageOptions)
       })
@@ -372,6 +372,11 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
       // enable the delete button
       enabledDeleteDialogBtn.value = true
     }
+  }
+
+  function openLinkDialog() {
+    linkDialog.value.isOpen = true
+    console.log(linkDialog.value)
   }
 
   function openCreateDialog() {
