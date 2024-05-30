@@ -92,17 +92,17 @@ const productValidator = (value: string) => {
 
 const {
   value: productOne,
-    meta: productOneMeta,
-    errorMessage: productOneErrorMessage
+  meta: productOneMeta,
+  errorMessage: productOneErrorMessage
 } = useField('productOne', productValidator)
 
-watch(()=>productName.productOne, (value)=>{
-  console.log(value);
-  productOne.value = value;
-})
-
-
-
+watch(
+  () => productName.productOne,
+  (value) => {
+    console.log(value)
+    productOne.value = value
+  }
+)
 
 const{
   value: productTwo,
