@@ -35,6 +35,13 @@ export interface PageOptions {
   pageUrl: string
 }
 
+interface PdfFormat {
+  documentId: string,
+  documentName: string,
+  documentUrl: string,
+  createdAt: string
+}
+
 const BASE_URL = import.meta.env.VITE_API_URL as string
 
 export const usePageContentStore = defineStore('pageContentStore', () => {
@@ -371,7 +378,40 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
     }
   }
 
-  // products
+  async function getUploadedPdf (pageId: any){
+    const authStore = useAuthStore();
+    const notificationStore = useNotificationsStore();
+    const homeStore = useAppHomeStore();
+
+    homeStore.setIsAppFetching(true)
+    try{
+      const response = await fetch(`${BASE_URL}/pages/data/get-documents/${pageId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${authStore.token}`,
+          mode: 'cors'
+        }
+      })
+      const res = await response.json();
+        console.log(res)
+        const { result, data } = res;
+        console.log(data);
+       return data;
+    }
+    catch(e){
+      console.log('error--', e);
+      notificationStore.addNotification('An error occurred while fetching uploaded files', 'error')
+    }
+    finally {
+      setTimeout(()=>{
+        homeStore.setIsAppFetching(false)
+      }, 500)
+
+    }
+
+  }
+
 
 
   async function uploadFile(file: File, pageId: string) {
