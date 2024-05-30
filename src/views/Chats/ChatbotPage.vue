@@ -26,8 +26,6 @@ const router = useRouter()
 const sesh_id = ref('')
 const chatbotImg = ref('')
 
-
-
 // mesRes declaration
 // step 1
 
@@ -38,10 +36,9 @@ const socket = io('wss://botsockets.mzawadi.com/', {
   reconnection: true,
   reconnectionAttempts: Infinity,
   reconnectionDelay: 1000,
-  reconnectionDelayMax: 5000,
+  reconnectionDelayMax: 5000
   // timeout: 20000,
-}
-)
+})
 socket.on('disconnect', () => {
   console.log('connection failed-disconnected')
 })
@@ -70,8 +67,6 @@ const staticGreeting = ref<string>('')
 // const iconImg = pageContent.value?.iconName
 // const imgUrl = `${import.meta.env.VITE_IMG_BASE_URL}/${iconImg}`
 
-
-
 // color customization
 
 // const baseBgColor = ref('bg-requested-color');
@@ -84,12 +79,7 @@ const inputBg = ref<string>('bg-requested-color')
 
 const bgImg = ref('')
 
-const chatbotMessageResponse = ref('');
-
-
-
 onBeforeMount(() => {
-
   console.log('Inside the before mount')
   if (authStore.chatBotUser === '') {
     console.log('No user data')
@@ -97,19 +87,19 @@ onBeforeMount(() => {
   }
   if (authStore.userRole === 'user') {
     console.log(authStore.chatBotUser)
-    console.log((JSON.parse(authStore.chatBotUser).iconName))
+    console.log(JSON.parse(authStore.chatBotUser).iconName)
     const userChatbotImg = JSON.parse(authStore.chatBotUser).iconName
-      chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${userChatbotImg}`
+    chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${userChatbotImg}`
     // chatbotImg.value = JSON.parse(authStore.chatBotUser)
-    window.addEventListener('beforeunload', ()=>{
-      authStore.chatBotUser = '';
+    window.addEventListener('beforeunload', () => {
+      authStore.chatBotUser = ''
     })
-  // if (authStore.chatBotUser === '') {
-  //   console.log('No user data')
-  //   router.push({ name: 'lets-chat' })
-  // }
+    // if (authStore.chatBotUser === '') {
+    //   console.log('No user data')
+    //   router.push({ name: 'lets-chat' })
+    // }
 
-    console.log('Hey it user user!' )
+    console.log('Hey it user user!')
     try {
       pageContent.value = pageContentStore.getPageContentByPageId(pageId.value)
       console.log('pageContent', pageContent.value)
@@ -151,17 +141,16 @@ onBeforeMount(() => {
         'error'
       )
     }
-  }
-  else if(authStore.adminIsLoggedIn){
-    console.log("Hey it admin user!")
+  } else if (authStore.adminIsLoggedIn) {
+    console.log('Hey it admin user!')
     pageContentStore
       .fetchPageContentItems()
       .then(() => {
-        pageContent.value = pageContentStore.getPageContentByPageId(pageId.value);
+        pageContent.value = pageContentStore.getPageContentByPageId(pageId.value)
         console.log('admin details -', pageContent.value)
         const chatbotUrl = pageContent.value?.iconName
-        console.log(chatbotUrl);
-        chatbotImg.value  = `${import.meta.env.VITE_IMG_BASE_URL}/${chatbotUrl}`
+        console.log(chatbotUrl)
+        chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${chatbotUrl}`
 
         console.log('pageContent', pageContent.value)
         // if (!pageContent.value) {
@@ -203,8 +192,6 @@ onBeforeMount(() => {
         )
       })
   }
-
-
 })
 
 interface Conversation {
@@ -432,7 +419,6 @@ const handleUserInput = (
     //emit request to the server
     if (authStore.userRole === 'user') {
       const userData = JSON.parse(authStore.chatBotUser) as UserInfo
-
 
       socket.emit('message', {
         //sending request to the socket
@@ -748,14 +734,11 @@ watch(conversation.value, () => {
         <!-- Title -->
         <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
           <div class="flex justify-center">
-            <img  class="w-10 h-10 rounded-full"  :src="chatbotImg">
-
+            <img :src="chatbotImg" class="w-10 h-10 rounded-full" />
 
             <h1 :class="titleTextColor" class="text-3xl font-bold sm:text-4xl ps-2">
-
               {{ chatbotName }} AI
             </h1>
-
           </div>
 
           <p class="mt-3 text-gray-600 dark:text-gray-400">
