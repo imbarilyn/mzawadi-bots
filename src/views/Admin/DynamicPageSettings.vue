@@ -1,10 +1,10 @@
-<script setup lang="ts">
-
-import {ref, reactive, watch} from 'vue'
-import { useAdminHomeStore } from "@/stores/admin/home";
-import DialogModal from "@/components/DialogModal.vue";
-import {useField} from "vee-validate";
-
+<script lang="ts" setup>
+import { reactive, ref, watch } from 'vue'
+import { useAdminHomeStore } from '@/stores/admin/home'
+import DialogModal from '@/components/DialogModal.vue'
+import { useField } from 'vee-validate'
+import { usePageContentStore } from '@/stores/admin/page-data'
+import FileItem from '@/views/Admin/FileItem.vue'
 import UrlLink from '@/views/Admin/toasts/UrlLink.vue'
 
 interface PageDetails {
@@ -16,17 +16,14 @@ interface TabStyle {
   value: string
 }
 
-
-const homeStore = useAdminHomeStore();
+const homeStore = useAdminHomeStore()
 const activeTab = ref<string>('Options')
-const addProductBatch: any= ref()
+
 const props = defineProps<PageDetails>()
-const pageContentStore = usePageContentStore();
+const pageContentStore = usePageContentStore()
 const files = ref<any>()
 
-
-
-const productName =reactive({
+const productName = reactive({
   productOne: '',
   productTwo: '',
   productThree: '',
