@@ -402,13 +402,13 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
     }
   }
 
-  async function getUploadedPdf (pageId: any){
-    const authStore = useAuthStore();
-    const notificationStore = useNotificationsStore();
-    const homeStore = useAppHomeStore();
+  async function getUploadedPdf(pageId: any) {
+    const authStore = useAuthStore()
+    const notificationStore = useNotificationsStore()
+    const homeStore = useAppHomeStore()
 
     homeStore.setIsAppFetching(true)
-    try{
+    try {
       const response = await fetch(`${BASE_URL}/pages/data/get-documents/${pageId}`, {
         method: 'GET',
         headers: {
@@ -417,26 +417,20 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
           mode: 'cors'
         }
       })
-      const res = await response.json();
-        console.log(res)
-        const { result, data } = res;
-        console.log(data);
-       return data;
-    }
-    catch(e){
-      console.log('error--', e);
+      const res = await response.json()
+      console.log(res)
+      const { result, data } = res
+      console.log(data)
+      return data
+    } catch (e) {
+      console.log('error--', e)
       notificationStore.addNotification('An error occurred while fetching uploaded files', 'error')
-    }
-    finally {
-      setTimeout(()=>{
+    } finally {
+      setTimeout(() => {
         homeStore.setIsAppFetching(false)
       }, 500)
-
     }
-
   }
-
-
 
   async function uploadFile(file: File, pageId: string) {
     const formData = new FormData()
