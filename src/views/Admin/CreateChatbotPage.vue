@@ -153,7 +153,7 @@ const createPage = () => {
       })
       .catch((error) => {
         console.log(error)
-        notificationsStore.addNotification('An error has occurred', 'error')
+        notificationsStore.addNotification('An error has occurred while creating page', 'error')
       })
   } else {
     // pageNameMeta.touched = true
