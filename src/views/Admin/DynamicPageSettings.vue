@@ -76,15 +76,15 @@ const addProduct = () => {
   homeStore.openProductDialog()
 }
 
-const productValidator = (value: string)=>{
- if(!value){
-   return 'Product name is required'
- }
- if(value.length < 3) {
-   return 'Product name must be at least 3 characters'
- }
- const productRegEx = /^[a-zA-Z0-9_ ]*$/
-  if(!productRegEx.test(value)) {
+const productValidator = (value: string) => {
+  if (!value) {
+    return 'Product name is required'
+  }
+  if (value.length < 3) {
+    return 'Product name must be at least 3 characters'
+  }
+  const productRegEx = /^[a-zA-Z0-9_ ]*$/
+  if (!productRegEx.test(value)) {
     return 'Product name must be alphanumeric'
   }
   return true
