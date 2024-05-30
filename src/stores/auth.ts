@@ -89,7 +89,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // actions
 
-  async function createProfile(profileData: UserInfo) {
+  async function createProfile(profileData: any) {
     const response = await fetch(`${BASE_URL}/create_profile`, {
       method: 'POST',
       headers: {
