@@ -50,8 +50,8 @@ const moreDynamicTabs = ref<TabStyle[]>([
     value: 'content'
   },
   {
-    name: 'Data',
-    value: 'data'
+    name: 'Links',
+    value: 'links'
   },
   {
     name: 'Products',
