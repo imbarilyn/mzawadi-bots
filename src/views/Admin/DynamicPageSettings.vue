@@ -63,7 +63,22 @@ const moreDynamicTabs = ref<TabStyle[]>([
 ])
 
 const toggleDynamicSettings = (tab:string)=>{
+  console.log(typeof(tab))
+  console.log(tab)
+  // fetching.value = true
+
   activeTab.value = tab
+if(tab === 'files'){
+  pageContentStore.getUploadedPdf(props.pageId)
+      .then((resp)=>{
+        console.log(resp)
+        files.value = resp
+        console.log(files.value)
+
+        setTimeout(()=>{
+        }, 500)
+      })
+}
 }
 
 const addProduct =()=>{
