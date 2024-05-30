@@ -176,19 +176,19 @@ const isLoadingResource = ref(false)
 const onSubmit = () => {
   isLoadingResource.value = true
 
-  // if (everythingIsValid.value) {
-  //   authStore.createAccount(signUpData)
-  //       .then((res: object) => {
-  //         // router.push({name: 'otp'});
-  //         console.log(res);
-  //       })
-  //       .catch((err: object) => {
-  //         console.error(err);
-  //       })
-  //   // router.push({name: 'HomeAdmin'});
-  // } else {
-  //   isLoadingResource.value = false;
-  // }
+  if (everythingIsValid.value) {
+    authStore.createProfile(signUpData)
+        .then((res: object) => {
+          // router.push({name: 'otp'});
+          console.log(res);
+        })
+        .catch((err: object) => {
+          console.error(err);
+        })
+    // router.push({name: 'HomeAdmin'});
+  } else {
+    isLoadingResource.value = false;
+  }
 }
 </script>
 
