@@ -36,6 +36,10 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     isOpen: false
   })
 
+  const linkDialog = ref({
+    isOpen: false
+  })
+
   const addProductBtnEnabled = ref<boolean>(true)
 
   const enabledCreateDialogBtn = ref<boolean>(true)
