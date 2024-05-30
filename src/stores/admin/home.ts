@@ -452,6 +452,9 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     productDialog,
     closeProductDialog,
     addProduct,
-    addProductBtnEnabled
+    addProductBtnEnabled,
+    openLinkDialog,
+    closeLinkDialog,
+    linkDialog
   }
 })
