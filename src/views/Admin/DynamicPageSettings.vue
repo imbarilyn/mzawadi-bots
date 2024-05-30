@@ -5,12 +5,13 @@ import { useAdminHomeStore } from "@/stores/admin/home";
 import DialogModal from "@/components/DialogModal.vue";
 import {useField} from "vee-validate";
 
+import UrlLink from '@/views/Admin/toasts/UrlLink.vue'
 
 interface PageDetails {
   pageId: string
 }
 
-interface TabStyle{
+interface TabStyle {
   name: string
   value: string
 }
