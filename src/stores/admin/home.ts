@@ -402,7 +402,7 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     searchDialog.value.isOpen = true
   }
 
-  function openProductDialog(){
+  function openProductDialog() {
     productDialog.value.isOpen = true
   }
 
