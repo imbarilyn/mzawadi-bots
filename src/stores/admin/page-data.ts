@@ -35,13 +35,6 @@ export interface PageOptions {
   pageUrl: string
 }
 
-interface PdfFormat {
-  documentId: string,
-  documentName: string,
-  documentUrl: string,
-  createdAt: string
-}
-
 const BASE_URL = import.meta.env.VITE_API_URL as string
 
 export const usePageContentStore = defineStore('pageContentStore', () => {
