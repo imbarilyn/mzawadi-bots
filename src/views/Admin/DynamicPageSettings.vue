@@ -338,7 +338,7 @@ const postProduct = ()=>{
         <!-- Grid -->
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Card -->
-          <div class="group flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+          <div class="group flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70" v-for="(file, index) in files" :key="index">
             <div class="h-40 flex flex-col justify-center items-center bg-blue-600 rounded-t-xl">
               <div class="bg-white h-20 w-20 rounded-lg flex justify-center items-center">
                 <span class="material-icons-round !text-6xl ">picture_as_pdf</span>
@@ -347,12 +347,15 @@ const postProduct = ()=>{
 
 
             </div>
-            <div class="h-35 p-4 md:p-6">
+            <div class="h-35 p-4 md:p-6" >
              <h3 class="text-xl font-semibold text-gray-800 dark:text-neutral-300 dark:hover:text-white">
-                FIle Name
+                {{file.documentName}}
               </h3>
               <p class="mt-3 text-gray-500 dark:text-neutral-500">
-                File last updated on [DATE]
+                {{file.documentUrl}}
+              </p>
+              <p>
+                {{file.createdAt}}
               </p>
             </div>
             <div class="mt-auto flex border-t border-gray-200 divide-x divide-gray-200 dark:border-neutral-700 dark:divide-neutral-700">
