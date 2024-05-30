@@ -456,7 +456,6 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
 
       const { file } = data
 
-
       return file
     } catch (error) {
       console.error(error)
@@ -530,6 +529,8 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
     updatePageContentItem,
     setActivePageContentItem,
     uploadFile,
-    uploadImg
+    uploadImg,
+    getUploadedPdf,
+    addUrl
   }
 })
