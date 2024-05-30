@@ -20,6 +20,9 @@ const homeStore = useAdminHomeStore();
 const activeTab = ref<string>('Options')
 const addProductBatch: any= ref()
 const props = defineProps<PageDetails>()
+const pageContentStore = usePageContentStore();
+const files = ref<any>()
+
 
 
 const productName =reactive({
