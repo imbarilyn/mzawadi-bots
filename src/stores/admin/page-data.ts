@@ -221,6 +221,37 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
     return pageContentItem
   }
 
+  //POST URL links
+
+  async function addUrl(linkPayload: any) {
+    const authStore = useAuthStore()
+    const notificationStore = useNotificationsStore()
+    const appHomeStore = useAppHomeStore()
+    appHomeStore.setIsAppFetching(true)
+    try {
+      const response = await fetch(`${BASE_URL}pages/<string:my_id>/data/links/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${authStore.token}`
+        },
+        body: JSON.stringify({ linkPayload })
+      })
+      const res = await response.json()
+      console.log(res)
+      notificationStore.addNotification('Links added successfully', 'success')
+      return res
+    } catch (e) {
+      console.log('error--', e)
+      notificationStore.addNotification('An error occurred while adding links', 'error')
+      r
+    } finally {
+      setTimeout(() => {
+        appHomeStore.setIsAppFetching(false)
+      }, 500)
+    }
+  }
+
   async function savePageOptions(pageOptions: Page) {
     const newPageOptions: PageOptions = {
       pageId: pageOptions.id.toString(),
