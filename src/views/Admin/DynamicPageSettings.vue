@@ -28,17 +28,9 @@ const productName = reactive({
   productTwo: '',
   productThree: '',
   pageId: ''
-
 })
 
-
-
-
-
-
-
-
-
+//color generation for cards
 
 const moreDynamicTabs = ref<TabStyle[]>([
   {
@@ -80,13 +72,9 @@ const toggleDynamicSettings = (tab:string)=>{
   }
 }
 
-const addProduct =()=>{
+const addProduct = () => {
   homeStore.openProductDialog()
-  addProductBatch.value++
 }
-
-
-
 
 const productValidator = (value: string)=>{
  if(!value){
