@@ -131,55 +131,52 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     }
   }
 
-  async function addProduct (products: Products){
-    const appHomeStore = useAppHomeStore();
-    const notificationStore = useNotificationsStore();
-    const authStore = useAuthStore();
+  async function addProduct(products: Products) {
+    const appHomeStore = useAppHomeStore()
+    const notificationStore = useNotificationsStore()
+    const authStore = useAuthStore()
     appHomeStore.setIsAppFetching(false)
-    addProductBtnEnabled.value = false;
-    try{
+    addProductBtnEnabled.value = false
+    try {
       const response = await fetch(`${BASE_URL}/pages/products/${products.pageId}`, {
         method: 'POST',
         body: JSON.stringify({
-              products: [
-                {
-                  productName: products.productOne
-                },
-                {
-                  productName: products.productTwo
-                },
-                {
-                  productName: products.productThree
-                }
-              ]
+          products: [
+            {
+              productName: products.productOne
+            },
+            {
+              productName: products.productTwo
+            },
+            {
+              productName: products.productThree
             }
-
-        ),
+          ]
+        }),
         headers: {
           'Content-Type': 'application/json',
           Authorization: `${authStore.token}`,
           mode: 'cors'
         }
-    })
-      if(response.ok){
-        const prd = await response.json();
+      })
+      if (response.ok) {
+        const prd = await response.json()
         console.log(prd)
         notificationStore.addNotification('Product added successfully', 'success')
         return prd
       }
-    }
-    catch (e){
+    } catch (e) {
       console.log(e)
       notificationStore.addNotification('An error occurred while adding product', 'error')
-    }
-    finally {
-      setTimeout(()=>{
+    } finally {
+      setTimeout(() => {
         appHomeStore.setIsAppFetching(false)
         addProductBtnEnabled.value = true
       }, 500)
-
     }
   }
+
+  //GET files uploaded
 
   async function createNewPage(pageName: string, chatBotType: string) {
     const appHomeStore = useAppHomeStore()
