@@ -410,7 +410,11 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     searchDialog.value.isOpen = false
   }
 
-  function closeProductDialog(){
+  function closeLinkDialog() {
+    linkDialog.value.isOpen = false
+  }
+
+  function closeProductDialog() {
     productDialog.value.isOpen = false
   }
 
