@@ -733,8 +733,8 @@ watch(conversation.value, () => {
       <div class="py-10 lg:py-14">
         <!-- Title -->
         <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
-          <div class="flex justify-center">
-            <img :src="chatbotImg" class="w-10 h-10 rounded-full" />
+          <div class="flex justify-center items-center">
+            <img class="h-14 w-14 rounded-full" src="@/assets/imgs/chatbot.png" />
 
             <h1 :class="titleTextColor" class="text-3xl font-bold sm:text-4xl ps-2">
               {{ chatbotName }} AI
