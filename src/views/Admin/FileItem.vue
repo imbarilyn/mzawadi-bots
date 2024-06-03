@@ -15,6 +15,7 @@ const props = defineProps<FileItemProps>()
 const { darkBgColor, setColor } = useColorGenerator(props.file.documentName)
 
 onMounted(() => {
+  console.log(props.file.documentUrl)
   setColor()
 })
 </script>
@@ -31,9 +32,9 @@ onMounted(() => {
       <h3 class="text-xl font-semibold text-gray-800 dark:text-neutral-300 dark:hover:text-white">
         {{ props.file.documentName }}
       </h3>
-      <p class="mt-3 text-gray-500 dark:text-neutral-500">
-        {{ file.documentUrl }}
-      </p>
+      <!--      <p class="mt-3 text-gray-500 dark:text-neutral-500">-->
+      <!--        {{ file.documentUrl }}-->
+      <!--      </p>-->
       <p>
         {{ file.createdAt }}
       </p>
@@ -47,12 +48,14 @@ onMounted(() => {
       >
         <span class="material-icons-round h-6 w-8">delete</span>
       </button>
-      <button
+      <a
+        :href="file.documentUrl"
         class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-ee-xl bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800"
-        href="#"
+        download="file"
+        target="_blank"
       >
         <span class="material-icons-round">file_download</span>
-      </button>
+      </a>
     </div>
   </div>
 </template>
