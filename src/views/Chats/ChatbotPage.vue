@@ -706,21 +706,15 @@ watch(conversation.value, () => {
         <!--            </p>-->
         <!--          </div>-->
 
-        <!--          <div class="p-4 border-t border-gray-200 dark:border-gray-700">-->
-        <!--            <a class="flex justify-between items-center gap-x-3 py-2 px-3 text-sm text-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"-->
-        <!--               href="#">-->
-        <!--              Sign in-->
-        <!--              <svg class="flex-shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"-->
-        <!--                   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"-->
-        <!--                   stroke-linejoin="round">-->
-        <!--                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>-->
-        <!--                <polyline points="10 17 15 12 10 7"/>-->
-        <!--                <line x1="15" x2="3" y1="12" y2="12"/>-->
-        <!--              </svg>-->
-        <!--            </a>-->
-        <!--          </div>-->
-        <!--        </div> -->
-        <!-- End Footer -->
+            <button class="btn btn-sm btn-ghost">
+              <span class="material-icons-outlined"> logout </span>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex justify-center items-center">
+          <small class="font-xs">&copy 2009-{{ currentYear }} Powered by Mzawadi</small>
+        </div>
       </nav>
     </div>
     <!-- End Sidebar -->
