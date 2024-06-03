@@ -195,7 +195,7 @@ const postProduct = () => {
       <h1>Content Section</h1>
     </div>
     <div v-if="activeTab === 'links'">
-      <UrlLink />
+      <UrlLink :pageId="props.pageId" />
     </div>
     <transition
       fade-enter="transition 4s ease-out"
