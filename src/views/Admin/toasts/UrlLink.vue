@@ -16,6 +16,10 @@ interface UrlInput {
   description: string
 }
 
+interface PageDetails {
+  pageId: string
+}
+
 const inputPayloadArray = ref<UrlInput[]>([])
 
 const inputPayload = reactive({
