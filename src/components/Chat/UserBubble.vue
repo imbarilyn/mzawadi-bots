@@ -63,18 +63,20 @@ const pauseAudio = () => {
   <li class="py-2 sm:py-4 list-none">
     <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto">
       <div class="max-w-2xl flex gap-x-2 sm:gap-x-4">
-        <div
-          class="flex-shrink-0 w-10 h-10 rounded-full bg-secondary inline-flex items-center justify-center"
-        >
-          <span class="text-lg font-poppins-semi-bold text-white leading-none">ME</span>
-        </div>
-
-        <div class="flex flex-col space-y-3 items-start w-full">
-          <div class="flex-shrink-0 h-10 rounded-full flex items-center">
-            <div class="text-sm font-poppins-semi-bold mb-2 tracking-wide leading-tight">You</div>
+        <div class="flex gap-3 w-full">
+          <!--          <div class="flex-shrink-0 bg-secondary rounded-full h-10 w-10">-->
+          <!--            <span class="text-white text-lg font-poppins-semi-bold">YOU</span>-->
+          <!--          </div>-->
+          <div
+            class="flex-shrink-0 w-10 space h-10 rounded-full bg-secondary inline-flex items-center justify-center"
+          >
+            <span class="text-lg font-poppins-semi-bold text-white leading-none">ME</span>
           </div>
-          <div class="space-y-3 text-sm">
-            <div class="text-sm" :class="chatTextColor" v-html="props.userMessage"></div>
+
+          <div
+            class="flex flex-col mt-10 space-y-3 text-sm bg-gray-200 rounded-t-2xl rounded-bl-2xl p-2"
+          >
+            <div :class="chatTextColor" class="text-sm" v-html="props.userMessage"></div>
             <div class="mt-3">
               <template v-if="hasAudio">
                 <button
