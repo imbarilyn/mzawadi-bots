@@ -329,7 +329,8 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `${authStore.token}`
+          Authorization: `${authStore.token}`,
+          mode: 'cors'
         },
         body: JSON.stringify(pageContentBody)
       })
