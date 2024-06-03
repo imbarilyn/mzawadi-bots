@@ -119,23 +119,23 @@ const moreUrls = () => {
   }
 }
 const postUrl = () => {
-  if (url1Meta.valid && description1Meta.valid && url2Meta.valid && description2Meta.valid) {
+  if ((url1Meta.valid && description1Meta.valid) || (url2Meta.valid && description2Meta.valid)) {
     inputPayloadArray.value.push({
-      url: inputPayload?.url1,
-      description: inputPayload?.description1
+      url: inputPayload?.url2,
+      description: inputPayload?.description2
     })
     pageContentStore
-      .addUrl(inputPayloadArray)
+      .addUrl(inputPayloadArray.value, props.pageId)
       .then((res) => {
         if (res) {
           notificationStore.addNotification('Link added successfully', 'success')
         } else {
-          notificationStore.addNotification('Failed to add link', 'error')
+          notificationStore.addNotification('An error occurred while adding links', 'error')
         }
       })
       .catch((error) => {
         console.log(error)
-        notificationStore.addNotification('Failed to add link', 'error')
+        notificationStore.addNotification('An error occurred while adding links', 'error')
       })
       .finally(() => {
         setTimeout(() => {
