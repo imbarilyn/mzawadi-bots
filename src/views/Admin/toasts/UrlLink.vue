@@ -265,11 +265,11 @@ const postUrl = () => {
           </div>
         </template>
         <template #footer>
-          <div>
-            <button v-if="!isAddInputField" class="btn btn-primary" @click="moreUrls">
+          <div class="grid grid-cols-2 gap-1">
+            <button v-if="!isAddInputField" class="btn btn-primary px-3" @click="moreUrls">
               More Url
             </button>
-            <button v-else class="btn btn-primary" type="button" @click="postUrl">Add Url</button>
+            <button class="btn btn-primary" @click="postUrl">Add Url</button>
           </div>
         </template>
       </DialogModal>
