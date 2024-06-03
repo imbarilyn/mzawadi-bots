@@ -661,50 +661,59 @@ watch(conversation.value, () => {
     >
       <nav class="hs-accordion-group w-full h-full flex flex-col" data-hs-accordion-always-open>
         <div class="flex items-center justify-center pt-4 pe-4 ps-7">
-          <div class="h-10 sm:h-14 p-2 sm:p-3">
-            <img alt="Bot Icon Img" class="w-full h-full object-center" src="/icon.png" />
+          <div class="h-10 sm:h-14 p-2 sm:p-3 flex flex-row">
+            <div class="justify-center items-center">
+              <p class="font-semibold">{{ chatbotName }} Bot</p>
+            </div>
+
+            <!--            <img alt="Bot Icon Img" class="w-full h-full object-center" src="/icon.png" />-->
           </div>
           <!-- Logo -->
         </div>
+        <div class="flex">
+          <button class="btn btn-sm p-2">
+            <span class="material-icons-outlined"> add </span>
+            <span>New Chat</span>
+          </button>
+        </div>
 
-        <div class="h-full">
+        <div class="h-full mt-8">
+          <p>History</p>
           <!-- List -->
-          <ul v-if="false" class="space-y-1.5 p-4">
-            <li>
-              <a
-                class="flex items-center gap-x-3 py-2 px-3 text-sm text-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                href="#"
-              >
-                <svg
-                  class="flex-shrink-0 w-4 h-4"
-                  fill="none"
-                  height="24"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M5 12h14" />
-                  <path d="M12 5v14" />
-                </svg>
-                New chat
-              </a>
-            </li>
-          </ul>
+          <!--          <ul v-if="false" class="space-y-1.5 p-4">-->
+          <!--            <li>-->
+          <!--              <a-->
+          <!--                class="flex items-center gap-x-3 py-2 px-3 text-sm text-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"-->
+          <!--                href="#"-->
+          <!--              >-->
+          <!--                <svg-->
+          <!--                  class="flex-shrink-0 w-4 h-4"-->
+          <!--                  fill="none"-->
+          <!--                  height="24"-->
+          <!--                  stroke="currentColor"-->
+          <!--                  stroke-linecap="round"-->
+          <!--                  stroke-linejoin="round"-->
+          <!--                  stroke-width="2"-->
+          <!--                  viewBox="0 0 24 24"-->
+          <!--                  width="24"-->
+          <!--                  xmlns="http://www.w3.org/2000/svg"-->
+          <!--                >-->
+          <!--                  <path d="M5 12h14" />-->
+          <!--                  <path d="M12 5v14" />-->
+          <!--                </svg>-->
+          <!--                New chat-->
+          <!--              </a>-->
+          <!--            </li>-->
+          <!--          </ul>-->
           <!-- End List -->
         </div>
 
-        <!-- Footer -->
-        <!-- <div class="mt-auto"> -->
-        <!--          <div class="py-2.5 px-7">-->
-        <!--            <p class="inline-flex items-center gap-x-2 text-xs text-green-600">-->
-        <!--              <span class="block w-1.5 h-1.5 rounded-full bg-green-600"></span>-->
-        <!--              Active 12,320 people-->
-        <!--            </p>-->
-        <!--          </div>-->
+        <div class="mt-auto">
+          <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex flex-col">
+            <button class="btn btn-sm btn-ghost">
+              <span class="material-icons-outlined">settings</span>
+              <span>Setting</span>
+            </button>
 
             <button class="btn btn-sm btn-ghost">
               <span class="material-icons-outlined"> logout </span>

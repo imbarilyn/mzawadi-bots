@@ -80,9 +80,9 @@ const pauseAudio = () => {
             <div class="mt-3">
               <template v-if="hasAudio">
                 <button
+                  class="btn btn-primary btn-outline btn-sm normal-case group"
                   type="button"
                   @click="onPlayAudioClick(isPlaying ? 'pause' : 'play')"
-                  class="btn btn-primary btn-outline btn-sm normal-case group"
                 >
                   <i v-if="!isPlaying" class="material-icons !text-2xl">play_arrow</i>
                   <i v-else class="material-icons !text-2xl">pause</i>

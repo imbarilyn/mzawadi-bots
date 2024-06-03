@@ -899,7 +899,7 @@ onUnmounted(() => {
     // Stop the mediaRecorder, disconnect it from audio nodes
     // stopListening();
   }
-
+  undefined
   // Stop the animation loop
   // cancelAnimationFrame(animationFrameId);
 })
@@ -926,10 +926,10 @@ onUnmounted(() => {
     <Transition name="slide-fade-y">
       <button
         v-if="micIsListening"
-        type="button"
         class="absolute right-1/2 -top-12 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-lg font-medium bg-primary text-white shadow-sm align-middle text-sm"
+        type="button"
       >
-        <svg class="flex-shrink-0 w-3 h-3" viewBox="0 0 12 12" fill="currentColor">
+        <svg class="flex-shrink-0 w-3 h-3" fill="currentColor" viewBox="0 0 12 12">
           <circle cx="6" cy="6" r="6" />
         </svg>
         Listening...
@@ -958,9 +958,9 @@ onUnmounted(() => {
             <div class="flex items-center space-x-2">
               <!-- Delete Button -->
               <button
-                type="button"
                 v-if="micIsListening || micIsStopped"
                 class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
+                type="button"
                 @click.prevent="onRecordAudioControlClick('delete')"
               >
                 <span class="material-icons-round !text-2xl"> delete </span>
@@ -981,17 +981,17 @@ onUnmounted(() => {
               >
                 <!-- Play Button -->
                 <button
-                  type="button"
                   v-if="!audioIsPlaying"
                   class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
+                  type="button"
                   @click.prevent="onAudioControlClick('play')"
                 >
                   <span class="material-icons-round !text-2xl"> play_arrow </span>
                 </button>
                 <button
                   v-else
-                  type="button"
                   class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
+                  type="button"
                   @click.prevent="onAudioControlClick('pause')"
                 >
                   <span class="material-icons-round !text-2xl"> pause </span>
@@ -1002,10 +1002,10 @@ onUnmounted(() => {
                 <div class="space-x-2 p-2 rounded-full bg-neutral-200">
                   <input
                     ref="seekBar"
-                    type="range"
                     class="w-32 h-2 bg-neutral-200 cursor-pointer rounded-lg"
-                    min="0"
                     max=""
+                    min="0"
+                    type="range"
                     value=""
                   />
                 </div>
@@ -1033,11 +1033,11 @@ onUnmounted(() => {
 
             <!-- Mic Button -->
             <button
+              v-if="!micIsListening || micIsStopped"
               :disabled="hasText || isGenerating"
+              class="relative btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
               type="button"
               @click.prevent="onRecordAudioControlClick('start')"
-              class="relative btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
-              v-if="!micIsListening || micIsStopped"
             >
               <span class="material-icons-round !text-2xl"> mic_none </span>
               <!--                                  <span v-else class="material-icons-round !text-2xl">-->
@@ -1050,9 +1050,9 @@ onUnmounted(() => {
 
             <!-- Pause Button -->
             <button
-              type="button"
               v-if="micIsListening && !micIsStopped"
               class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
+              type="button"
               @click.prevent="onRecordAudioControlClick('stop')"
             >
               <span class="material-icons-round !text-2xl text-red-500"> stop </span>
@@ -1094,7 +1094,7 @@ onUnmounted(() => {
     </div>
   </div>
 
-  <audio ref="audioElement" controls class="hidden">
+  <audio ref="audioElement" class="hidden" controls>
     Your browser does not support the audio element.
   </audio>
 </template>

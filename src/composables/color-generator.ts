@@ -1,6 +1,7 @@
 import {ref} from "vue";
 
 export function useColorGenerator(text:string) {
+   // console.log(text)
     // const color = ref('#000000');
     // const generateColor = () => {
     //     color.value = '#' + Math.floor(Math.random() * 16777215).toString(16);
@@ -45,6 +46,7 @@ export function useColorGenerator(text:string) {
 
     const setColor = () => {
         const firstChar = text.charAt(0).toLowerCase();
+        console.log(firstChar)
 
         const color = colorMapping.value.get(firstChar);
 
