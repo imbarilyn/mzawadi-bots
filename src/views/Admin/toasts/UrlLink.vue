@@ -29,6 +29,8 @@ const inputPayload = reactive({
   description2: ''
 })
 
+const props = defineProps<PageDetails>()
+
 const urlValidation = (value: string) => {
   if (!value) {
     return 'Url is required'
