@@ -145,7 +145,7 @@ export const useAuthStore = defineStore('auth', () => {
       const resp = await response.json()
       console.log('login data', resp)
 
-      const { result, data, conversationId, pageContent, pageOptions, iconName} = resp
+      const { result, data, conversationId, pageContent, pageOptions, iconName } = resp
       // conversationId.value = resp.conversationId
 
       if (result === 'ok') {
@@ -168,7 +168,7 @@ export const useAuthStore = defineStore('auth', () => {
           memberNo: createAccountPayload.memberNo,
           role: 'user',
           conversationId: conversationId,
-          iconName:iconName
+          iconName: iconName
         } as UserInfo)
         console.log(user.value)
 
@@ -214,6 +214,7 @@ export const useAuthStore = defineStore('auth', () => {
       })
 
       const data = await response.json()
+      console.log(data)
 
       const { result, page_ids } = data as LoginResponse
 
@@ -366,7 +367,7 @@ export const useAuthStore = defineStore('auth', () => {
       memberNo: usr.memberNo ?? '',
       role: usr.role ?? '',
       conversationId: usr.conversationId ?? '',
-      iconName:usr.iconName ?? ''
+      iconName: usr.iconName ?? ''
       // userId: userId ?? ''
     })
   }
@@ -417,6 +418,10 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     isLoggedIn.value = false
     user.value = null
+  }
+
+  function logoutAdmin() {
+    isLoggedIn.value = false
     token.value = null
   }
 
@@ -454,7 +459,8 @@ export const useAuthStore = defineStore('auth', () => {
     forgotPassword,
     chatBotUser,
     userRole,
-    conversationId
+    conversationId,
+    logoutAdmin
     // resetPassword,
   }
 })
