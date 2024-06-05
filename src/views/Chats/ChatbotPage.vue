@@ -58,6 +58,22 @@ socket.on('connected', (sesh) => {
   sesh_id.value = sesh.sessionId
 })
 
+const confirmSignOut = () => {
+  homeStore.signOutDialog.isOpen = true
+}
+
+const logOut = () => {
+  if (authStore.userRole === 'user') {
+    authStore.chatBotUser = ''
+    router.push({ name: 'lets-chat' })
+    console.log('user is logged out')
+  } else {
+    authStore.logoutAdmin()
+    console.log('Admin logged out')
+    router.push({ name: 'admin-login' })
+  }
+}
+
 const appIsFetching = ref(true)
 
 // const page = ref(route.params.chatbotId);
@@ -856,6 +872,34 @@ watch(conversation.value, () => {
       </div>
       <div id="user-input-placeholder"></div>
     </div>
+    <teleport to="body">
+      <DialogModal
+        :is-open="homeStore.signOutDialog.isOpen"
+        @closeModal="homeStore.closeSignOutDialog"
+      >
+        <template #title>
+          <div class="flex justify-center">
+            <span class="material-icons-outlined !text-6xl"> logout </span>
+          </div>
+        </template>
+        <template #body>
+          <div class="flex justify-center">
+            <h1 class="text-xl font-bold">Oh no! You're leaving...</h1>
+          </div>
+          <div class="flex justify-center">
+            <p class="text-lg font-semibold">Are you sure?</p>
+          </div>
+        </template>
+        <template #footer>
+          <div class="flex justify-center">
+            <button class="btn bg-emerald-100 me-5" @click="logOut">Sign Out</button>
+            <button class="btn bg-emerald-400 w-[200px]" @click="homeStore.closeSignOutDialog()">
+              Cancel
+            </button>
+          </div>
+        </template>
+      </DialogModal>
+    </teleport>
   </div>
 </template>
 
