@@ -20,6 +20,7 @@ import DialogModal from '@/components/DialogModal.vue'
 const notificationsStore = useNotificationsStore()
 const tokenStore = useAuthStore()
 const authStore = useAuthStore()
+const homeStore = useAdminHomeStore()
 
 const route = useRoute()
 const pageContentStore = usePageContentStore()
