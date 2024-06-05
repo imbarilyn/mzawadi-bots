@@ -4,8 +4,7 @@ import './styles.css'
 import './assets/material-icons/material-icons.css'
 import App from './App.vue'
 import router from './router'
-// import vue3GoogleLogin from 'vue3-google-login'
-
+import vue3GoogleLogin from 'vue3-google-login'
 
 createApp(App)
   .use(router)
