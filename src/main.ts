@@ -8,10 +8,10 @@ import router from './router'
 
 
 createApp(App)
-    .use(router)
-    .use(createPinia())
-    // .use(vue3GoogleLogin, {
-    //     clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
-    //     // clientSecret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET as string,
-    // })
-    .mount('#app')
+  .use(router)
+  .use(createPinia())
+  .use(vue3GoogleLogin, {
+    clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID as string
+    // clientSecret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET as string,
+  })
+  .mount('#app')
