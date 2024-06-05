@@ -40,6 +40,10 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     isOpen: false
   })
 
+  const signOutDialog = ref({
+    isOpen: false
+  })
+
   const addProductBtnEnabled = ref<boolean>(true)
 
   const enabledCreateDialogBtn = ref<boolean>(true)
@@ -422,6 +426,10 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     pageIdToDelete.value = pageId
   }
 
+  function closeSignOutDialog() {
+    signOutDialog.value.isOpen = false
+  }
+
   return {
     pages,
     createDialog,
@@ -455,6 +463,8 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     addProductBtnEnabled,
     openLinkDialog,
     closeLinkDialog,
-    linkDialog
+    linkDialog,
+    signOutDialog,
+    closeSignOutDialog
   }
 })
