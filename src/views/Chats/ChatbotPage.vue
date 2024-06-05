@@ -733,10 +733,10 @@ watch(conversation.value, () => {
           <!-- End List -->
         </div>
 
-        <div class="mt-auto">
-          <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex flex-col">
-            <button class="btn btn-sm btn-ghost">
-              <span class="material-icons-outlined">settings</span>
+        <div class="w-full">
+          <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <button class="btn btn-sm btn-ghost w-full">
+              <span class="material-icons-outlined S">settings</span>
               <span>Setting</span>
             </button>
 
