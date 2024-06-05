@@ -2,7 +2,7 @@
 import { useField } from 'vee-validate'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, reactive, ref, watch } from 'vue'
-// import {googleTokenLogin} from "vue3-google-login"
+import { googleTokenLogin } from 'vue3-google-login'
 import { useAuthStore } from '../../../stores/auth'
 import { useAdminHomeStore } from '../../../stores/admin/home'
 
