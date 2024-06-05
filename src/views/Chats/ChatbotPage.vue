@@ -740,7 +740,7 @@ watch(conversation.value, () => {
               <span>Setting</span>
             </button>
 
-            <button class="btn btn-sm btn-ghost">
+            <button class="btn btn-sm btn-ghost w-full" @click="confirmSignOut">
               <span class="material-icons-outlined"> logout </span>
               <span>Sign Out</span>
             </button>
