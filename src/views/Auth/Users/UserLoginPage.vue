@@ -112,7 +112,12 @@ watch(
   }
 )
 
-// const BASE_URL = import.meta.env.VITE_API_URL as string;
+const BASE_URL = import.meta.env.VITE_API_URL as string
+
+const loginWithGoogle = () => {
+  googleTokenLogin()
+    .then((response) => {
+      console.log('Handle the response', response)
 
 // const loginWithGoogle = () => {
 //   googleTokenLogin()
