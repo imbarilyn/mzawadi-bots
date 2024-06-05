@@ -83,6 +83,7 @@ const pageContent = ref<PageContent | null>(null)
 const chatbotName = ref<string>('')
 const promptPlaceholder = ref<string>('')
 const staticGreeting = ref<string>('')
+const currentYear = new Date().getFullYear()
 // const iconImg = pageContent.value?.iconName
 // const imgUrl = `${import.meta.env.VITE_IMG_BASE_URL}/${iconImg}`
 
