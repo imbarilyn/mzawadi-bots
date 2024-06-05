@@ -14,6 +14,8 @@ import { useNotificationsStore } from '@/stores/notifications'
 import { useAuthStore, type UserInfo } from '@/stores/auth'
 
 import { io } from 'socket.io-client'
+import { useAdminHomeStore } from '@/stores/admin/home'
+import DialogModal from '@/components/DialogModal.vue'
 
 const notificationsStore = useNotificationsStore()
 const tokenStore = useAuthStore()
