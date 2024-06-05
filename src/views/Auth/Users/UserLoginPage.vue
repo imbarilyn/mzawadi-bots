@@ -119,46 +119,40 @@ const loginWithGoogle = () => {
     .then((response) => {
       console.log('Handle the response', response)
 
-// const loginWithGoogle = () => {
-//   googleTokenLogin()
-//       .then((response) => {
-//         console.log("Handle the response", response);
-//
-//         fetch(`${BASE_URL}/register/google`, {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//             mode: "cors",
-//           },
-//           body: JSON.stringify({
-//             ...response,
-//           }),
-//         })
-//             .then(console.log)
-//             .catch(console.error);
-//
-//         // get user info from response
-//         return fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-//           method: "POST",
-//           headers: {
-//             Authorization: `Bearer ${response.access_token}`,
-//           },
-//           // body: JSON.stringify({
-//           // get the user phone number
-//           // 'scope': 'email profile openid https://www.googleapis.com/auth/user.phonenumbers.read',
-//           // }),
-//         });
-//       })
-//       .then((response) => {
-//         console.log("Handle the response", response)
-//         return response.json();
-//       })
-//       .then((userInfo) => {
-//         console.log("User info", userInfo)
-//         // use userInfo in your project
-//       })
-// }
-//
+      fetch(`${BASE_URL}/register/google`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          mode: 'cors'
+        },
+        body: JSON.stringify({
+          ...response
+        })
+      })
+        .then(console.log)
+        .catch(console.error)
+
+      // get user info from response
+      return fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${response.access_token}`
+        }
+        // body: JSON.stringify({
+        // get the user phone number
+        // 'scope': 'email profile openid https://www.googleapis.com/auth/user.phonenumbers.read',
+        // }),
+      })
+    })
+    .then((response) => {
+      console.log('Handle the response', response)
+      return response.json()
+    })
+    .then((userInfo) => {
+      console.log('User info', userInfo)
+      // use userInfo in your project
+    })
+}
 
 const isLoadingResource = ref(false)
 const loginFailed = ref(false)
@@ -331,6 +325,19 @@ const onLoginClick = () => {
                     class="loading loading-md loading-spinner text-neutral-400"
                   ></span>
                   Get Started
+                </button>
+
+                <button
+                  :disabled="isLoadingResource"
+                  class="btn btn-primary btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
+                  type="submit"
+                  @click="loginWithGoogle"
+                >
+                  <span
+                    v-if="isLoadingResource"
+                    class="loading loading-md loading-spinner text-neutral-400"
+                  ></span>
+                  Login with Google
                 </button>
               </div>
             </div>
