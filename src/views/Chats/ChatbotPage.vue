@@ -682,16 +682,21 @@ watch(conversation.value, () => {
       <nav class="hs-accordion-group w-full h-full flex flex-col" data-hs-accordion-always-open>
         <div class="flex items-center justify-center pt-4 pe-4 ps-7">
           <div class="h-10 sm:h-14 p-2 sm:p-3 flex flex-row">
-            <div class="justify-center items-center">
-              <p class="font-semibold">{{ chatbotName }} Bot</p>
-            </div>
+            <!--            <div class="justify-center items-center">-->
+            <!--              <p class="font-semibold">{{ chatbotName.split(' ')[0] }} Bot</p>-->
+            <!--            </div>-->
 
             <!--            <img alt="Bot Icon Img" class="w-full h-full object-center" src="/icon.png" />-->
           </div>
           <!-- Logo -->
         </div>
-        <div class="flex">
-          <button class="btn btn-sm p-2">
+        <div>
+          <button>
+            <span class="material-icons-outlined">menu</span>
+          </button>
+        </div>
+        <div class="flex ms-3">
+          <button class="btn btn-sm btn-ghost rounded-full">
             <span class="material-icons-outlined"> add </span>
             <span>New Chat</span>
           </button>
