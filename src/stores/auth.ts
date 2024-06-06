@@ -62,6 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
   const tokenExpiry = useStorage('tokenExpiry', '')
   const hasEverLoggedIn = useStorage('_h_eve_lgg_in_', false)
   const userRole = useStorage('userRole', '')
+  const memberData = useStorage('memberData', '')
 
   const createProfilePhone = ref('')
   const conversationId = ref('')
