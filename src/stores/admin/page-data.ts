@@ -90,6 +90,17 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
 
     return foundItem
   })
+  const getPageContentByChatbotName = computed(() => (chatbotName: string) => {
+    const foundItem = pageContentItems.value.find(
+      (pageContentItem) => pageContentItem.pageSlug.toLowerCase() === chatbotName
+    )
+
+    if (!foundItem) {
+      return null
+    }
+
+    return foundItem
+  })
 
   // actions
 
@@ -529,6 +540,7 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
     getPageContentByPageSlug,
     getActivePageContentItem,
     getPageContentByPageId,
+    getPageContentByChatbotName,
     fetchPageContentItems,
     addNewPageContentItem,
     savePageOptions,
