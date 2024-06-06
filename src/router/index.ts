@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
-
 const routes = [
   {
     path: '/',
@@ -109,7 +108,7 @@ const routes = [
       {
         path: '/page',
         name: 'DynamicSection',
-        component: ()=> import('../views/Admin/DynamicParent.vue'),
+        component: () => import('../views/Admin/DynamicParent.vue'),
         children: [
           {
             path: ':pageId',
@@ -119,7 +118,7 @@ const routes = [
               return {
                 // page: route.params.page,
                 // pageId: route.query.pageId
-                pageId: route.params.pageId,
+                pageId: route.params.pageId
               }
             }
           },
@@ -133,7 +132,6 @@ const routes = [
               }
             }
           }
-
         ]
       }
     ]
@@ -153,7 +151,7 @@ const routes = [
             pageId: route.params.pageId
           }
         },
-        children: [],
+        children: []
         // beforeEnter: (to: any, _from: any, next: any) => {
         //   const chatbotId = to.params.chatbotId
         //   const pageId = to.params.pageId
@@ -202,8 +200,6 @@ const routes = [
         //   next()
         //
         // }
-
-
       },
       {
         // path: 'sign-up',
@@ -232,16 +228,74 @@ const routes = [
               name: 'chatbot-page',
               params: { chatbotId: to.params.chatbotId, pageId: to.params.pageId }
             })
-            }else if (!authStore.chatBotUser && !authStore.adminIsLoggedIn) {
-              next()
+          } else if (!authStore.chatBotUser && !authStore.adminIsLoggedIn) {
+            next()
           }
           //console.log('chat-bot beforeEnter')
           // next()
           // next()
         }
-
       }
     ]
+  },
+  {
+    name: 'chatbot',
+    path: '/:chatbotName',
+    component: () => import('../views/chatbot/ChatbotPage.vue'),
+    props: (route: any) => {
+      return {
+        cbName: String(route.params.chatbotName).toLowerCase()
+      }
+    },
+    children: [
+      //   {
+      //     path: '',
+      //     name: 'new-chat',
+      //     component: () => import('../views/chatbot/NewChatPage.vue'),
+      //     props: (route: any) => {
+      //       return {
+      //         chatbotName: String(route.params.chatbotName).toLowerCase()
+      //       }
+      //     }
+      //   },
+      //   {
+      //     path: ':conversationId',
+      //     name: 'conversation',
+      //     component: () => import('../views/chatbot/ConversationHistoryPage.vue'),
+      //     props: (route: any) => {
+      //       return {
+      //         chatbotName: String(route.params.chatbotName).toLowerCase(),
+      //         conversationId: route.params.conversationId
+      //       }
+      //     }
+      //   }
+      // {
+      //   path: 'login',
+      //   name: 'chat-login',
+      //   component: () => import('../views/Auth/Users/UserLoginPage.vue'),
+      //   props: (route: any) => {
+      //     return {
+      //       cbName: route.params.chatbotName
+      //     }
+      //   }
+      // }
+    ],
+    beforeEnter: (to: any, _from: any, next: any) => {
+      const chatbotName = to.params.chatbotName
+      console.log('chatbotName', to.name)
+
+      next()
+    }
+  },
+  {
+    path: '/:chatbotName/login',
+    name: 'chat-login',
+    component: () => import('../views/Auth/Users/UserLoginPage.vue'),
+    props: (route: any) => {
+      return {
+        cbName: route.params.chatbotName
+      }
+    }
   },
   // all
   {
@@ -281,7 +335,9 @@ router.beforeEach((to, _from, next) => {
     'forgot-password',
     'reset-password',
     'lets-chat',
-     'chatbot-page'
+    'chatbot-page',
+    'chatbot',
+    'chat-login'
   ]
 
   const isExcludedRoute = excludedRoutes.includes(to.name as string)
@@ -298,36 +354,39 @@ router.beforeEach((to, _from, next) => {
       // if the admin is not logged in, redirect to login page
       next({ name: 'admin-login' })
     } else {
+      console.log(to.name)
       console.log('excluded route')
+      //
+      if (to.name === 'chatbot') {
+        console.log('chatbot-page')
+        const chatbotName = to.params.chatbotName
+        const chatbotId = to.params.chatbotId
+        const pageId = to.params.pageId
 
-         if (to.name === 'chatbot-page') {
+        console.log('user is not logged in', authStore.chatBotUser, authStore.adminIsLoggedIn)
 
-           console.log('chatbot-page')
-           const chatbotId = to.params.chatbotId
-           const pageId = to.params.pageId
-
-           console.log('user is not logged in', authStore.chatBotUser, authStore.adminIsLoggedIn)
-
-           if (!chatbotId || !pageId) {
-             next({name: 'not-found'})
-           }
-           else if(authStore.chatBotUser || authStore.adminIsLoggedIn){
-             console.log('toxx', to.name)
-             next();
-           }
-           // else if (!authStore.chat=BotUser || !authStore.adminIsLoggedIn) {
-           //   console.log('load chatbot page')
-           //   console.log('to', to.name)
-           //   next()
-           // }
-         }
-
-
-
+        if (!chatbotName) {
+          next({ name: 'not-found' })
+          console.log('No chatbotName')
+          if (authStore.chatBotUser || authStore.adminIsLoggedIn) {
+            console.log('toxx', to.name)
+            next()
+          }
+          // else if (authStore.chatBotUser) {
+          //   console.log('load user login page')
+          //   console.log('to', to.name)
+          //
+          //   next()
+          // }
+          console.log('to', to.name)
+          // next()
+        }
+      }
     }
-  }
-    else {
-
+  } else {
+    console.log('admin is logged in')
+    console.log(to.name)
+    console.log(to.path)
     next()
   }
   next()
