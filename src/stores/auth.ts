@@ -73,6 +73,13 @@ export const useAuthStore = defineStore('auth', () => {
   const getUser = computed(() => user.value)
   const getDummyUser = computed(() => dummyUser.value)
   const getToken = computed(() => token.value)
+  const getMemberData = computed(() => {
+    if (memberData.value) {
+      return JSON.parse(memberData.value) as CreateAccountPayload
+    } else {
+      return {} as CreateAccountPayload
+    }
+  })
   const adminIsLoggedIn = computed(() => {
     const expiry = moment(tokenExpiry.value)
 
