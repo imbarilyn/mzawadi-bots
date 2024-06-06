@@ -184,6 +184,9 @@ export const useAuthStore = defineStore('auth', () => {
         hasEverLoggedIn.value = true
 
         userRole.value = 'user'
+        memberData.value = JSON.stringify({
+          ...createAccountPayload
+        })
 
         return {
           success: true,
