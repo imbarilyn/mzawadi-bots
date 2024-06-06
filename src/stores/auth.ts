@@ -472,7 +472,9 @@ export const useAuthStore = defineStore('auth', () => {
     chatBotUser,
     userRole,
     conversationId,
-    logoutAdmin
+    logoutAdmin,
+    memberData,
+    getMemberData
     // resetPassword,
   }
 })
