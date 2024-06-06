@@ -51,8 +51,8 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = ref(false)
   const user: Ref<UserInfo | null> = ref(null)
   // const chatBotUser: Ref<UserInfo | null> = ref(null)
-  // const chatBotUser = useStorage('chatBotUser', '')
-  const chatBotUser = ref('')
+  const chatBotUser = useStorage('chatBotUser', '')
+  // const chatBotUser = ref('')
   const dummyUser = ref({
     username: USERNAME,
     password: PASSWORD,
