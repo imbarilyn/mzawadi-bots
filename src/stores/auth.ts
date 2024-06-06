@@ -23,6 +23,7 @@ export interface CreateAccountPayload {
   phoneNo: string
   memberNo: string
   pageId?: string
+  pageSlug: string
 }
 
 export interface LoginPayload {
