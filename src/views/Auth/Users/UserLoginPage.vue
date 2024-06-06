@@ -14,8 +14,9 @@ const route = useRoute()
 const page = ref(route.query.pageId as string)
 
 interface UserLoginPageProps {
-  pageId: string
-  chatbotId: string
+  // pageId: string
+  // chatbotId: string
+  cbName: string
 }
 
 const props = defineProps<UserLoginPageProps>()
@@ -24,11 +25,11 @@ const loginData = reactive({
   fullNames: '',
   phoneNo: '',
   memberNo: '',
-  pageId: ''
+  pageSlug: ''
 })
 
 onMounted(() => {
-  loginData.pageId = props.pageId
+  loginData.pageSlug = props.cbName
 })
 
 const phoneNoValidator = (value: string) => {
@@ -166,7 +167,7 @@ const onLoginClick = () => {
   isLoadingResource.value = true
   // console.log(loginData)
 
-  loginData.pageId = props.pageId as string
+  loginData.pageSlug = props.cbName as string
   console.log(loginData)
 
   //let's create account and post payload for user to use chatbot
@@ -178,8 +179,8 @@ const onLoginClick = () => {
       if (resp.success) {
         console.log(resp.response?.pageOptions)
         router.push({
-          name: 'chatbot-page',
-          params: { pageId: props.pageId, chatbotId: props.chatbotId }
+          name: 'chatbot',
+          params: { cbName: props.cbName }
         })
       }
     })
@@ -302,7 +303,7 @@ const onLoginClick = () => {
                     'input-primary': memberNumberMeta.validated && memberNumberMeta.valid
                   }"
                   class="input input-primary input-bordered w-full text-sm"
-                  placeholder="Member Number"
+                  placeholder="Member Number (Optional)"
                   type="text"
                 />
                 <small
@@ -327,18 +328,18 @@ const onLoginClick = () => {
                   Get Started
                 </button>
 
-                <button
-                  :disabled="isLoadingResource"
-                  class="btn btn-primary btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
-                  type="submit"
-                  @click="loginWithGoogle"
-                >
-                  <span
-                    v-if="isLoadingResource"
-                    class="loading loading-md loading-spinner text-neutral-400"
-                  ></span>
-                  Login with Google
-                </button>
+                <!--                <button-->
+                <!--                  :disabled="isLoadingResource"-->
+                <!--                  class="btn btn-primary btn-sm md:btn-md normal-case text-xs md:text-sm w-full"-->
+                <!--                  type="submit"-->
+                <!--                  @click="loginWithGoogle"-->
+                <!--                >-->
+                <!--                  <span-->
+                <!--                    v-if="isLoadingResource"-->
+                <!--                    class="loading loading-md loading-spinner text-neutral-400"-->
+                <!--                  ></span>-->
+                <!--                  Login with Google-->
+                <!--                </button>-->
               </div>
             </div>
           </form>
