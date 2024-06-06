@@ -147,7 +147,7 @@ export const useAuthStore = defineStore('auth', () => {
           fullNames: createAccountPayload.fullNames,
           phoneNo: createAccountPayload.phoneNo,
           memberNo: createAccountPayload.memberNo,
-          pageId: createAccountPayload.pageId
+          pageSlug: createAccountPayload.pageSlug
         })
       })
 
