@@ -177,6 +177,18 @@ const createPage = () => {
     notificationsStore.addNotification('Please fill in all required fields', 'error')
   }
 }
+
+onBeforeMount(() => {
+  homeStore.fetchPages().then(() => {
+    setTimeout(() => {
+      appIsFetching.value = false
+
+      console.log('available pages ', homeStore.getPages)
+
+      allPageNames.value = homeStore.getPages.map((page) => page.name.toLowerCase())
+    }, 500)
+  })
+})
 </script>
 
 <template>
