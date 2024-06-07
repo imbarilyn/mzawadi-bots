@@ -12,7 +12,10 @@ import { useNotificationsStore } from '@/stores/notifications'
 const homeStore = useAdminHomeStore()
 const notificationsStore = useNotificationsStore()
 const pageContentStore = usePageContentStore()
-const allpageNames = homeStore.getPages.map((page) => page.name.toLowerCase())
+const allPageNames: Ref<string[]> = ref([])
+// every word in the reservedWords array will not be allowed as a page name
+// they should also be lowercased
+const reservedWords = ref(['home', 'settings', 'admin'])
 const tabStore = useTabsStore()
 const router = useRouter()
 const selected = ref()
@@ -84,28 +87,39 @@ const chatbotType = [
 // }
 // const selectedType = JSON.parse(selected.value)
 const pageNameValidator = (value: string) => {
-  console.log(selected.value)
+  console.log(allPageNames.value)
+
   if (!value) {
-    return 'Page name is required'
+    return 'Chatbot name is required'
   }
+
   if (value.length < 3) {
-    return 'Page name must be at least 3 characters long'
+    return 'Chatbot name must be at least 3 characters long'
   }
+
   if (value.length > 50) {
-    return 'Page name must not exceed 50 characters'
+    return 'Chatbot name must not exceed 50 characters'
   }
+
   const pageNameRegex = /^[a-zA-Z0-9_ ]+$/
+
   if (pageNameRegex.test(value)) {
     // console.log(value)
   } else {
-    return 'Page name must only contain alphanumeric characters'
+    return 'Chatbot name must only contain alphanumeric characters'
   }
-  if (allpageNames.includes(value.toLowerCase())) {
-    return 'Page name already exists'
+
+  if (allPageNames.value.includes(value.toLowerCase())) {
+    return 'Chatbot name already exists'
   }
-  if (value.toLowerCase() === 'home' || value.toLowerCase() === 'settings') {
-    return 'Page name is reserved'
+  // if (value.toLowerCase() === 'home' || value.toLowerCase() === 'settings') {
+  //   return 'Chatbot name is reserved'
+  // }
+
+  if (reservedWords.value.includes(value.toLowerCase())) {
+    return 'Chatbot name is reserved'
   }
+
   return true
 }
 
