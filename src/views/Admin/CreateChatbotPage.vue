@@ -160,10 +160,11 @@ const createPage = () => {
         pageNameMeta.touched = false
         selected.value = ''
 
+        console.log('created page ', page.pageSlug)
+        console.log('created page ', page.pageId)
         router.push({
           name: 'DynamicPage',
-          params: { page: page.pageSlug },
-          query: { pageId: page.pageId }
+          params: { pageId: page.pageId }
         })
       })
       .catch((error) => {
