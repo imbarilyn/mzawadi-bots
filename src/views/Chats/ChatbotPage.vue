@@ -17,6 +17,10 @@ import { io } from 'socket.io-client'
 import { useAdminHomeStore } from '@/stores/admin/home'
 import DialogModal from '@/components/DialogModal.vue'
 
+interface ChatbotPageProps {
+  chatbotNameprop: string
+}
+
 const notificationsStore = useNotificationsStore()
 const tokenStore = useAuthStore()
 const authStore = useAuthStore()
@@ -41,6 +45,10 @@ const socket = io('wss://botsockets.mzawadi.com/', {
   reconnectionDelay: 1000,
   reconnectionDelayMax: 5000
   // timeout: 20000,
+})
+
+const props = withDefaults(defineProps<ChatbotPageProps>(), {
+  chatbotNameprop: 'Mzawadi'
 })
 socket.on('disconnect', () => {
   console.log('connection failed-disconnected')
