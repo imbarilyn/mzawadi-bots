@@ -3,7 +3,7 @@ import { useAdminHomeStore } from '@/stores/admin/home'
 import { useField } from 'vee-validate'
 import { useTabsStore } from '@/stores/admin/tabs'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { onBeforeMount, type Ref, ref } from 'vue'
 import { usePageContentStore } from '@/stores/admin/page-data'
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
@@ -27,6 +27,7 @@ const chatbotType = [
     name: 'Inhouse'
   }
 ]
+const appIsFetching = ref(true)
 
 // interface AddOnList {
 //   label: string
