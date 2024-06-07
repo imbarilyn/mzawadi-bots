@@ -195,7 +195,7 @@ onBeforeMount(() => {
   <div class="flex items-center justify-center h-full">
     <div class="grid grid-cols-1 gap-3 py-3 px-5">
       <div class="flex flex-col space-y-2">
-        <label class="label text-xs font-semibold" for="page-name"> Page Name </label>
+        <label class="label text-xs font-semibold" for="page-name"> Chatbot Name </label>
         <input
           id="page-name"
           v-model="pageName"
@@ -204,7 +204,7 @@ onBeforeMount(() => {
             'input-primary': pageNameMeta.validated && pageNameMeta.valid
           }"
           class="input input-primary input-bordered w-full text-sm"
-          placeholder="Page Name"
+          placeholder="Chatbot Name"
           type="text"
         />
         <small v-if="pageNameMeta.validated && !pageNameMeta.valid" class="text-xs text-rose-500">
