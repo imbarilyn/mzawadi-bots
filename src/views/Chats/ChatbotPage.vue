@@ -12,7 +12,6 @@ import _ from 'lodash'
 import hljs from 'highlight.js'
 import { useNotificationsStore } from '@/stores/notifications'
 import { useAuthStore, type UserInfo } from '@/stores/auth'
-
 import { io } from 'socket.io-client'
 import { useAdminHomeStore } from '@/stores/admin/home'
 import DialogModal from '@/components/DialogModal.vue'
@@ -119,9 +118,7 @@ onBeforeMount(() => {
     const userChatbotImg = JSON.parse(authStore.chatBotUser).iconName
     chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${userChatbotImg}`
     // chatbotImg.value = JSON.parse(authStore.chatBotUser)
-    window.addEventListener('beforeunload', () => {
-      authStore.chatBotUser = ''
-    })
+
     // if (authStore.chatBotUser === '') {
     //   console.log('No user data')
     //   router.push({ name: 'lets-chat' })
@@ -678,6 +675,48 @@ watch(conversation.value, () => {
   // if the conversation container height is greater than the viewport height
   // toggleSticky.value =
 })
+
+// const logOut = () => {
+//   if (authStore.userRole === 'user') {
+//     authStore.chatBotUser = ''
+//     router.push({ name: 'lets-chat' })
+//     console.log('user is logged out')
+//   } else {
+//     authStore.logoutAdmin()
+//     console.log('Admin logged out')
+//     router.push({ name: 'admin-login' })
+//   }
+// }
+
+const collapseSidebar = () => {
+  const sidebar = document.getElementById('application-sidebar')
+  sidebar?.classList.toggle('-translate-x-full')
+  console.log('clicked menu button')
+}
+
+const showBelow = () => {
+  // const below = document.querySelector('.hidden')
+  // below?.classList.toggle('block')
+  const below = document.getElementById('showCollapse')
+  below?.classList.remove('hidden')
+  below?.classList.add('absolute')
+}
+
+const hideBelow = () => {
+  // const below = document.querySelector('.block')
+  // below?.classList.toggle('hidden')
+  const below = document.getElementById('showCollapse')
+  below?.classList.remove('absolute')
+  below?.classList.add('hidden')
+}
+const activateTextarea = () => {
+  const textArea = document.getElementById('user-input')
+  textArea?.focus()
+}
+
+// const confirmSignOut = () => {
+//   homeStore.signOutDialog.isOpen = true
+// }
 </script>
 
 <template>
@@ -687,24 +726,33 @@ watch(conversation.value, () => {
       id="application-sidebar"
       class="hs-overlay hs-overlay-open:translate-x-0 -translate-x-full duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
     >
-      <nav class="hs-accordion-group w-full h-full flex flex-col" data-hs-accordion-always-open>
-        <div class="flex items-center justify-center pt-4 pe-4 ps-7">
-          <div class="h-10 sm:h-14 p-2 sm:p-3 flex flex-row">
-            <!--            <div class="justify-center items-center">-->
-            <!--              <p class="font-semibold">{{ chatbotName.split(' ')[0] }} Bot</p>-->
-            <!--            </div>-->
-
-            <!--            <img alt="Bot Icon Img" class="w-full h-full object-center" src="/icon.png" />-->
-          </div>
-          <!-- Logo -->
-        </div>
-        <div>
-          <button>
+      <nav
+        class="hs-accordion-group w-full h-full flex flex-col justify-center ml-4"
+        data-hs-accordion-always-open
+      >
+        <!--        <div class="flex items-center justify-center pt-4 pe-4 ps-7">-->
+        <!--          <div class="h-10 sm:h-14 p-2 sm:p-3 flex flex-row">-->
+        <!--                        <div class="justify-center items-center">-->
+        <!--                          <p class="font-semibold">{{ chatbotName.split(' ')[0] }} Bot</p>-->
+        <!--                        </div>-->
+        <!--&lt;!&ndash;&ndash;&gt;-->
+        <!--                        <img alt="Bot Icon Img" class="w-full h-full object-center" src="/icon.png" />-->
+        <!--          </div>-->
+        <!--          &lt;!&ndash; Logo &ndash;&gt;-->
+        <!--        </div>-->
+        <div class="mt-6 relative">
+          <button @click="collapseSidebar" @mouseleave="hideBelow" @mouseover="showBelow">
             <span class="material-icons-outlined">menu</span>
           </button>
+          <div id="showCollapse" class="hidden px-2 rounded-md bg-gray-600">
+            <span class="text-xs text-white dark:text-white">Collapse menu</span>
+          </div>
         </div>
-        <div class="flex ms-3">
-          <button class="btn btn-sm btn-ghost rounded-full">
+        <div class="mt-10">
+          <button
+            class="btn btn-sm btn-ghost rounded-full bg-emerald-100"
+            @click="activateTextarea"
+          >
             <span class="material-icons-outlined"> add </span>
             <span>New Chat</span>
           </button>
@@ -742,21 +790,28 @@ watch(conversation.value, () => {
         </div>
 
         <div class="w-full">
-          <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-            <button class="btn btn-sm btn-ghost w-full">
-              <span class="material-icons-outlined S">settings</span>
-              <span>Setting</span>
-            </button>
+          <div class="border-t border-gray-200 dark:border-gray-700">
+            <ul class="w-56 my-3">
+              <li
+                class="relative flex items-center y-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
+              >
+                <span class="material-icons-outlined S">settings</span>
+                <span class="pl-3">Setting</span>
+              </li>
 
-            <button class="btn btn-sm btn-ghost w-full" @click="confirmSignOut">
-              <span class="material-icons-outlined"> logout </span>
-              <span>Sign Out</span>
-            </button>
+              <li
+                class="flex items-center py-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
+                @click="confirmSignOut"
+              >
+                <span class="material-icons-outlined"> logout </span>
+                <span class="pl-3">Sign Out</span>
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="flex justify-center items-center">
-          <small class="font-xs">&copy 2009-{{ currentYear }} Powered by Mzawadi</small>
-        </div>
+        <div></div>
+
+        <small class="text-xs">&copy; 2009-{{ currentYear }} Powered by Mzawadi</small>
       </nav>
     </div>
     <!-- End Sidebar -->
