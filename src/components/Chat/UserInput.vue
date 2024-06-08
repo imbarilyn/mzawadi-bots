@@ -916,7 +916,7 @@ onUnmounted(() => {
       v-model="userInput"
       :disabled="props.disabled || micIsListening"
       :placeholder="promptPlaceholderText"
-      class="w-full border-none resize-none focus:outline-none bg-transparent h-6 text-sm grow transition duration-150 my-1.5"
+      class="w-full border-none resize-none focus:outline-none bg-transparent h-6 text-sm grow transition duration-150 my-1.5 bottom-0"
       rows="1"
       @blur="inputHasFocus = false"
       @focus="inputHasFocus = true"
