@@ -39,11 +39,11 @@ const openSearchModal = () => {
 
         <template v-for="tab in tabsStore.getOpenTabs" :key="tab.id">
           <SidebarPageItem
-            :title="tab.title"
-            :name="tab.name"
             :active="tab.active"
-            :to="tab.to"
+            :name="tab.name"
             :page-id="tab.pageId"
+            :title="tab.title"
+            :to="tab.to"
           />
         </template>
       </ul>
