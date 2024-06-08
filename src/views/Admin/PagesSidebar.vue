@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useTabsStore } from '../../stores/admin/tabs'
 import { useAdminHomeStore } from '../../stores/admin/home'
 import SidebarPageItem from './SidebarPageItem.vue'

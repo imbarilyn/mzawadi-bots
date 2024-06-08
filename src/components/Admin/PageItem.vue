@@ -27,12 +27,14 @@ const tabsStore = useTabsStore()
 const homeStore = useAdminHomeStore()
 
 const onClick = () => {
+  console.log('Clicked card bots')
   setTimeout(async () => {
     try {
       // activate the tab
       await tabsStore.updateActiveTab(props.page.name)
 
       if (props.page.name === 'Home') {
+        console.log('home')
         await router.push({
           name: 'AdminHome',
           params: { page: props.page.path },
@@ -40,6 +42,7 @@ const onClick = () => {
         })
         return
       } else if (props.page.name === 'Settings') {
+        console.log('settings')
         await router.push({
           name: 'AdminSettingsTab',
           params: { tab: 'general' },
@@ -50,8 +53,8 @@ const onClick = () => {
 
       await router.push({
         name: 'DynamicPage',
-        params: { page: props.page.path },
-        query: { pageId: props.page.id }
+        params: { pageId: props.page.id }
+        // query: { pageId: props.page.id }
       })
     } catch (e) {
       console.error(e)
@@ -105,22 +108,22 @@ const handleDeleteClick = () => {
   <div
     class="card overflow-hidden shadow rounded-lg hover:shadow-lg hover:scale-110 border-primary transition duration-300 ease-in-out h-48 md:h-52 page-item-bg animate-scale-up-center active:scale-95"
   >
-    <div class="relative flex items-center justify-center h-40" :class="bgColor" @click="onClick">
+    <div :class="bgColor" class="relative flex items-center justify-center h-40" @click="onClick">
       <div class="absolute inset-y-0 -right-4 flex items-center justify-center">
         <svg
-          class="rounded-t-lg w-28 drop-shadow-lg opacity-20"
           :class="textColor"
-          xmlns="http://www.w3.org/2000/svg"
-          width="512.000000pt"
+          class="rounded-t-lg w-28 drop-shadow-lg opacity-20"
           height="512.000000pt"
-          viewBox="0 0 512.000000 512.000000"
           preserveAspectRatio="xMidYMid meet"
+          viewBox="0 0 512.000000 512.000000"
+          width="512.000000pt"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <metadata>Created by potrace 1.16, written by Peter Selinger 2001-2019</metadata>
           <g
-            transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
             fill="currentColor"
             stroke="none"
+            transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
           >
             <path
               d="M3770 5106 c-413 -87 -715 -420 -748 -824 -16 -189 9 -334 87 -497
@@ -189,8 +192,8 @@ c24 -17 30 -62 10 -82 -17 -17 -1749 -17 -1766 0 -20 20 -14 65 10 82 20 14
     </div>
     <div class="absolute top-1/3 left-5 flex flex-row w-full justify-between items-center">
       <h6
-        class="text-lg hover:scale-110 md:text-xl font-poppins-semi-bold leading-tight tracking-wide"
         :class="[textColor]"
+        class="text-lg hover:scale-110 md:text-xl font-poppins-semi-bold leading-tight tracking-wide"
       >
         {{ props.page.name }}
       </h6>
@@ -209,6 +212,16 @@ c24 -17 30 -62 10 -82 -17 -17 -1749 -17 -1766 0 -20 20 -14 65 10 82 20 14
         </ul>
       </div>
     </div>
+    <!--    <div class="flex justify-between w-full mx-auto my-auto x-divider divide-gray-600">-->
+    <!--      <span-->
+    <!--        class="material-icons-outlined p-4 ark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 text-gray-500 hover:text-gray-800 hover:cursor-pointer"-->
+    <!--        >edit</span-->
+    <!--      >-->
+    <!--      <span-->
+    <!--        class="material-icons-outlined p-4 ark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 text-gray-500 hover:text-gray-800 hover:cursor-pointer"-->
+    <!--        >delete</span-->
+    <!--      >-->
+    <!--    </div>-->
   </div>
 </template>
 
