@@ -779,13 +779,22 @@ const reloadChat = () => {
             <span class="material-icons-outlined">menu</span>
           </button>
           <div id="showCollapse" class="hidden px-2 rounded-md bg-gray-600">
-            <span class="text-xs text-white dark:text-white">Collapse menu</span>
+            <p class="text-xs text-white dark:text-white">Collapse menu</p>
           </div>
         </div>
         <div class="mt-10">
-          <button class="btn btn-sm btn-ghost rounded-full bg-emerald-100" @click="reloadChat">
-            <span class="material-icons-outlined"> add </span>
-            <span>New Chat</span>
+          <button
+            :class="[collapse ? 'btn btn-circle' : '']"
+            class="btn btn-sm btn-ghost rounded-full bg-emerald-100"
+            @click="reloadChat"
+          >
+            <span
+              :class="[collapse ? 'flex justify-center items-center' : '']"
+              class="material-icons-outlined"
+            >
+              add
+            </span>
+            <span :class="[collapse ? 'w-0 overflow-hidden' : '']">New Chat</span>
           </button>
         </div>
 
