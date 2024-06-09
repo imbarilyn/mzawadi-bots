@@ -750,7 +750,10 @@ const reloadChat = () => {
 </script>
 
 <template>
-  <div :class="[bgImg ? 'page-bg-color' : 'bg-requested-color']" class="chat-page">
+  <div
+    :class="[bgImg ? 'page-bg-color' : 'bg-requested-color']"
+    class="chat-page relative flex min-h-full"
+  >
     <!-- Sidebar -->
     <div
       id="application-sidebar"
