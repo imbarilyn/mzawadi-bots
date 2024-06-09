@@ -798,60 +798,52 @@ const reloadChat = () => {
           </button>
         </div>
 
-        <div class="h-full mt-8">
-          <!--          <p>History</p>-->
-          <!-- List -->
-          <!--          <ul v-if="false" class="space-y-1.5 p-4">-->
-          <!--            <li>-->
-          <!--              <a-->
-          <!--                class="flex items-center gap-x-3 py-2 px-3 text-sm text-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"-->
-          <!--                href="#"-->
-          <!--              >-->
-          <!--                <svg-->
-          <!--                  class="flex-shrink-0 w-4 h-4"-->
-          <!--                  fill="none"-->
-          <!--                  height="24"-->
-          <!--                  stroke="currentColor"-->
-          <!--                  stroke-linecap="round"-->
-          <!--                  stroke-linejoin="round"-->
-          <!--                  stroke-width="2"-->
-          <!--                  viewBox="0 0 24 24"-->
-          <!--                  width="24"-->
-          <!--                  xmlns="http://www.w3.org/2000/svg"-->
-          <!--                >-->
-          <!--                  <path d="M5 12h14" />-->
-          <!--                  <path d="M12 5v14" />-->
-          <!--                </svg>-->
-          <!--                New chat-->
-          <!--              </a>-->
-          <!--            </li>-->
-          <!--          </ul>-->
-          <!-- End List -->
-        </div>
+        <div class="h-full mt-8">Hello</div>
 
         <div class="w-full">
-          <div class="border-t border-gray-200 dark:border-gray-700">
+          <div :class="[collapse ? '' : 'border-t border-gray-200 dark:border-gray-700']">
             <ul class="w-56 my-3">
-              <!--              <li-->
-              <!--                class="relative flex items-center y-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"-->
-              <!--              >-->
-              <!--                <span class="material-icons-outlined S">settings</span>-->
-              <!--                <span class="pl-3">Setting</span>-->
-              <!--              </li>-->
+              <li
+                :class="[
+                  collapse ? 'relative flex items-center y-2 rounded-full p-2 hover:bg-none' : ''
+                ]"
+                class="relative flex items-center y-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
+              >
+                <span class="material-icons-outlined S">settings</span>
+                <span :class="[collapse ? 'w-0 overflow-hidden' : '']" class="pl-3">Setting</span>
+              </li>
 
               <li
-                class="flex items-center py-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
+                :class="[collapse ? 'relative flex items-center y-2 rounded-full p-2' : '']"
+                class="relative w-full flex items-center y-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
                 @click="confirmSignOut"
               >
-                <span class="material-icons-outlined"> logout </span>
-                <span class="pl-3">Sign Out</span>
+                <span class="material-icons-outlined S">logout</span>
+                <span :class="[collapse ? 'w-0 overflow-hidden' : '']" class="pl-3">Log out</span>
+                <p class="absolute invisible opacity-20 group-hover:visible left-full">Logout</p>
               </li>
             </ul>
           </div>
         </div>
-        <div></div>
+        <div>
+          <!--          <button-->
+          <!--            :class="[collapse ? 'btn btn-circle' : '']"-->
+          <!--            class="btn btn-sm btn-ghost rounded-full bg-emerald-100"-->
+          <!--            @click="logOut"-->
+          <!--          >-->
+          <!--            <span-->
+          <!--              :class="[collapse ? 'flex justify-center items-center' : '']"-->
+          <!--              class="material-icons-outlined"-->
+          <!--            >-->
+          <!--              logout-->
+          <!--            </span>-->
+          <!--            <span :class="[collapse ? 'w-0 overflow-hidden' : '']">Sign Out</span>-->
+          <!--          </button>-->
+        </div>
 
-        <small class="text-xs">&copy; 2009-{{ currentYear }} Powered by Mzawadi</small>
+        <small v-if="!collapse" class="text-xs"
+          >&copy; 2009-{{ currentYear }} Powered by Mzawadi</small
+        >
       </nav>
     </div>
     <!-- End Sidebar -->
@@ -859,7 +851,7 @@ const reloadChat = () => {
     <div
       id="main-container"
       ref="conversationContainerRef"
-      class="relative min-h-screen w-full lg:ps-64"
+      class="relative min-h-screen w-full lg:ps-64 flex-1"
     >
       <div class="py-10 lg:py-14">
         <!-- Title -->
