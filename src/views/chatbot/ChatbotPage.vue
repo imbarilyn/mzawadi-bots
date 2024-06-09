@@ -717,11 +717,10 @@ watch(conversation.value, () => {
 //     router.push({ name: 'admin-login' })
 //   }
 // }
-
+const collapse = ref<boolean>(false)
 const collapseSidebar = () => {
-  const sidebar = document.getElementById('application-sidebar')
-  sidebar?.classList.toggle('-translate-x-full')
-  console.log('clicked menu button')
+  collapse.value = !collapse.value
+  console.log('collapse', collapse.value)
 }
 
 const showBelow = () => {
