@@ -63,6 +63,7 @@ socket.on('connect_error', (error) => {
 socket.on('connected', (sesh) => {
   console.log('connected successfully!!')
   console.log(sesh)
+  console.log(pageId)
   sesh_id.value = sesh.sessionId
 })
 
@@ -466,17 +467,17 @@ const handleUserInput = (
   // ****************************
 
   try {
-    console.log('page id', pageId.value)
+    // console.log('page id', pageId.value)
 
     // const userData
     //emit request to the server
     if (authStore.userRole === 'user') {
       const userData = JSON.parse(authStore.chatBotUser) as UserInfo
-
+      // console.log(pageId.value)
       socket.emit('message', {
         //sending request to the socket
         message: formatted,
-        page_id: pageId.value,
+        pageSlug: props.cbName,
         // token: tokenStore.token,
         conversationId: userData.conversationId
       })
@@ -484,7 +485,7 @@ const handleUserInput = (
       socket.emit('message', {
         //sending request to the socket
         message: formatted,
-        page_id: pageId.value,
+        pageSlug: props.cbName,
         // token: tokenStore.token,
         // conversationId: userData.conversationId
         conversationId: null
@@ -757,13 +758,9 @@ const reloadChat = () => {
     <!-- Sidebar -->
     <div
       id="application-sidebar"
-      :class="[collapse ? 'w-[80px]' : '']"
-      class="hs-overlay hs-overlay-open:translate-x-0 -translate-x-full duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
+      class="hs-overlay duration-300 insert-y-0 left-0 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 lg:block lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
     >
-      <nav
-        class="hs-accordion-group w-full h-full flex flex-col justify-center ml-4"
-        data-hs-accordion-always-open
-      >
+      <nav class="w-full h-full flex flex-col justify-center ml-4">
         <!--        <div class="flex items-center justify-center pt-4 pe-4 ps-7">-->
         <!--          <div class="h-10 sm:h-14 p-2 sm:p-3 flex flex-row">-->
         <!--                        <div class="justify-center items-center">-->
@@ -774,7 +771,7 @@ const reloadChat = () => {
         <!--          </div>-->
         <!--          &lt;!&ndash; Logo &ndash;&gt;-->
         <!--        </div>-->
-        <div class="mt-6 relative">
+        <div class="mt-6 relative sticky">
           <button @click="collapseSidebar" @mouseleave="hideBelow" @mouseover="showBelow">
             <span class="material-icons-outlined">menu</span>
           </button>
@@ -783,43 +780,30 @@ const reloadChat = () => {
           </div>
         </div>
         <div class="mt-10">
-          <button
-            :class="[collapse ? 'btn btn-circle' : '']"
-            class="btn btn-sm btn-ghost rounded-full bg-emerald-100"
-            @click="reloadChat"
-          >
-            <span
-              :class="[collapse ? 'flex justify-center items-center' : '']"
-              class="material-icons-outlined"
-            >
-              add
-            </span>
-            <span :class="[collapse ? 'w-0 overflow-hidden' : '']">New Chat</span>
+          <button class="btn btn-sm btn-ghost rounded-full bg-emerald-100" @click="reloadChat">
+            <span class="material-icons-outlined"> add </span>
+            <span>New Chat</span>
           </button>
         </div>
 
         <div class="h-full mt-8">Hello</div>
 
         <div class="w-full">
-          <div :class="[collapse ? '' : 'border-t border-gray-200 dark:border-gray-700']">
+          <div>
             <ul class="w-56 my-3">
               <li
-                :class="[
-                  collapse ? 'relative flex items-center y-2 rounded-full p-2 hover:bg-none' : ''
-                ]"
                 class="relative flex items-center y-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
               >
                 <span class="material-icons-outlined S">settings</span>
-                <span :class="[collapse ? 'w-0 overflow-hidden' : '']" class="pl-3">Setting</span>
+                <span class="pl-3">Setting</span>
               </li>
 
               <li
-                :class="[collapse ? 'relative flex items-center y-2 rounded-full p-2' : '']"
                 class="relative w-full flex items-center y-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
                 @click="confirmSignOut"
               >
                 <span class="material-icons-outlined S">logout</span>
-                <span :class="[collapse ? 'w-0 overflow-hidden' : '']" class="pl-3">Log out</span>
+                <span class="pl-3">Log out</span>
                 <p class="absolute invisible opacity-20 group-hover:visible left-full">Logout</p>
               </li>
             </ul>
@@ -853,6 +837,10 @@ const reloadChat = () => {
       ref="conversationContainerRef"
       class="relative min-h-screen w-full lg:ps-64 flex-1"
     >
+      <div class="lg:invisible md:visible">
+        <span class="material-icons-outlined">menu</span>
+      </div>
+
       <div class="py-10 lg:py-14">
         <!-- Title -->
         <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
