@@ -414,7 +414,7 @@ const renderer: any = {
 // create a custom description list renderer
 
 marked.use({
-  // renderer,
+  renderer,
   breaks: true,
   gfm: true
 })
@@ -478,7 +478,6 @@ const handleUserInput = (
         //sending request to the socket
         message: formatted,
         pageSlug: props.cbName,
-        // token: tokenStore.token,
         conversationId: userData.conversationId
       })
     } else {
@@ -486,17 +485,12 @@ const handleUserInput = (
         //sending request to the socket
         message: formatted,
         pageSlug: props.cbName,
-        // token: tokenStore.token,
-        // conversationId: userData.conversationId
         conversationId: null
       })
     }
 
     console.log('emitted!')
   } catch (error) {
-    // socket.on("connect", )
-    console.log(error)
-
     scrollToBottom()
 
     aiMessage.value.hasError = true
@@ -720,8 +714,20 @@ watch(conversation.value, () => {
 // }
 const collapse = ref<boolean>(false)
 const collapseSidebar = () => {
-  collapse.value = !collapse.value
-  console.log('collapse', collapse.value)
+  // const main_container = document.getElementById('main-container')
+  if (isMedium.value) {
+    const sidebar = document.getElementById('application-sidebar')
+
+    sidebar?.classList.add('hidden')
+    isMedium.value = false
+    const btn_medium = document.getElementById('btn-medium')
+    btn_medium?.classList.remove('hidden')
+  } else {
+    collapse.value = !collapse.value
+    hideBelow()
+  }
+
+  // console.log('collapse', collapse.value)
 }
 
 const showBelow = () => {
@@ -745,9 +751,52 @@ const reloadChat = () => {
   window.location.href = '/' + props.cbName
 }
 
-// const confirmSignOut = () => {
-//   homeStore.signOutDialog.isOpen = true
-// }
+const newChat = ref(false)
+const showNewChat = () => {
+  newChat.value = true
+}
+const hideNewChat = () => {
+  newChat.value = false
+}
+
+const setting = ref(false)
+const showSetting = () => {
+  setting.value = true
+}
+const hideSetting = () => {
+  setting.value = false
+}
+
+const logout = ref(false)
+const showLogout = () => {
+  logout.value = true
+}
+const hideLogout = () => {
+  logout.value = false
+}
+
+const showMenuMedium = ref(false)
+const showExpand = () => {
+  showMenuMedium.value = true
+}
+const hideExpand = () => {
+  showMenuMedium.value = false
+  console.log('medium mouse-over')
+}
+const isMedium = ref(false)
+const expandMenuMedium = () => {
+  hideExpand()
+  const sidebar = document.getElementById('application-sidebar')
+  sidebar?.classList.remove('hidden')
+  const main_container = document.getElementById('main-container')
+  main_container?.classList.add('z-[30]')
+
+  isMedium.value = true
+  const btn_medium = document.getElementById('btn-medium')
+  btn_medium?.classList.add('hidden')
+
+  console.log('expand menu') // hideExpand()
+}
 </script>
 
 <template>
@@ -758,73 +807,89 @@ const reloadChat = () => {
     <!-- Sidebar -->
     <div
       id="application-sidebar"
-      class="hs-overlay duration-300 insert-y-0 left-0 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 lg:block lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
+      :class="{ 'w-[70px]': collapse }"
+      class="hs-overlay duration-300 inset-y-0 left-0 transform sticky hidden top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 lg:block lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
     >
       <nav class="w-full h-full flex flex-col justify-center ml-4">
-        <!--        <div class="flex items-center justify-center pt-4 pe-4 ps-7">-->
-        <!--          <div class="h-10 sm:h-14 p-2 sm:p-3 flex flex-row">-->
-        <!--                        <div class="justify-center items-center">-->
-        <!--                          <p class="font-semibold">{{ chatbotName.split(' ')[0] }} Bot</p>-->
-        <!--                        </div>-->
-        <!--&lt;!&ndash;&ndash;&gt;-->
-        <!--                        <img alt="Bot Icon Img" class="w-full h-full object-center" src="/icon.png" />-->
-        <!--          </div>-->
-        <!--          &lt;!&ndash; Logo &ndash;&gt;-->
-        <!--        </div>-->
-        <div class="mt-6 relative sticky">
+        <div class="mt-6">
           <button @click="collapseSidebar" @mouseleave="hideBelow" @mouseover="showBelow">
             <span class="material-icons-outlined">menu</span>
           </button>
           <div id="showCollapse" class="hidden px-2 rounded-md bg-gray-600">
-            <p class="text-xs text-white dark:text-white">Collapse menu</p>
+            <p v-if="!collapse" class="text-xs text-white dark:text-white">Collapse menu</p>
+            <p
+              v-if="collapse"
+              class="text-xs text-white dark:text-white text-nowrap flex justify-center"
+            >
+              Expand menu
+            </p>
           </div>
         </div>
-        <div class="mt-10">
-          <button class="btn btn-sm btn-ghost rounded-full bg-emerald-100" @click="reloadChat">
-            <span class="material-icons-outlined"> add </span>
-            <span>New Chat</span>
+        <div class="mt-10 relative">
+          <button
+            :class="{ 'btn-circle px-2': collapse }"
+            class="btn btn-sm btn-ghost rounded-full bg-emerald-100"
+            @click="reloadChat"
+            @mouseleave="hideNewChat"
+            @mouseover="showNewChat"
+          >
+            <span class="material-icons-outlined text-center"> add </span>
+            <span :class="{ hidden: collapse }">New Chat</span>
           </button>
-        </div>
-
-        <div class="h-full mt-8">Hello</div>
-
-        <div class="w-full">
-          <div>
-            <ul class="w-56 my-3">
-              <li
-                class="relative flex items-center y-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
-              >
-                <span class="material-icons-outlined S">settings</span>
-                <span class="pl-3">Setting</span>
-              </li>
-
-              <li
-                class="relative w-full flex items-center y-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
-                @click="confirmSignOut"
-              >
-                <span class="material-icons-outlined S">logout</span>
-                <span class="pl-3">Log out</span>
-                <p class="absolute invisible opacity-20 group-hover:visible left-full">Logout</p>
-              </li>
-            </ul>
+          <div
+            v-if="collapse"
+            :class="[newChat ? 'visible' : 'hidden']"
+            class="absolute bg-gray-600 text-white rounded-lg left-1 top-10 px-2"
+          >
+            <p class="text-xs text-nowrap">New chat</p>
           </div>
         </div>
-        <div>
-          <!--          <button-->
-          <!--            :class="[collapse ? 'btn btn-circle' : '']"-->
-          <!--            class="btn btn-sm btn-ghost rounded-full bg-emerald-100"-->
-          <!--            @click="logOut"-->
-          <!--          >-->
-          <!--            <span-->
-          <!--              :class="[collapse ? 'flex justify-center items-center' : '']"-->
-          <!--              class="material-icons-outlined"-->
-          <!--            >-->
-          <!--              logout-->
-          <!--            </span>-->
-          <!--            <span :class="[collapse ? 'w-0 overflow-hidden' : '']">Sign Out</span>-->
-          <!--          </button>-->
+
+        <div class="h-full mt-8"></div>
+
+        <div class="w-60 pb-6">
+          <div class="relative">
+            <button
+              :class="{ 'hover:btn-circle btn-sm  rounded-full ': collapse }"
+              class="flex items-center w-full y-2 cursor-pointer hover:bg-gray-200 rounded-xl p-1"
+              @mouseleave="hideSetting"
+              @mouseover="showSetting"
+            >
+              <span :class="{ 'text-sm px-1': collapse }" class="material-icons-outlined space"
+                >settings</span
+              >
+              <span :class="{ 'opacity-0': collapse }" class="pl-3 text-sm">Setting</span>
+            </button>
+            <small
+              v-if="collapse"
+              :class="[setting ? 'visible transition ease-in duration-500' : 'hidden']"
+              class="absolute left-14 top-3 bg-gray-600 text-white rounded-lg px-2"
+              >Setting
+            </small>
+          </div>
+          <div class="relative">
+            <button
+              :class="{ 'hover:btn-circle btn-sm rounded-full': collapse }"
+              class="flex w-full items-center y-2 cursor-pointer hover:bg-gray-200 rounded-xl p-2"
+              @click="confirmSignOut"
+              @mouseleave="hideLogout"
+              @mouseover="showLogout"
+            >
+              <span :class="{ 'text-sm px-1': collapse }" class="material-icons-outlined"
+                >logout</span
+              >
+              <span :class="{ 'opacity-0': collapse }" class="pl-3 text-sm">Log out</span>
+            </button>
+            <small
+              v-if="collapse"
+              :class="[logout ? 'visible transition ease-in duration-500' : 'hidden']"
+              class="absolute left-14 top-3 text-nowrap bg-gray-600 text-white rounded-lg px-2"
+              >Log out</small
+            >
+          </div>
         </div>
 
+        <div></div>
         <small v-if="!collapse" class="text-xs"
           >&copy; 2009-{{ currentYear }} Powered by Mzawadi</small
         >
@@ -835,10 +900,17 @@ const reloadChat = () => {
     <div
       id="main-container"
       ref="conversationContainerRef"
-      class="relative min-h-screen w-full lg:ps-64 flex-1"
+      class="relative min-h-screen w-full flex-1"
     >
-      <div class="lg:invisible md:visible">
-        <span class="material-icons-outlined">menu</span>
+      <div id="btn-medium" class="relative lg:hidden block ps-4 pt-6">
+        <button @click="expandMenuMedium" @mouseleave="hideExpand" @mouseover="showExpand">
+          <span class="material-icons-outlined">menu</span>
+        </button>
+        <small
+          v-if="showMenuMedium"
+          class="absolute rounded-md left-6 top-12 p-0.5 bg-gray-700 text-white transition ease-in-out duration-300"
+          >expand menu
+        </small>
       </div>
 
       <div class="py-10 lg:py-14">
