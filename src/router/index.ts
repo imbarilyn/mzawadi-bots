@@ -116,8 +116,6 @@ const routes = [
             component: () => import('../views/Admin/DynamicPage.vue'),
             props: (route: any) => {
               return {
-                // page: route.params.page,
-                // pageId: route.query.pageId
                 pageId: route.params.pageId
               }
             }
@@ -150,59 +148,9 @@ const routes = [
             chatbotId: route.params.chatbotId,
             pageId: route.params.pageId
           }
-        },
-        children: []
-        // beforeEnter: (to: any, _from: any, next: any) => {
-        //   const chatbotId = to.params.chatbotId
-        //   const pageId = to.params.pageId
-        //   const authStore = useAuthStore()
-        //
-        //   console.log('chatbot-page', chatbotId, pageId)
-        //   //
-        //   // if (!chatbotId || !pageId) {
-        //   //   console.log('No pageId or ChatbotId')
-        //   //   next({ name: 'not-found' })
-        //   // }
-        //   // else if (authStore.chatBotUser || authStore.adminIsLoggedIn) {
-        //   //   console.log('user-login', pageId, chatbotId)
-        //   //   console.log('to', to.name)
-        //   //   next()
-        //   // }
-        //   // next({ name: 'chatbot-signup', params: { pageId, chatbotId } })
-        //
-        //   // else if (!authStore.adminIsLoggedIn) {
-        //   //   next({ name: 'admin-login' })
-        //   // }else {
-        //   // next()
-        //   // }
-        //   if (authStore.chatBotUser || authStore.adminIsLoggedIn) {
-        //     next()
-        //   }
-        //   next()
-        // }
-
-        // beforeEnter: (to:any, from:any, next:any) =>{
-        //   const chatbotId = to.params.chatbotId;
-        //   const pageId = to.params.pageId;
-        //   const authStore = useAuthStore();
-        //   // if(!chatbotId || !pageId){
-        //   //   next({name: 'not-found'})
-        //   // }else if(!authStore.chatBotUser || !authStore.adminIsLoggedIn){
-        //   //   next({name: 'lets-chat', params: {pageId, chatbotId}})
-        //   // }
-        //   // else if(authStore.adminIsLoggedIn){
-        //   //   next({name: 'chatbot-page', params: {pageId, chatbotId}})
-        //   // }
-        //   if(!authStore.chatBotUser){
-        //     console.log("Loading chatbot page")
-        //     next({name: 'lets-chat', params: {pageId, chatbotId}})
-        //   }
-        //   next()
-        //
-        // }
+        }
       },
       {
-        // path: 'sign-up',
         path: ':chatbotId/:pageId/lets-chat',
         name: 'lets-chat',
         component: () => import('../views/Auth/Users/UserLoginPage.vue'),
@@ -231,9 +179,6 @@ const routes = [
           } else if (!authStore.chatBotUser && !authStore.adminIsLoggedIn) {
             next()
           }
-          //console.log('chat-bot beforeEnter')
-          // next()
-          // next()
         }
       }
     ]
@@ -246,45 +191,6 @@ const routes = [
       return {
         cbName: String(route.params.chatbotName).toLowerCase()
       }
-    },
-    children: [
-      //   {
-      //     path: '',
-      //     name: 'new-chat',
-      //     component: () => import('../views/chatbot/NewChatPage.vue'),
-      //     props: (route: any) => {
-      //       return {
-      //         chatbotName: String(route.params.chatbotName).toLowerCase()
-      //       }
-      //     }
-      //   },
-      //   {
-      //     path: ':conversationId',
-      //     name: 'conversation',
-      //     component: () => import('../views/chatbot/ConversationHistoryPage.vue'),
-      //     props: (route: any) => {
-      //       return {
-      //         chatbotName: String(route.params.chatbotName).toLowerCase(),
-      //         conversationId: route.params.conversationId
-      //       }
-      //     }
-      //   }
-      // {
-      //   path: 'login',
-      //   name: 'chat-login',
-      //   component: () => import('../views/Auth/Users/UserLoginPage.vue'),
-      //   props: (route: any) => {
-      //     return {
-      //       cbName: route.params.chatbotName
-      //     }
-      //   }
-      // }
-    ],
-    beforeEnter: (to: any, _from: any, next: any) => {
-      const chatbotName = to.params.chatbotName
-      console.log('chatbotName', to.name)
-
-      next()
     }
   },
   {
@@ -297,7 +203,6 @@ const routes = [
       }
     }
   },
-  // all
   {
     path: '/:notFound(.*)*',
     name: 'not-found',
@@ -360,8 +265,6 @@ router.beforeEach((to, _from, next) => {
       if (to.name === 'chatbot') {
         console.log('chatbot-page')
         const chatbotName = to.params.chatbotName
-        const chatbotId = to.params.chatbotId
-        const pageId = to.params.pageId
 
         console.log('user is not logged in', authStore.chatBotUser, authStore.adminIsLoggedIn)
 
@@ -372,14 +275,7 @@ router.beforeEach((to, _from, next) => {
             console.log('toxx', to.name)
             next()
           }
-          // else if (authStore.chatBotUser) {
-          //   console.log('load user login page')
-          //   console.log('to', to.name)
-          //
-          //   next()
-          // }
           console.log('to', to.name)
-          // next()
         }
       }
     }
@@ -389,7 +285,7 @@ router.beforeEach((to, _from, next) => {
     console.log(to.path)
     next()
   }
-  next()
+  // next()
 })
 
 export default router
