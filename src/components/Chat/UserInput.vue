@@ -907,8 +907,8 @@ onUnmounted(() => {
 
 <template>
   <div
-    :class="inputHasFocus ? `ring-2 ${ringColor} ring-opacity-50` : ''"
-    class="relative text-sm bg-white rounded-xl shadow-lg shadow-slate-300/10 flex flex-row items-center m-0 p-4 pb-14"
+    :class="[inputHasFocus ? `ring-2 ${ringColor} ring-opacity-50` : '']"
+    class="relative text-sm border-2 border-emerald-200 bg-white rounded-xl shadow-lg shadow-slate-300/10 flex flex-row items-center m-0 p-4 pb-14"
     @click.stop="addFocus"
   >
     <textarea
