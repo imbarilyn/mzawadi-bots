@@ -32,9 +32,6 @@ onMounted(() => {
       <h3 class="text-xl font-semibold text-gray-800 dark:text-neutral-300 dark:hover:text-white">
         {{ props.file.documentName }}
       </h3>
-      <!--      <p class="mt-3 text-gray-500 dark:text-neutral-500">-->
-      <!--        {{ file.documentUrl }}-->
-      <!--      </p>-->
       <p>
         {{ file.createdAt }}
       </p>
