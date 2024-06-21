@@ -149,14 +149,8 @@ const postUrl = () => {
 </script>
 
 <template>
-  <div>
-    <div class="absolute right-0 p-3">
-      <button class="btn btn-sm btn-ghost font-medium rounded-full md:rounded-md" @click="addLink">
-        <span class="material-icons-round">add</span>
-        new Link
-      </button>
-    </div>
-    <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+  <div class="">
+    <div class="max-w-[85rem] min-w-sm px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
       <!-- Grid -->
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
@@ -167,13 +161,13 @@ const postUrl = () => {
               <span class="material-icons-round !text-5xl rotate-[135deg]"> link </span>
             </div>
           </div>
-          <div class="p-4 md:p-6">
+          <div class="p-4 md:p-6 text-wrap">
             <h3
               class="text-xl font-semibold text-gray-800 dark:text-neutral-300 dark:hover:text-white"
             >
-              Link Name
+              {{ props.link.url }}
             </h3>
-            <p class="mt-3 text-gray-500 dark:text-neutral-500">Description.............</p>
+            <p class="mt-3 text-gray-500 dark:text-neutral-500">{{ props.link.description }}</p>
           </div>
           <div
             class="mt-auto flex border-t border-gray-200 divide-x divide-gray-200 dark:border-neutral-700 dark:divide-neutral-700"
