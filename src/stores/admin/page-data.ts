@@ -257,19 +257,38 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
         body: JSON.stringify({ siteUrls: linkPayload })
       })
       const res = await response.json()
-      console.log(res)
-      const { result, message } = res
+      const { result } = res
       console.log(result)
-
-      if (result === 'ok') {
-        notificationStore.addNotification('Links added successfully', 'success')
-        return res
-      } else {
-        notificationStore.addNotification('An error occurred while adding links', 'error')
-      }
+      return result
     } catch (e) {
       console.log('error--', e)
-      notificationStore.addNotification('An error occurred while adding links', 'error')
+      // notificationStore.addNotification('An error occurred while adding links', 'error')
+    } finally {
+      setTimeout(() => {
+        appHomeStore.setIsAppFetching(false)
+      }, 500)
+    }
+  }
+
+  async function getUrlLink(pageId: string) {
+    const authStore = useAuthStore()
+    // const notificationStore = useNotificationsStore()
+    const appHomeStore = useAppHomeStore()
+    try {
+      const response: any = await fetch(`${BASE_URL}/pages/${pageId}/data/links/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${authStore.token}`,
+          mode: 'cors'
+        }
+      })
+      const resp = await response.json()
+      console.log(resp)
+      return resp
+    } catch (error) {
+      console.log('error--', error)
+      // notificationStore.addNotification('An error occurred while fetching links', 'error')
     } finally {
       setTimeout(() => {
         appHomeStore.setIsAppFetching(false)
