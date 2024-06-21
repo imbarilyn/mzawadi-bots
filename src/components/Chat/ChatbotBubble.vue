@@ -133,7 +133,7 @@ const onCopyClick = () => {
   <li class="max-w-4xl py-2 px-4 sm:px-6 lg:px-8 mx-auto flex gap-x-2 sm:gap-x-4">
     <div
       :class="[!iconName ? darkBgColor : 'border border-gray-200 dark:border-gray-700']"
-      class="flex-shrink-0 w-10 h-10 p-0.5 rounded-full inline-flex items-center justify-center"
+      class="flex-shrink-0 w-10 h-full p-0.5 rounded-full inline-flex items-center justify-center"
     >
       <img v-if="iconName" :src="chatbotImgUrl" alt="Bot Icon" class="w-10 h-10 rounded-full" />
       <span v-else class="text-lg font-poppins-semi-bold text-white leading-none">{{
