@@ -578,6 +578,7 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
     uploadFile,
     uploadImg,
     getUploadedPdf,
-    addUrl
+    addUrl,
+    getUrlLink
   }
 })
