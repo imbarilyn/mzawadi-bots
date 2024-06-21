@@ -35,6 +35,11 @@ export interface PageOptions {
   pageUrl: string
 }
 
+export interface LinkItem {
+  description: string
+  url: string
+}
+
 const BASE_URL = import.meta.env.VITE_API_URL as string
 
 export const usePageContentStore = defineStore('pageContentStore', () => {
