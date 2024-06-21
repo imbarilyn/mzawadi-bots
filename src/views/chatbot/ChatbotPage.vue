@@ -103,7 +103,7 @@ const currentYear = new Date().getFullYear()
 // const baseTextColor = ref('text-requested-color');
 const chatTextColor = ref('text-neutral-800')
 const titleTextColor = ref('text-gray-800')
-const inputRingColor = ref('ring-primary')
+const inputRingColor = ref('ring-emerald-200')
 const inputBtnColor = ref('text-primary')
 const inputBg = ref<string>('bg-requested-color')
 
@@ -900,6 +900,7 @@ const expandMenuMedium = () => {
     <div
       id="main-container"
       ref="conversationContainerRef"
+      :class="[collapse ? '' : 'lg:ps-64']"
       class="relative min-h-screen w-full flex-1"
     >
       <div id="btn-medium" class="relative lg:hidden block ps-4 pt-6">
