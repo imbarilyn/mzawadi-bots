@@ -1,26 +1,21 @@
-<script setup lang="ts">
-import {useAdminHomeStore} from "../../stores/admin/home";
-import {useTabsStore} from "../../stores/admin/tabs";
-import {useRouter} from "vue-router";
-import {useColorGenerator} from "../../composables/color-generator";
-import {onMounted} from "vue";
+<script lang="ts" setup>
+import { useAdminHomeStore } from '../../stores/admin/home'
+import { useTabsStore } from '../../stores/admin/tabs'
+import { useRouter } from 'vue-router'
+import { useColorGenerator } from '../../composables/color-generator'
+import { onMounted } from 'vue'
 
 interface PageItem {
-  name: string;
-  path: string;
-  id: string;
+  name: string
+  path: string
+  id: string
 }
 
 const props = defineProps<{
-  page: PageItem;
-}>();
+  page: PageItem
+}>()
 
-const {
-  bgColor,
-  bgHoverColor,
-  textColor,
-  setColor,
-} = useColorGenerator(props.page.name);
+const { bgColor, bgHoverColor, textColor, setColor } = useColorGenerator(props.page.name)
 
 onMounted(() => {
   setColor();
@@ -47,7 +42,10 @@ const visitClick = () => {
         return;
       }
 
-      await router.push({name: "DynamicPage", params: {page: props.page.path}, query: {pageId: props.page.id}});
+      await router.push({
+        name: 'DynamicPage',
+        params: { pageId: props.page.id }
+      })
     } catch (e) {
       console.error(e);
     }
