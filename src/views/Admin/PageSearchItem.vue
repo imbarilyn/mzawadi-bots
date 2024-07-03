@@ -18,15 +18,15 @@ const props = defineProps<{
 const { bgColor, bgHoverColor, textColor, setColor } = useColorGenerator(props.page.name)
 
 onMounted(() => {
-  setColor();
-});
+  setColor()
+})
 
-const homeStore = useAdminHomeStore();
-const tabsStore = useTabsStore();
-const router = useRouter();
+const homeStore = useAdminHomeStore()
+const tabsStore = useTabsStore()
+const router = useRouter()
 
 const visitClick = () => {
-  homeStore.closeSearchDialog();
+  homeStore.closeSearchDialog()
 
   setTimeout(async () => {
     try {
@@ -47,19 +47,19 @@ const visitClick = () => {
         params: { pageId: props.page.id }
       })
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  }, 300);
-};
+  }, 300)
+}
 
 const deleteClick = (e: any) => {
-  e.stopPropagation();
+  e.stopPropagation()
 
-  homeStore.closeSearchDialog();
+  homeStore.closeSearchDialog()
 
-  homeStore.openDeleteDialog();
+  homeStore.openDeleteDialog()
 
-  homeStore.setPageToDelete(props.page.id);
+  homeStore.setPageToDelete(props.page.id)
 }
 </script>
 
