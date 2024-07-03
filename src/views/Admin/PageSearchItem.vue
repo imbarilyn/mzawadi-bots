@@ -32,14 +32,22 @@ const visitClick = () => {
     try {
 
       // activate the tab
-      await tabsStore.updateActiveTab(props.page.name);
+      await tabsStore.updateActiveTab(props.page.name)
 
-      if (props.page.name === "Home") {
-        await router.push({name: "AdminHome", params: {page: props.page.path}, query: {pageId: props.page.id}});
-        return;
-      } else if (props.page.name === "Settings") {
-        await router.push({name: "AdminSettingsTab", params: {tab: "general"}, query: {pageId: props.page.id}});
-        return;
+      if (props.page.name === 'Home') {
+        await router.push({
+          name: 'AdminHome',
+          params: { page: props.page.path },
+          query: { pageId: props.page.id }
+        })
+        return
+      } else if (props.page.name === 'Settings') {
+        await router.push({
+          name: 'AdminSettingsTab',
+          params: { tab: 'general' },
+          query: { pageId: props.page.id }
+        })
+        return
       }
 
       await router.push({
