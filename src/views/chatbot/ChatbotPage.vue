@@ -58,13 +58,24 @@ socket.on('disconnect', () => {
 socket.on('connect_error', (error) => {
   console.log('Connection error', error)
 })
+
+// establish connection
+socket.on('connect', () => {
+  console.log('connected!')
+})
 //getting session id for established session
 
-socket.on('connected', (sesh) => {
-  console.log('connected successfully!!')
-  console.log(sesh)
-  console.log(pageId)
-  sesh_id.value = sesh.sessionId
+socket.on('set_conv_id', (sesh) => {
+  console.log('Coversation-Id', sesh)
+})
+// on refreshing
+const chatUser = JSON.parse(authStore.chatBotUser)
+console.log('chatUser', chatUser)
+socket.emit('get_conv_id', {
+  userName: chatUser.fullNames,
+  phoneNo: chatUser.phoneNo,
+  memberNo: chatUser.memberNo,
+  pageSlug: chatUser.pageSlug
 })
 
 const confirmSignOut = () => {
