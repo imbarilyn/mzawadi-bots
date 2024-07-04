@@ -16,6 +16,7 @@ export interface UserInfo {
   userId?: string
   conversationId?: string
   iconName?: string
+  pageSlug?: string
 }
 
 export interface CreateAccountPayload {
@@ -154,20 +155,9 @@ export const useAuthStore = defineStore('auth', () => {
       const resp = await response.json()
       console.log('login data', resp)
 
-      const { result, data, conversationId, pageContent, pageOptions, iconName } = resp
-      // conversationId.value = resp.conversationId
+      const { result, data, pageContent, pageOptions, iconName } = resp
 
       if (result === 'ok') {
-        // const { token, exp } = resp
-        // console.log(result)
-        //
-        // setToken(token)
-        //
-        // tokenExpiry.value = exp
-
-        // setUserInfo()
-        // conversationId.value = conversationId
-
         const pageContentStore = usePageContentStore()
         pageContentStore.setPageContentItems([pageOptions], pageContent)
 
@@ -175,14 +165,12 @@ export const useAuthStore = defineStore('auth', () => {
           fullNames: createAccountPayload.fullNames,
           phoneNo: createAccountPayload.phoneNo,
           memberNo: createAccountPayload.memberNo,
+          pageSlug: createAccountPayload.pageSlug,
           role: 'user',
-          conversationId: conversationId,
           iconName: iconName
         } as UserInfo)
-        console.log(user.value)
 
         hasEverLoggedIn.value = true
-
         userRole.value = 'user'
         memberData.value = JSON.stringify({
           ...createAccountPayload
@@ -378,8 +366,8 @@ export const useAuthStore = defineStore('auth', () => {
       phoneNo: usr.phoneNo ?? '',
       memberNo: usr.memberNo ?? '',
       role: usr.role ?? '',
-      conversationId: usr.conversationId ?? '',
-      iconName: usr.iconName ?? ''
+      iconName: usr.iconName ?? '',
+      pageSlug: usr.pageSlug ?? ''
       // userId: userId ?? ''
     })
   }
