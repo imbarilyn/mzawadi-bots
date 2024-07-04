@@ -262,6 +262,7 @@ const onLoginClick = () => {
                   }"
                   class="input input-primary input-bordered w-full text-sm"
                   placeholder="John Doe"
+                  required
                   type="text"
                 />
                 <small
@@ -283,6 +284,7 @@ const onLoginClick = () => {
                   }"
                   class="input input-primary input-bordered w-full text-sm"
                   placeholder="Phone Number"
+                  required
                   type="text"
                 />
                 <small

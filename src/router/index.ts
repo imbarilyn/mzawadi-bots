@@ -228,7 +228,7 @@ router.beforeEach((to, _from, next) => {
 
   const userInfo = authStore.getUserInfo()
 
-  console.log('userInfo', userInfo)
+  // console.log('userInfo', userInfo)
 
   const excludedRoutes = [
     'landing',
@@ -251,41 +251,42 @@ router.beforeEach((to, _from, next) => {
   // const isAdminRoute = to.path.includes('/admin')
 
   if (!authStore.adminIsLoggedIn) {
-    console.log('admin is not logged in')
-    console.log('to.name', to.name)
-    console.log('from.name', _from.name)
+    // console.log('admin is not logged in')
+    // console.log('to.name', to.name)
+    // console.log('from.name', _from.name)
     if (!isExcludedRoute) {
-      console.log('not excluded route')
+      // console.log('not excluded route')
       // if the admin is not logged in, redirect to login page
       next({ name: 'admin-login' })
     } else {
-      console.log(to.name)
-      console.log('excluded route')
+      // console.log(to.name)
+      // console.log('excluded route')
       //
       if (to.name === 'chatbot') {
-        console.log('chatbot-page')
+        // console.log('chatbot-page')
         const chatbotName = to.params.chatbotName
+        // console.log(chatbotName)
 
-        console.log('user is not logged in', authStore.chatBotUser, authStore.adminIsLoggedIn)
+        // console.log('user is not logged in', authStore.chatBotUser, authStore.adminIsLoggedIn)
 
         if (!chatbotName) {
           next({ name: 'not-found' })
-          console.log('No chatbotName')
+          // console.log('No chatbotName')
           if (authStore.chatBotUser || authStore.adminIsLoggedIn) {
-            console.log('toxx', to.name)
+            // console.log('toxx', to.name)
             next()
           }
-          console.log('to', to.name)
+          // console.log('to', to.name)
         }
       }
     }
   } else {
-    console.log('admin is logged in')
-    console.log(to.name)
-    console.log(to.path)
+    // console.log('admin is logged in')
+    // console.log(to.name)
+    // console.log(to.path)
     next()
   }
-  // next()
+  next()
 })
 
 export default router

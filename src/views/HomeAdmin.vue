@@ -8,7 +8,7 @@ import ToastContainer from '../views/Admin/toasts/ToastContainer.vue'
 import ToastAlert from '../views/Admin/toasts/ToastAlert.vue'
 import { useNotificationsStore } from '../stores/notifications'
 import PagesSidebar from './Admin/PagesSidebar.vue'
-import {computed, reactive, type Ref, ref, watch} from 'vue'
+import { computed, ref } from 'vue'
 import PageSearchItem from './Admin/PageSearchItem.vue'
 import { gsap } from 'gsap'
 
@@ -23,7 +23,6 @@ const closeDeleteModal = () => {
 const closeSearchModal = () => {
   homeStore.closeSearchDialog()
 }
-
 
 const deletePage = async () => {
   const page = (await homeStore.deletePage()) as any
@@ -48,8 +47,6 @@ if (homeStore.getPages.length > 0) {
 } else {
   pagesToDisplay.value = []
 }
-
-
 
 const searchQueryText = ref('')
 
@@ -96,7 +93,6 @@ function onLeave(el: any, done: any) {
     onComplete: done
   })
 }
-
 </script>
 
 <template>
@@ -111,7 +107,7 @@ function onLeave(el: any, done: any) {
 
       <div class="md:ml-64 flex flex-col flex-1 grow min-h-full">
         <RouterView #default="{ Component, route }">
-          <Transition name="route" mode="out-in" appear>
+          <Transition appear mode="out-in" name="route">
             <template v-if="Component">
               <component :is="Component" :key="route.fullPath" />
             </template>
@@ -155,8 +151,8 @@ function onLeave(el: any, done: any) {
 
       <DialogModal
         :is-open="homeStore.searchDialog.isOpen"
-        @closeModal="closeSearchModal"
         max-width="w-9/12 sm:w-6/12 md:w-5/12"
+        @closeModal="closeSearchModal"
       >
         <template #title>
           <span class="text-lg font-semibold"> Search bots </span>
@@ -167,18 +163,14 @@ function onLeave(el: any, done: any) {
             <div class="flex flex-col space-y-2">
               <input
                 id="search-pages"
-                @input="searchPages"
                 class="input input-bordered input-primary w-full text-sm"
                 placeholder="Search bots"
                 type="text"
+                @input="searchPages"
               />
             </div>
             <div class="flex flex-col space-y-2">
               <div v-if="pagesToDisplayLength === 0" class="flex flex-col space-y-2">
-                <!--                <p class="text-sm text-gray-500">-->
-                <!--                  No pages found-->
-                <!--                </p>-->
-
                 <div class="flex flex-col space-y-2 pt-4">
                   <div class="flex flex-row justify-center items-center">
                     <div
@@ -203,20 +195,20 @@ function onLeave(el: any, done: any) {
                   </div>
                 </div>
               </div>
-              <div v-else class="flex flex-col space-y-2">
+              <div v-else class="flex flex-col space-y-2 pt-4">
                 <TransitionGroup
                   :css="false"
-                  @enter="onEnter"
-                  @leave="onLeave"
+                  class="flex flex-col space-y-2"
                   name="fade"
                   tag="div"
-                  class="flex flex-col space-y-2"
+                  @enter="onEnter"
+                  @leave="onLeave"
                 >
                   <PageSearchItem
                     v-for="(page, index) in pagesToDisplay"
                     :key="page.id"
-                    :page="page"
                     :data-index="index"
+                    :page="page"
                   />
                 </TransitionGroup>
               </div>
