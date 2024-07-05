@@ -188,8 +188,20 @@ const routes = [
     path: '/:chatbotName',
     component: () => import('../views/chatbot/ChatbotPage.vue'),
     props: (route: any) => {
+      console.log('ChatbotPage')
       return {
         cbName: String(route.params.chatbotName).toLowerCase()
+      }
+    },
+    beforeEnter(to: any, _from: any, next: any) {
+      console.log('to', to.params)
+      const authStore = useAuthStore()
+      console.log(authStore.getUserDetails())
+      if (authStore.getUserDetails() === null) {
+        console.log('Hello going to login-page')
+        next({ name: 'chat-login', params: { chatbotName: to.params.chatbotName } })
+      } else {
+        next()
       }
     }
   },
@@ -244,14 +256,13 @@ router.beforeEach((to, _from, next) => {
     'chatbot',
     'chat-login'
   ]
-
   const isExcludedRoute = excludedRoutes.includes(to.name as string)
 
   // is the user accessing the admin area?
   // const isAdminRoute = to.path.includes('/admin')
 
   if (!authStore.adminIsLoggedIn) {
-    // console.log('admin is not logged in')
+    console.log('admin is not logged in')
     // console.log('to.name', to.name)
     // console.log('from.name', _from.name)
     if (!isExcludedRoute) {
@@ -259,7 +270,7 @@ router.beforeEach((to, _from, next) => {
       // if the admin is not logged in, redirect to login page
       next({ name: 'admin-login' })
     } else {
-      // console.log(to.name)
+      console.log(to.name)
       // console.log('excluded route')
       //
       if (to.name === 'chatbot') {

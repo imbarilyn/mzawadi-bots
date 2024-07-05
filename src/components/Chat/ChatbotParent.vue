@@ -1,4 +1,3 @@
-imbari
 <script lang="ts" setup>
 import { useAdminHomeStore } from '@/stores/admin/home'
 import { useAuthStore } from '@/stores/auth'
