@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, type Ref, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { type PageContent, usePageContentStore } from '@/stores/admin/page-data'
-import { useChatbotStore } from '@/stores/chatbot'
 import { useNotificationsStore } from '@/stores/notifications'
 import { useAuthStore, type UserInfo } from '@/stores/auth'
 import { io } from 'socket.io-client'
@@ -21,13 +20,9 @@ interface ChatbotPageProps {
 }
 
 const notificationsStore = useNotificationsStore()
-const tokenStore = useAuthStore()
 const authStore = useAuthStore()
 const homeStore = useAdminHomeStore()
-
-const route = useRoute()
 const pageContentStore = usePageContentStore()
-const chatbot = useChatbotStore()
 const router = useRouter()
 const sesh_id = ref('')
 const chatbotImg = ref('')
@@ -67,15 +62,17 @@ socket.on('connect', () => {
 
 socket.on('set_conv_id', (sesh) => {
   console.log('Coversation-Id', sesh)
+  sesh_id.value = sesh.conversationId
+  console.log(sesh_id.value)
 })
 // on refreshing
-const chatUser = JSON.parse(authStore.chatBotUser)
-console.log('chatUser', chatUser)
+const chatUser: any = authStore.getUserDetails()
+console.log(chatUser)
 socket.emit('get_conv_id', {
   userName: chatUser.fullNames,
   phoneNo: chatUser.phoneNo,
-  memberNo: chatUser.memberNo,
-  pageSlug: chatUser.pageSlug
+  pageSlug: chatUser.pageSlug,
+  memberNo: chatUser.memberNo
 })
 
 const confirmSignOut = () => {
@@ -122,8 +119,7 @@ const bgImg = ref('')
 
 onMounted(() => {
   console.log('Inside the before mount')
-  // if (authStore.chatBotUser === '') {
-  //   console.log('No user data')
+
   if (authStore.memberData !== '') {
     authStore
       .createAccount({
@@ -133,26 +129,18 @@ onMounted(() => {
       .then((response) => {
         console.log(response)
         pageContent.value = pageContentStore.getPageContentByChatbotName(props.cbName)
-        console.log(authStore.chatBotUser)
+        // console.log(authStore.chatBotUser)
         console.log(JSON.parse(authStore.chatBotUser).iconName)
         const userChatbotImg = JSON.parse(authStore.chatBotUser).iconName
         chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${userChatbotImg}`
-        // chatbotImg.value = JSON.parse(authStore.chatBotUser)
-        // window.addEventListener('beforeunload', () => {
-        //   authStore.chatBotUser = ''
-        // })
-        // if (authStore.chatBotUser === '') {
-        //   console.log('No user data')
-        //   router.push({ name: 'chat-login' })
-        // }
 
         console.log('Hey it user user!')
         try {
           // pageContent.value = pageContentStore.getPageContentByChatbotName(props.cbName)
-          console.log('pageContent', props.cbName)
+          // console.log('pageContent', props.cbName)
           // pageContent.value = pageContentStore.getPageContentByPageId(pageId.value)
-          console.log('pageContent', pageContent.value)
-          console.log('user details', authStore.chatBotUser)
+          // console.log('pageContent', pageContent.value)
+          // console.log('user details', authStore.chatBotUser)
           // if (!pageContent.value) {
           //   router.replace({ name: 'not-found' })
           // }
@@ -520,7 +508,7 @@ const handleUserInput = (
 }
 
 socket.on('message', (response) => {
-  // console.log(response)
+  console.log(response)
   const parsedResponse = JSON.parse(response)
   // console.log(parsedResponse.sessionId)
   console.log('sesh_id: ', sesh_id.value)
@@ -628,35 +616,6 @@ const currentScrollPosition = ref(0)
 // We'll also create a variable for the height of the conversation container
 const conversationContainerHeight = ref(0)
 
-// onMounted(() => {
-// socket.connect()
-// socket.on('connect', () => {
-//   console.log('connected!')
-// })
-// // socket.emit('message', formatted)
-// socket.on('message', (response) => {
-//   console.log(response)
-//   // stop generating ressponse if end of string
-//   if (response === '~~~ENDOFSTREAM~~~') {
-//     isGeneratingResponse.value = false
-//   }
-//   // else {
-//   // isGeneratingResponse.value = true;
-//   // }
-//   chatbotMessageResponse.value += response
-//   // else{
-//   aiMessage.value.isTyping = false;
-//   socket.disconnect();
-//   socket.on("disconnect", ()=>{
-//     console.log("disconnect!")
-//     aiMessage.value.message += '|| -- last message -- ||';
-//   })
-//   console.log("**disconnected**!")
-// }
-
-// console.log('props is ', props)
-// })
-
 // document.querySelector('#main-container')?.addEventListener('scroll', (evt) => {
 document.addEventListener('scroll', (_evt) => {
   // console.log(evt)
@@ -712,17 +671,6 @@ watch(conversation.value, () => {
   // toggleSticky.value =
 })
 
-// const logOut = () => {
-//   if (authStore.userRole === 'user') {
-//     authStore.chatBotUser = ''
-//     router.push({ name: 'lets-chat' })
-//     console.log('user is logged out')
-//   } else {
-//     authStore.logoutAdmin()
-//     console.log('Admin logged out')
-//     router.push({ name: 'admin-login' })
-//   }
-// }
 const collapse = ref<boolean>(false)
 const collapseSidebar = () => {
   // const main_container = document.getElementById('main-container')
@@ -1139,7 +1087,7 @@ const expandMenuMedium = () => {
 }
 
 .page-bg-color {
-  background-image: v-bind('bgImg');
+  /*background-image: v-bind('bgImg');*/
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
