@@ -153,7 +153,7 @@ export const useAuthStore = defineStore('auth', () => {
       })
 
       const resp = await response.json()
-      console.log('login data', resp)
+      // console.log('login data', resp)
 
       const { result, data, pageContent, pageOptions, iconName } = resp
 
@@ -372,6 +372,15 @@ export const useAuthStore = defineStore('auth', () => {
     })
   }
 
+  function getUserDetails() {
+    try {
+      console.log(JSON.parse(chatBotUser.value))
+      return JSON.parse(chatBotUser.value) as UserInfo
+    } catch {
+      return null
+    }
+  }
+
   function getUserInfo() {
     if (adminIsLoggedIn.value) {
       const decode = jwtDecode(token.value)
@@ -462,7 +471,8 @@ export const useAuthStore = defineStore('auth', () => {
     conversationId,
     logoutAdmin,
     memberData,
-    getMemberData
+    getMemberData,
+    getUserDetails
     // resetPassword,
   }
 })
