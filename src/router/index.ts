@@ -183,16 +183,34 @@ const routes = [
       }
     ]
   },
+
   {
-    name: 'chatbot',
-    path: '/:chatbotName',
-    component: () => import('../views/chatbot/ChatbotPage.vue'),
-    props: (route: any) => {
-      console.log('ChatbotPage')
-      return {
-        cbName: String(route.params.chatbotName).toLowerCase()
+    name: 'chatPage',
+    path: '/chatPage',
+    component: () => import('../views/chatbot/ChatPage.vue'),
+    children: [
+      {
+        name: 'newChat',
+        path: '/:chatbotName',
+        component: () => import('../views/chatbot/NewChat.vue'),
+        props: (route: any) => {
+          return {
+            cbName: String(route.params.chatbotName).toLowerCase()
+          }
+        }
+      },
+      {
+        name: 'chatHistory',
+        path: '/:chatbotName/:id',
+        component: () => import('../views/chatbot/ChatHistory.vue'),
+        props: (route: any) => {
+          return {
+            cbName: String(route.params.chatbotName).toLowerCase(),
+            id: route.params.id
+          }
+        }
       }
-    },
+    ],
     beforeEnter(to: any, _from: any, next: any) {
       console.log('to', to.params)
       const authStore = useAuthStore()
