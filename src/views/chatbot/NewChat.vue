@@ -3,7 +3,7 @@ import { computed, onMounted, type Ref, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { type PageContent, usePageContentStore } from '@/stores/admin/page-data'
 import { useNotificationsStore } from '@/stores/notifications'
-import { useAuthStore, type UserInfo } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth'
 import { io } from 'socket.io-client'
 import { useAdminHomeStore } from '@/stores/admin/home'
 import { marked } from 'marked'
@@ -14,18 +14,29 @@ import UserInput from '../../components/Chat/UserInput.vue'
 import ChatbotBubble from '../../components/Chat/ChatbotBubble.vue'
 import LoadingOverlay from '../../components/LoadingOverlay.vue'
 import DialogModal from '@/components/DialogModal.vue'
+import { useChatbotStore } from '@/stores/chatbot'
 
 interface ChatbotPageProps {
   cbName: string
+}
+
+interface ChatHistory {
+  Content: string
+  Id: number
+  conversationId: string
+  createdAt: string
+  title: string
 }
 
 const notificationsStore = useNotificationsStore()
 const authStore = useAuthStore()
 const homeStore = useAdminHomeStore()
 const pageContentStore = usePageContentStore()
+const chatBotStore = useChatbotStore()
 const router = useRouter()
 const sesh_id = ref('')
 const chatbotImg = ref('')
+const chatHistoryArray = ref<ChatHistory[]>([])
 
 // mesRes declaration
 // step 1
@@ -132,21 +143,13 @@ onMounted(() => {
         // console.log(authStore.chatBotUser)
         console.log(JSON.parse(authStore.chatBotUser).iconName)
         const userChatbotImg = JSON.parse(authStore.chatBotUser).iconName
+        console.log(userChatbotImg)
         chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${userChatbotImg}`
+        console.log(chatbotImg.value)
 
         console.log('Hey it user user!')
         try {
-          // pageContent.value = pageContentStore.getPageContentByChatbotName(props.cbName)
-          // console.log('pageContent', props.cbName)
-          // pageContent.value = pageContentStore.getPageContentByPageId(pageId.value)
-          // console.log('pageContent', pageContent.value)
-          // console.log('user details', authStore.chatBotUser)
-          // if (!pageContent.value) {
-          //   router.replace({ name: 'not-found' })
-          // }
-
           if (!pageContent.value) return
-
           chatbotName.value = pageContent.value.chatbotName
           promptPlaceholder.value = pageContent.value.promptPlaceholder
           staticGreeting.value = pageContent.value.staticGreeting
@@ -179,13 +182,20 @@ onMounted(() => {
           )
         }
       })
+    chatBotStore
+      .getConversationHistory(props.cbName, authStore.getMemberData.phoneNo)
+      .then((response) => {
+        if (response.result === 'ok') {
+          chatHistoryArray.value = response.data
+          console.log(typeof chatHistoryArray.value[0].Id)
+          console.log(chatHistoryArray.value)
+        }
+      })
   } else {
     window.location.href = '/' + props.cbName + '/login'
   }
   // }
-
-  if (authStore.userRole === 'user') {
-  } else if (authStore.adminIsLoggedIn) {
+  if (authStore.adminIsLoggedIn) {
     console.log('Hey it admin user!')
     pageContentStore
       .fetchPageContentItems()
@@ -201,6 +211,7 @@ onMounted(() => {
           const chatbotUrl = pageContent.value?.iconName
           console.log(chatbotUrl)
           chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${chatbotUrl}`
+          console.log(chatbotImg.value)
 
           console.log('pageContent', pageContent.value)
           // if (!pageContent.value) {
@@ -471,20 +482,20 @@ const handleUserInput = (
     // const userData
     //emit request to the server
     if (authStore.userRole === 'user') {
-      const userData = JSON.parse(authStore.chatBotUser) as UserInfo
-      // console.log(pageId.value)
+      // const userData = JSON.parse(authStore.chatBotUser) as UserInfo
+      console.log(sesh_id.value)
       socket.emit('message', {
         //sending request to the socket
         message: formatted,
         pageSlug: props.cbName,
-        conversationId: userData.conversationId
+        conversationId: sesh_id.value
       })
     } else {
       socket.emit('message', {
         //sending request to the socket
         message: formatted,
         pageSlug: props.cbName,
-        conversationId: null
+        conversationId: sesh_id.value
       })
     }
 
@@ -510,23 +521,14 @@ const handleUserInput = (
 socket.on('message', (response) => {
   console.log(response)
   const parsedResponse = JSON.parse(response)
-  // console.log(parsedResponse.sessionId)
-  console.log('sesh_id: ', sesh_id.value)
   console.log(parsedResponse.message)
-  if (parsedResponse.sessionId === sesh_id.value) {
-    mesRes.value += parsedResponse.message
-    // console.log(mesRes.value)
-  } else {
-    return
-  }
-  // mesRes.value += response
+  mesRes.value += parsedResponse.message
 })
 
 watch(
   () => mesRes.value,
   (value) => {
     // console.log(value)
-
     if (!value) return
 
     const responsesArr = value.split('~~~ENDOFSTREAM~~~')
@@ -671,7 +673,7 @@ watch(conversation.value, () => {
   // toggleSticky.value =
 })
 
-const collapse = ref<boolean>(false)
+// const chatBotStore = useChatbotStore()
 const collapseSidebar = () => {
   // const main_container = document.getElementById('main-container')
   if (isMedium.value) {
@@ -682,7 +684,7 @@ const collapseSidebar = () => {
     const btn_medium = document.getElementById('btn-medium')
     btn_medium?.classList.remove('hidden')
   } else {
-    collapse.value = !collapse.value
+    chatBotStore.collapse = !chatBotStore.collapse
     hideBelow()
   }
 
@@ -761,106 +763,13 @@ const expandMenuMedium = () => {
 <template>
   <div
     :class="[bgImg ? 'page-bg-color' : 'bg-requested-color']"
-    class="chat-page relative flex min-h-full"
+    class="chat-page relative flex min-h-full w-full"
   >
-    <!-- Sidebar -->
-    <div
-      id="application-sidebar"
-      :class="{ 'w-[70px]': collapse }"
-      class="hs-overlay duration-300 inset-y-0 fixed left-0 transform fixed hidden top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 lg:block lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
-    >
-      <nav class="w-full h-full flex flex-col justify-center ml-4">
-        <div class="mt-6">
-          <button @click="collapseSidebar" @mouseleave="hideBelow" @mouseover="showBelow">
-            <span class="material-icons-outlined">menu</span>
-          </button>
-          <div id="showCollapse" class="hidden px-2 rounded-md bg-gray-600">
-            <p v-if="!collapse" class="text-xs text-white dark:text-white">Collapse menu</p>
-            <p
-              v-if="collapse"
-              class="text-xs text-white dark:text-white text-nowrap flex justify-center"
-            >
-              Expand menu
-            </p>
-          </div>
-        </div>
-        <div class="mt-10 relative">
-          <button
-            :class="{ 'btn-circle px-2': collapse }"
-            class="btn btn-sm btn-ghost rounded-full bg-emerald-100"
-            @click="reloadChat"
-            @mouseleave="hideNewChat"
-            @mouseover="showNewChat"
-          >
-            <span class="material-icons-outlined text-center"> add </span>
-            <span :class="{ hidden: collapse }">New Chat</span>
-          </button>
-          <div
-            v-if="collapse"
-            :class="[newChat ? 'visible' : 'hidden']"
-            class="absolute bg-gray-600 text-white rounded-lg left-1 top-10 px-2"
-          >
-            <p class="text-xs text-nowrap">New chat</p>
-          </div>
-        </div>
-
-        <div class="h-full mt-8"></div>
-
-        <div class="w-60 pb-6">
-          <div class="relative">
-            <button
-              :class="{ 'hover:btn-circle btn-sm  rounded-full ': collapse }"
-              class="flex items-center w-full y-2 cursor-pointer hover:bg-gray-200 rounded-xl p-1"
-              @mouseleave="hideSetting"
-              @mouseover="showSetting"
-            >
-              <span :class="{ 'text-sm px-1': collapse }" class="material-icons-outlined space"
-                >settings</span
-              >
-              <span :class="{ 'opacity-0': collapse }" class="pl-3 text-sm">Setting</span>
-            </button>
-            <small
-              v-if="collapse"
-              :class="[setting ? 'visible transition ease-in duration-500' : 'hidden']"
-              class="absolute left-14 top-3 bg-gray-600 text-white rounded-lg px-2"
-              >Setting
-            </small>
-          </div>
-          <div class="relative">
-            <button
-              :class="{ 'hover:btn-circle btn-sm rounded-full': collapse }"
-              class="flex w-full items-center y-2 cursor-pointer hover:bg-gray-200 rounded-xl p-2"
-              @click="confirmSignOut"
-              @mouseleave="hideLogout"
-              @mouseover="showLogout"
-            >
-              <span :class="{ 'text-sm px-1': collapse }" class="material-icons-outlined"
-                >logout</span
-              >
-              <span :class="{ 'opacity-0': collapse }" class="pl-3 text-sm">Log out</span>
-            </button>
-            <small
-              v-if="collapse"
-              :class="[logout ? 'visible transition ease-in duration-500' : 'hidden']"
-              class="absolute left-14 top-3 text-nowrap bg-gray-600 text-white rounded-lg px-2"
-              >Log out</small
-            >
-          </div>
-        </div>
-
-        <div></div>
-        <small v-if="!collapse" class="text-xs"
-          >&copy; 2009-{{ currentYear }} Powered by Mzawadi</small
-        >
-      </nav>
-    </div>
-    <!-- End Sidebar -->
-
     <div
       id="main-container"
       ref="conversationContainerRef"
-      :class="[collapse ? '' : 'lg:ps-64']"
-      class="relative min-h-screen w-full flex-1"
+      :class="[chatBotStore.collapse ? '' : 'lg:ps-64']"
+      class="relative min-h-screen flex-1"
     >
       <div id="btn-medium" class="relative lg:hidden block ps-4 pt-6">
         <button @click="expandMenuMedium" @mouseleave="hideExpand" @mouseover="showExpand">
