@@ -1,25 +1,25 @@
 <script lang="ts" setup>
-import { onMounted } from 'vue'
-
 interface ConversationHistoryPageProps {
-  // all chatbot names are lowercase
-  chatbotName: string
+  content: string
+  id: number
+  conversationId: string
+  createdAt: string
+  title: string
 }
 
-const props = withDefaults(defineProps<ConversationHistoryPageProps>(), {
-  chatbotName: 'Mzawadi'
-})
+const props = defineProps<ConversationHistoryPageProps>()
 
-onMounted(() => {
-  console.log('ConversationHistoryPage mounted')
-  console.log('Chatbot Name:', props.chatbotName)
-})
+const viewHistory = (id: number) => {
+  console.log('Viewing history', id)
+}
 </script>
 
 <template>
-  <div>
-    <h1>Conversation History Page</h1>
-    <p>Chatbot Name: {{ props.chatbotName }}</p>
+  <div class="w-52 flex flex-row text-sm pb-2 overflow-hidden">
+    <button class="btn btn-ghost btn-sm" @click="viewHistory(props.id)">
+      <span class="material-icons-outlined"> chat_bubble_outline </span>
+      <span class="">Chats {{ props.title }}</span>
+    </button>
   </div>
 </template>
 
