@@ -683,67 +683,6 @@ watch(conversation.value, () => {
 })
 
 // const chatBotStore = useChatbotStore()
-const collapseSidebar = () => {
-  // const main_container = document.getElementById('main-container')
-  if (isMedium.value) {
-    const sidebar = document.getElementById('application-sidebar')
-
-    sidebar?.classList.add('hidden')
-    isMedium.value = false
-    const btn_medium = document.getElementById('btn-medium')
-    btn_medium?.classList.remove('hidden')
-  } else {
-    chatBotStore.collapse = !chatBotStore.collapse
-    hideBelow()
-  }
-
-  // console.log('collapse', collapse.value)
-}
-
-const showBelow = () => {
-  // const below = document.querySelector('.hidden')
-  // below?.classList.toggle('block')
-  const below = document.getElementById('showCollapse')
-  below?.classList.remove('hidden')
-  below?.classList.add('absolute')
-}
-
-const hideBelow = () => {
-  // const below = document.querySelector('.block')
-  // below?.classList.toggle('hidden')
-  const below = document.getElementById('showCollapse')
-  below?.classList.remove('absolute')
-  below?.classList.add('hidden')
-}
-const reloadChat = () => {
-  // const textArea = document.getElementById('user-input')
-  // textArea?.focus()
-  window.location.href = '/' + props.cbName
-}
-
-const newChat = ref(false)
-const showNewChat = () => {
-  newChat.value = true
-}
-const hideNewChat = () => {
-  newChat.value = false
-}
-
-const setting = ref(false)
-const showSetting = () => {
-  setting.value = true
-}
-const hideSetting = () => {
-  setting.value = false
-}
-
-const logout = ref(false)
-const showLogout = () => {
-  logout.value = true
-}
-const hideLogout = () => {
-  logout.value = false
-}
 
 const showMenuMedium = ref(false)
 const showExpand = () => {
