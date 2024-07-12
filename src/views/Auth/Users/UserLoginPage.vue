@@ -179,7 +179,7 @@ const onLoginClick = () => {
       if (resp.success) {
         console.log(resp.response?.pageOptions)
         router.push({
-          name: 'chatbot',
+          name: 'newChat',
           params: { cbName: props.cbName }
         })
       }
