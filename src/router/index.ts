@@ -191,22 +191,22 @@ const routes = [
     children: [
       {
         name: 'newChat',
-        path: '/:chatbotName',
+        path: '/:cbName',
         component: () => import('../views/chatbot/NewChat.vue'),
         props: (route: any) => {
           return {
-            cbName: String(route.params.chatbotName).toLowerCase()
+            cbName: String(route.params.cbName).toLowerCase()
           }
         }
       },
       {
         name: 'chatHistory',
-        path: '/:chatbotName/:id',
+        path: '/:cbName/:convId',
         component: () => import('../views/chatbot/ChatHistory.vue'),
         props: (route: any) => {
           return {
-            cbName: String(route.params.chatbotName).toLowerCase(),
-            id: route.params.id
+            cbName: String(route.params.cbName).toLowerCase(),
+            convId: String(route.params.convId)
           }
         }
       }
@@ -219,20 +219,25 @@ const routes = [
       console.log(authStore.getUserDetails())
       if (authStore.getUserDetails() === null) {
         console.log('Hello going to login-page')
-        next({ name: 'chat-login', params: { chatbotName: to.params.chatbotName } })
+        next({ name: 'chat-login', params: { cbName: to.params.cbName } })
       } else {
         next()
       }
     }
   },
   {
-    path: '/:chatbotName/login',
+    path: '/:cbName/login',
     name: 'chat-login',
     component: () => import('../views/Auth/Users/UserLoginPage.vue'),
     props: (route: any) => {
+      console.log(route.params.cbName)
       return {
-        cbName: route.params.chatbotName
+        cbName: route.params.cbName
       }
+    },
+    beforeEnter(to: any, _from: any, next: any) {
+      console.log(to.params)
+      next()
     }
   },
   {
