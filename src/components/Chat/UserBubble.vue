@@ -74,7 +74,7 @@ const pauseAudio = () => {
           </div>
 
           <div
-            class="flex flex-col mt-10 space-y-3 text-sm bg-gray-200 rounded-t-2xl rounded-bl-2xl p-2"
+            class="flex flex-col mt-10 space-y-3 text-sm bg-emerald-500 rounded-t-2xl rounded-bl-2xl p-2"
           >
             <div :class="chatTextColor" class="text-sm" v-html="props.userMessage"></div>
             <div class="mt-3">
