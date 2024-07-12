@@ -228,6 +228,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
   async function getConversationHistory(pageSlug: string, phoneNo: string) {
     const notification = useNotificationsStore()
     console.log(pageSlug, phoneNo)
+    pgSlug.value = pageSlug
     try {
       const response = await fetch(`${BOT_URL}/chat-history/${pageSlug}/titles/`, {
         method: 'POST',
@@ -244,7 +245,32 @@ export const useChatbotStore = defineStore('chatbot', () => {
       return resp
     } catch (error) {
       console.log(error)
+      // notification.addNotification('There is an error fetching chat history', 'error')
+    }
+  }
+
+  async function displayHistory(convId: string) {
+    const notification = useNotificationsStore()
+    console.log(pgSlug.value)
+    try {
+      const response = await fetch(`${BOT_URL}/chat-history/${pgSlug.value}/chats/${convId}/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        mode: 'cors'
+      })
+      const resp = await response.json()
+      // chatDisplay.value.splice(0, chatDisplay.value.length)
+      console.log(resp)
+      const { data, result } = resp
+      chatDisplayArray.value = data
+      return resp
+    } catch (error) {
+      console.log(error)
       notification.addNotification('There is an error fetching chat history', 'error')
+    } finally {
+      console.log('finally')
     }
   }
 
@@ -259,6 +285,14 @@ export const useChatbotStore = defineStore('chatbot', () => {
     getLastString,
     establishConnection,
     getConversationHistory,
-    collapse
+    collapse,
+    chatHistoryArray,
+    chatDisplayArray,
+    displayHistory,
+    pgSlug,
+    setActiveHistory,
+    getActiveHistory,
+    setNewChatButton,
+    reloadNeChat
   }
 })
