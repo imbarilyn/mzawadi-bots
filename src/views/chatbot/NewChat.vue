@@ -547,6 +547,18 @@ watch(
       mesRes.value = ''
       isGeneratingResponse.value = false
       currentAiMsg.value.isTyping = false
+      chatBotStore
+        .getConversationHistory(props.cbName, authStore.getMemberData.phoneNo)
+        .then((response) => {
+          if (response.result === 'ok') {
+            chatBotStore.chatHistoryArray = response.data
+            console.log(chatBotStore.chatHistoryArray)
+            console.log('trying to fetch history in chatHistory')
+            notificationsStore.addNotification('Recent chat added successfully', 'success')
+          } else {
+            notificationsStore.addNotification('Unable to add recent chat', 'error')
+          }
+        })
       // console.log(mesRes.value);
     }
   }
