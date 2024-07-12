@@ -214,6 +214,8 @@ const routes = [
     beforeEnter(to: any, _from: any, next: any) {
       console.log('to', to.params)
       const authStore = useAuthStore()
+      const chatBotStore = useChatbotStore()
+      chatBotStore.setNewChatButton(true)
       console.log(authStore.getUserDetails())
       if (authStore.getUserDetails() === null) {
         console.log('Hello going to login-page')
