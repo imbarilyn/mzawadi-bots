@@ -2,8 +2,15 @@
 import { ref } from 'vue'
 import { useAdminHomeStore } from '@/stores/admin/home'
 import { useChatbotStore } from '@/stores/chatbot'
+import ConversationHistoryPage from '@/views/chatbot/ConversationHistoryPage.vue'
+import { useAuthStore } from '@/stores/auth'
+import { useNotificationsStore } from '@/stores/notifications'
+import { useRouter } from 'vue-router'
 
 const homeStore = useAdminHomeStore()
+const authStore = useAuthStore()
+const notification = useNotificationsStore()
+const router = useRouter()
 
 const currentYear = new Date().getFullYear()
 const hideSetting = () => {
@@ -20,10 +27,13 @@ const showNewChat = () => {
 }
 
 const reloadChat = () => {
-  // const textArea = document.getElementById('user-input')
-  // textArea?.focus()
-  // window.location.href = '/' + props.cbName
-  console.log('reload chat')
+  const textArea = document.getElementById('user-input')
+  textArea?.focus()
+  router.replace({
+    name: 'newChat',
+    cbName: String(chatBotStore.pgSlug).toLowerCase()
+  })
+  return
 }
 const chatBotStore = useChatbotStore()
 // const collapse = ref<boolean>(false)
@@ -102,6 +112,10 @@ const setting = ref(false)
 const showSetting = () => {
   setting.value = true
 }
+
+const setActiveTabHistory = (id: number) => {
+  chatBotStore.setActiveHistory(id)
+}
 </script>
 
 <template>
@@ -131,13 +145,17 @@ const showSetting = () => {
         <div class="mt-10 relative">
           <button
             :class="{ 'btn-circle px-2': chatBotStore.collapse }"
+            :disabled="chatBotStore.reloadNeChat"
             class="btn btn-sm btn-ghost rounded-full bg-emerald-100"
             @click="reloadChat"
             @mouseleave="hideNewChat"
             @mouseover="showNewChat"
           >
             <span class="material-icons-outlined text-center"> add </span>
-            <span :class="{ hidden: chatBotStore.collapse }">New Chat</span>
+            <span
+              :class="{ hidden: chatBotStore.collapse, 'text-normal': chatBotStore.reloadNeChat }"
+              >New Chat</span
+            >
           </button>
           <div
             v-if="chatBotStore.collapse"
@@ -147,20 +165,24 @@ const showSetting = () => {
             <p class="text-xs text-nowrap">New chat</p>
           </div>
         </div>
-        <!--      <div class="pt-8 w-56">-->
-        <!--        <p class="pb-3">History</p>-->
-        <!--        <div v-for="chat in chatHistoryArray" :key="chat.Id" class="">-->
-        <!--          <ConversationHistoryPage-->
-        <!--            :id="chat.Id"-->
-        <!--            :content="chat.Content"-->
-        <!--            :conversationId="chat.conversationId"-->
-        <!--            :createdAt="chat.createdAt"-->
-        <!--            :title="chat.title"-->
-        <!--          />-->
-        <!--        </div>-->
-        <!--        &lt;!&ndash;          <button><span class="material-icons-outlined"> expand_more </span></button>&ndash;&gt;-->
-        <!--        &lt;!&ndash;          <button><span class="material-icons-outlined"> expand_less </span></button>&ndash;&gt;-->
-        <!--      </div>-->
+        <div v-if="!chatBotStore.collapse" class="pt-8 w-56">
+          <p v-if="chatBotStore.chatHistoryArray.length > 0" class="pb-3">Recent</p>
+          <div
+            v-for="chat in chatBotStore.chatHistoryArray"
+            :key="chat.Id"
+            @click="setActiveTabHistory(chat.Id)"
+          >
+            <ConversationHistoryPage
+              :id="chat.Id"
+              :content="chat.Content"
+              :conversationId="chat.conversationId"
+              :createdAt="chat.createdAt"
+              :title="chat.title"
+            />
+          </div>
+          <!--          <button><span class="material-icons-outlined"> expand_more </span></button>-->
+          <!--          <button><span class="material-icons-outlined"> expand_less </span></button>-->
+        </div>
 
         <div class="h-full mt-8"></div>
 
