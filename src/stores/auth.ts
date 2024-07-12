@@ -182,14 +182,14 @@ export const useAuthStore = defineStore('auth', () => {
           response: { pageContent, pageOptions }
         }
       } else {
-        console.log('error in accessing chat bot')
+        console.log('error in accessing chat bot', 'error')
         return {
           error: data,
           success: false
         }
       }
     } catch (e) {
-      console.log('error creating profile', e)
+      console.log('error creating profile', 'error')
 
       return {
         error: 'Error creating profile',
@@ -374,7 +374,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   function getUserDetails() {
     try {
-      console.log(JSON.parse(chatBotUser.value))
+      // console.log(JSON.parse(chatBotUser.value))
       return JSON.parse(chatBotUser.value) as UserInfo
     } catch {
       return null
