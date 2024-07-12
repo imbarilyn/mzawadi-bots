@@ -10,11 +10,28 @@ import { useNotificationsStore } from '../notifications'
 // const BASE_URL = 'http://192.168.1.7:5000/api';
 const BASE_URL = 'http://192.168.100.12:5001'
 const BOT_URL = import.meta.env.VITE_API_URL as string
+const pgSlug = ref('')
 
 export const useChatbotStore = defineStore('chatbot', () => {
   // state
 
   // create the variables to store the connection and the stream
+
+  interface ChatHistory {
+    Content: string
+    Id: number
+    conversationId: string
+    createdAt: string
+    title: string
+  }
+
+  interface ChatDisplay {
+    content: string
+    conversationId: string
+    createdAt: string
+    isUser: string
+    chatId: number
+  }
 
   const stringArray = ref<string[]>([])
   const oldString = ref<string>('')
@@ -22,6 +39,10 @@ export const useChatbotStore = defineStore('chatbot', () => {
   const responseString = ref<string>('')
   const notifications = useNotificationsStore()
   const collapse = ref<boolean>(false)
+  const chatHistoryArray = ref<ChatHistory[]>([])
+  const chatDisplayArray = ref<ChatDisplay[]>([])
+  const activeHistory = ref<number>()
+  const reloadNeChat = ref<boolean>(false)
 
   // getters
 
@@ -37,6 +58,18 @@ export const useChatbotStore = defineStore('chatbot', () => {
   const getLastString = computed(() => {
     return stringArray.value[stringArray.value.length - 1]
   })
+
+  const getActiveHistory = computed(() => {
+    return activeHistory.value
+  })
+
+  const setActiveHistory = (id: number) => {
+    activeHistory.value = id
+  }
+
+  const setNewChatButton = (value: boolean) => {
+    return (reloadNeChat.value = value)
+  }
 
   // actions
 
