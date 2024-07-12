@@ -20,14 +20,6 @@ interface ChatbotPageProps {
   cbName: string
 }
 
-interface ChatHistory {
-  Content: string
-  Id: number
-  conversationId: string
-  createdAt: string
-  title: string
-}
-
 const notificationsStore = useNotificationsStore()
 const authStore = useAuthStore()
 const homeStore = useAdminHomeStore()
@@ -36,7 +28,6 @@ const chatBotStore = useChatbotStore()
 const router = useRouter()
 const sesh_id = ref('')
 const chatbotImg = ref('')
-const chatHistoryArray = ref<ChatHistory[]>([])
 
 // mesRes declaration
 // step 1
@@ -55,6 +46,10 @@ const socket = io('wss://botsockets.mzawadi.com/', {
 const props = withDefaults(defineProps<ChatbotPageProps>(), {
   cbName: 'Mzawadi'
 })
+
+const emits = defineEmits<{
+  (event: 'pgSlug', value: string): void
+}>()
 
 socket.on('disconnect', () => {
   console.log('connection failed-disconnected')
@@ -76,6 +71,16 @@ socket.on('set_conv_id', (sesh) => {
   sesh_id.value = sesh.conversationId
   console.log(sesh_id.value)
 })
+
+chatBotStore
+  .getConversationHistory(props.cbName, authStore.getMemberData.phoneNo)
+  .then((response) => {
+    if (response.result === 'ok') {
+      chatBotStore.chatHistoryArray = response.data
+      console.log(typeof chatBotStore.chatHistoryArray[0].Id)
+      console.log(chatBotStore.chatHistoryArray)
+    }
+  })
 // on refreshing
 const chatUser: any = authStore.getUserDetails()
 console.log(chatUser)
