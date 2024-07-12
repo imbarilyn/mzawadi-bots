@@ -135,6 +135,7 @@ const bgImg = ref('')
 
 onMounted(() => {
   console.log('Inside the before mount')
+  console.log('emitted', props.cbName)
 
   if (authStore.memberData !== '') {
     authStore
@@ -185,15 +186,6 @@ onMounted(() => {
             error ?? 'Oops! Something went wrong. Please try again.',
             'error'
           )
-        }
-      })
-    chatBotStore
-      .getConversationHistory(props.cbName, authStore.getMemberData.phoneNo)
-      .then((response) => {
-        if (response.result === 'ok') {
-          chatHistoryArray.value = response.data
-          console.log(typeof chatHistoryArray.value[0].Id)
-          console.log(chatHistoryArray.value)
         }
       })
   } else {
