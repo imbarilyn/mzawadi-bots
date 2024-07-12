@@ -279,7 +279,9 @@ router.beforeEach((to, _from, next) => {
     'lets-chat',
     'chatbot-page',
     'chatbot',
-    'chat-login'
+    'chat-login',
+    'newChat',
+    'chatHistory'
   ]
   const isExcludedRoute = excludedRoutes.includes(to.name as string)
 
