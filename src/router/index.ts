@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useChatbotStore } from '@/stores/chatbot'
 
 const routes = [
   {
@@ -290,7 +291,9 @@ router.beforeEach((to, _from, next) => {
 
   if (!authStore.adminIsLoggedIn) {
     console.log('admin is not logged in')
-    // console.log('to.name', to.name)
+    console.log('to.name', to.name)
+    console.log(to.params.cbName)
+    const cbName = to.params.cbName
     // console.log('from.name', _from.name)
     if (!isExcludedRoute) {
       // console.log('not excluded route')
@@ -300,30 +303,20 @@ router.beforeEach((to, _from, next) => {
       console.log(to.name)
       // console.log('excluded route')
       //
-      if (to.name === 'chatbot') {
+      if (!authStore.chatBotUser) {
         // console.log('chatbot-page')
-        const chatbotName = to.params.chatbotName
         // console.log(chatbotName)
-
         // console.log('user is not logged in', authStore.chatBotUser, authStore.adminIsLoggedIn)
-
-        if (!chatbotName) {
-          next({ name: 'not-found' })
-          // console.log('No chatbotName')
-          if (authStore.chatBotUser || authStore.adminIsLoggedIn) {
-            // console.log('toxx', to.name)
-            next()
-          }
-          // console.log('to', to.name)
-        }
+        // next({ name: 'chat-login', params: { cbName: cbName } })
       }
     }
   } else {
-    // console.log('admin is logged in')
-    // console.log(to.name)
+    console.log('admin is logged in')
+    console.log(to.name)
     // console.log(to.path)
     next()
   }
+
   next()
 })
 
