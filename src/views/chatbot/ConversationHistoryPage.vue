@@ -43,8 +43,8 @@ const viewHistory = (convId: string) => {
       class="btn btn-ghost btn-sm"
       @click="viewHistory(props.conversationId)"
     >
-      <span class="material-icons-outlined"> chat_bubble_outline </span>
-      <span class="">{{ props.title }}</span>
+      <span class="material-icons-outlined !text-sm text-neutral-600"> chat_bubble_outline </span>
+      <span class="text-neutral-600">{{ props.title }}</span>
     </button>
   </div>
 </template>
