@@ -29,9 +29,9 @@ const showNewChat = () => {
 const reloadChat = () => {
   const textArea = document.getElementById('user-input')
   textArea?.focus()
-  router.replace({
+  router.push({
     name: 'newChat',
-    cbName: String(chatBotStore.pgSlug).toLowerCase()
+    params: { cbName: chatBotStore.pgSlug }
   })
   return
 }
