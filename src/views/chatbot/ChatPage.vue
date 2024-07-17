@@ -39,16 +39,19 @@ const chatBotStore = useChatbotStore()
 // const collapse = ref<boolean>(false)
 const collapseSidebar = () => {
   // const main_container = document.getElementById('main-container')
-  if (isMedium.value) {
+  // console.log('Collapse from ChatPage.vue')
+  if (chatBotStore.isMedium && !chatBotStore.collapse) {
     const sidebar = document.getElementById('application-sidebar')
-
     sidebar?.classList.add('hidden')
-    isMedium.value = false
-    const btn_medium = document.getElementById('btn-medium')
-    btn_medium?.classList.remove('hidden')
+    // // isMedium.value = false
+    // chatBotStore.setIsMedium(false)
+    // const btn_medium = document.getElementById('btn-medium')
+    // btn_medium?.classList.remove('hidden')
   } else {
     chatBotStore.collapse = !chatBotStore.collapse
-    hideBelow()
+
+    console.log(chatBotStore.collapse)
+    // hideBelow()
   }
   // console.log('collapse', collapse.value)
 }
