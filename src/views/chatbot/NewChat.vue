@@ -692,19 +692,19 @@ const hideExpand = () => {
   showMenuMedium.value = false
   console.log('medium mouse-over')
 }
-const isMedium = ref(false)
 const expandMenuMedium = () => {
-  hideExpand()
+  //   hideExpand()
   const sidebar = document.getElementById('application-sidebar')
   sidebar?.classList.remove('hidden')
-  const main_container = document.getElementById('main-container')
-  main_container?.classList.add('z-[30]')
-
-  isMedium.value = true
-  const btn_medium = document.getElementById('btn-medium')
-  btn_medium?.classList.add('hidden')
-
-  console.log('expand menu') // hideExpand()
+  chatBotStore.setIsMedium(true)
+  //   const main_container = document.getElementById('main-container')
+  //   main_container?.classList.add('z-[30]')
+  //
+  //   isMedium.value = true
+  //   const btn_medium = document.getElementById('btn-medium')
+  //   btn_medium?.classList.add('hidden')
+  //
+  //   console.log('expand menu') // hideExpand()
 }
 </script>
 
@@ -729,155 +729,156 @@ const expandMenuMedium = () => {
           >expand menu
         </small>
       </div>
+      <div>
+        <div class="py-10 lg:py-14">
+          <!-- Title -->
+          <div class="sticky top-0 z-10 max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
+            <div class="flex justify-center items-center">
+              <img class="h-14 w-14 rounded-full" src="@/assets/imgs/chatbot.png" />
 
-      <div class="py-10 lg:py-14">
-        <!-- Title -->
-        <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
-          <div class="flex justify-center items-center">
-            <img class="h-14 w-14 rounded-full" src="@/assets/imgs/chatbot.png" />
+              <h1 :class="titleTextColor" class="text-3xl font-bold sm:text-4xl ps-2">
+                {{ chatbotName }} AI
+              </h1>
+            </div>
 
-            <h1 :class="titleTextColor" class="text-3xl font-bold sm:text-4xl ps-2">
-              {{ chatbotName }} AI
-            </h1>
+            <p class="mt-3 text-gray-600 dark:text-gray-400">
+              <!--            Your AI-powered copilot for the web-->
+              Here to help you with your questions
+            </p>
           </div>
+          <div class="grow mt-14">
+            <!-- End Title -->
+            <Transition mode="out-in" name="slide-in">
+              <template v-if="!appIsFetching">
+                <div class="">
+                  <ChatbotBubble
+                    :key="1"
+                    :chat-text-color="chatTextColor"
+                    :chatbot-message="
+                      staticGreeting
+                        ? marked.parse(staticGreeting)
+                        : 'Hello there! How can I help you today?'
+                    "
+                    :chatbot-name="chatbotName"
+                    :icon-name="pageContent?.iconName"
+                    :is-typing="false"
+                  />
 
-          <p class="mt-3 text-gray-600 dark:text-gray-400">
-            <!--            Your AI-powered copilot for the web-->
-            Here to help you with your questions
-          </p>
+                  <ul class="space-y-5">
+                    <template v-for="(message, index) in conversation" :key="index">
+                      <UserBubble
+                        v-if="
+                          message.value.isUser &&
+                          message.value.message &&
+                          message.value.message.length > 0
+                        "
+                        :key="message.value.uniqueId"
+                        :audio-data="message.value?.audioData"
+                        :chat-text-color="chatTextColor"
+                        :user-message="message.value.message"
+                        user-name="John Doe"
+                      />
+                      <!-- <div class="ai-respose"> -->
+                      <!-- :key="message.value.uniqueId" -->
+
+                      <ChatbotBubble
+                        v-else-if="!message.value.isUser"
+                        :key="index"
+                        :chat-text-color="chatTextColor"
+                        :chatbot-message="marked.parse(message.value.message)"
+                        :chatbot-name="chatbotName"
+                        :disclosure-message="pageContent?.closureMessage"
+                        :has-disclosure-message="pageContent?.displayClosureMessage"
+                        :has-error="message.value?.hasError"
+                        :icon-name="pageContent?.iconName"
+                        :is-copyable="index !== 0"
+                        :is-typing="message.value?.isTyping"
+                        :original-message="message.value?.originalMessage"
+                      />
+
+                      <!-- </div> -->
+                    </template>
+                  </ul>
+                </div>
+              </template>
+              <template v-else-if="appIsFetching">
+                <LoadingOverlay :show="appIsFetching" />
+              </template>
+            </Transition>
+          </div>
         </div>
-        <div class="grow mt-14">
-          <!-- End Title -->
-          <Transition mode="out-in" name="slide-in">
-            <template v-if="!appIsFetching">
-              <div class="">
-                <ChatbotBubble
-                  :key="1"
-                  :chat-text-color="chatTextColor"
-                  :chatbot-message="
-                    staticGreeting
-                      ? marked.parse(staticGreeting)
-                      : 'Hello there! How can I help you today?'
-                  "
-                  :chatbot-name="chatbotName"
-                  :icon-name="pageContent?.iconName"
-                  :is-typing="false"
-                />
-
-                <ul class="space-y-5">
-                  <template v-for="(message, index) in conversation" :key="index">
-                    <UserBubble
-                      v-if="
-                        message.value.isUser &&
-                        message.value.message &&
-                        message.value.message.length > 0
-                      "
-                      :key="message.value.uniqueId"
-                      :audio-data="message.value?.audioData"
-                      :chat-text-color="chatTextColor"
-                      :user-message="message.value.message"
-                      user-name="John Doe"
-                    />
-                    <!-- <div class="ai-respose"> -->
-                    <!-- :key="message.value.uniqueId" -->
-
-                    <ChatbotBubble
-                      v-else-if="!message.value.isUser"
-                      :key="index"
-                      :chat-text-color="chatTextColor"
-                      :chatbot-message="marked.parse(message.value.message)"
-                      :chatbot-name="chatbotName"
-                      :disclosure-message="pageContent?.closureMessage"
-                      :has-disclosure-message="pageContent?.displayClosureMessage"
-                      :has-error="message.value?.hasError"
-                      :icon-name="pageContent?.iconName"
-                      :is-copyable="index !== 0"
-                      :is-typing="message.value?.isTyping"
-                      :original-message="message.value?.originalMessage"
-                    />
-
-                    <!-- </div> -->
-                  </template>
-                </ul>
-              </div>
-            </template>
-            <template v-else-if="appIsFetching">
-              <LoadingOverlay :show="appIsFetching" />
-            </template>
-          </Transition>
-        </div>
-      </div>
-      <div ref="userInputContainerHeightRef" class="sticky w-full bottom-0">
-        <div class="relative">
-          <button
-            v-if="showScrollToBottomButton"
-            class="absolute -top-4 right-1/2 rounded-full bg-neutral-500 shadow-lg shadow-slate-300/10 p-2 opacity-30 hover:opacity-100 transition-opacity duration-300 active:scale-95 focus:outline-none"
-            @click="scrollToBottom"
-          >
-            <svg
-              class="h-5 w-5 text-slate-200"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+        <div ref="userInputContainerHeightRef" class="sticky w-full bottom-0">
+          <div class="relative">
+            <button
+              v-if="showScrollToBottomButton"
+              class="absolute -top-4 right-1/2 rounded-full bg-neutral-500 shadow-lg shadow-slate-300/10 p-2 opacity-30 hover:opacity-100 transition-opacity duration-300 active:scale-95 focus:outline-none"
+              @click="scrollToBottom"
             >
-              <path
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-              />
-            </svg>
-          </button>
-          <div v-if="isBottom" class="py-4 bg-gradient-to-t from-requested-color block"></div>
-          <div
-            :class="!isBottom ? inputBg : 'bg-requested-color'"
-            class="w-full px-4 md:px-6 pb-8 flex-1"
-          >
-            <div class="grid grid-cols-1 w-11/12 md:w-10/12 mx-auto">
-              <UserInput
-                :disabled="false"
-                :input-btn-color="inputBtnColor"
-                :is-generating="isGeneratingResponse"
-                :prompt-placeholder="promptPlaceholder"
-                :ring-color="inputRingColor"
-                user-input=""
-                @userInput="handleUserInput"
-              />
+              <svg
+                class="h-5 w-5 text-slate-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                />
+              </svg>
+            </button>
+            <div v-if="isBottom" class="py-4 bg-gradient-to-t from-requested-color block"></div>
+            <div
+              :class="!isBottom ? inputBg : 'bg-requested-color'"
+              class="w-full px-4 md:px-6 pb-8 flex-1"
+            >
+              <div class="grid grid-cols-1 w-11/12 md:w-10/12 mx-auto">
+                <UserInput
+                  :disabled="false"
+                  :input-btn-color="inputBtnColor"
+                  :is-generating="isGeneratingResponse"
+                  :prompt-placeholder="promptPlaceholder"
+                  :ring-color="inputRingColor"
+                  user-input=""
+                  @userInput="handleUserInput"
+                />
+              </div>
             </div>
           </div>
         </div>
+        <div id="user-input-placeholder"></div>
       </div>
-      <div id="user-input-placeholder"></div>
+      <teleport to="body">
+        <DialogModal
+          :is-open="homeStore.signOutDialog.isOpen"
+          @closeModal="homeStore.closeSignOutDialog"
+        >
+          <template #title>
+            <div class="flex justify-center">
+              <span class="material-icons-outlined !text-6xl"> logout </span>
+            </div>
+          </template>
+          <template #body>
+            <div class="flex justify-center">
+              <h1 class="text-xl font-bold">Oh no! You're leaving...</h1>
+            </div>
+            <div class="flex justify-center">
+              <p class="text-lg font-semibold">Are you sure?</p>
+            </div>
+          </template>
+          <template #footer>
+            <div class="flex justify-center">
+              <button class="btn bg-emerald-100 me-5" @click="logOut">Sign Out</button>
+              <button class="btn bg-emerald-400 w-[200px]" @click="homeStore.closeSignOutDialog()">
+                Cancel
+              </button>
+            </div>
+          </template>
+        </DialogModal>
+      </teleport>
     </div>
-    <teleport to="body">
-      <DialogModal
-        :is-open="homeStore.signOutDialog.isOpen"
-        @closeModal="homeStore.closeSignOutDialog"
-      >
-        <template #title>
-          <div class="flex justify-center">
-            <span class="material-icons-outlined !text-6xl"> logout </span>
-          </div>
-        </template>
-        <template #body>
-          <div class="flex justify-center">
-            <h1 class="text-xl font-bold">Oh no! You're leaving...</h1>
-          </div>
-          <div class="flex justify-center">
-            <p class="text-lg font-semibold">Are you sure?</p>
-          </div>
-        </template>
-        <template #footer>
-          <div class="flex justify-center">
-            <button class="btn bg-emerald-100 me-5" @click="logOut">Sign Out</button>
-            <button class="btn bg-emerald-400 w-[200px]" @click="homeStore.closeSignOutDialog()">
-              Cancel
-            </button>
-          </div>
-        </template>
-      </DialogModal>
-    </teleport>
   </div>
 </template>
 
