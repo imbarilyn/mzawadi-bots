@@ -75,14 +75,12 @@ const hideExpand = () => {
 }
 
 const showBelow = () => {
-  // const below = document.querySelector('.hidden')
-  // below?.classList.toggle('block')
   const below = document.getElementById('showCollapse')
   below?.classList.remove('hidden')
   below?.classList.add('absolute')
 }
 
-const isMedium = ref(false)
+// const isMedium = ref(false)
 const expandMenuMedium = () => {
   hideExpand()
   const sidebar = document.getElementById('application-sidebar')
@@ -90,7 +88,8 @@ const expandMenuMedium = () => {
   const main_container = document.getElementById('main-container')
   main_container?.classList.add('z-[30]')
 
-  isMedium.value = true
+  // isMedium.value = true
+  chatBotStore.setIsMedium(true)
   const btn_medium = document.getElementById('btn-medium')
   btn_medium?.classList.add('hidden')
 
@@ -163,7 +162,7 @@ const groupChatbyMonth = () => {
       class="hs-overlay duration-500 inset-y-0 fixed left-0 transform hidden top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 lg:block lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
     >
       <nav class="w-full h-full flex flex-col justify-center ml-4">
-        <div class="mt-6">
+        <div class="mt-3">
           <button @click="collapseSidebar" @mouseleave="hideBelow" @mouseover="showBelow">
             <span class="material-icons-outlined">menu</span>
           </button>
@@ -179,7 +178,7 @@ const groupChatbyMonth = () => {
             </p>
           </div>
         </div>
-        <div class="mt-10 relative">
+        <div class="mt-7 mb-4 relative">
           <button
             :class="{ 'btn-circle px-2': chatBotStore.collapse }"
             :disabled="chatBotStore.reloadNeChat"
@@ -202,28 +201,27 @@ const groupChatbyMonth = () => {
             <p class="text-xs text-nowrap">New chat</p>
           </div>
         </div>
-        <div v-if="!chatBotStore.collapse" class="pt-8 w-56">
-          <p v-if="chatBotStore.chatHistoryArray.length > 0" class="pb-3">Recent</p>
-          <div
-            v-for="chat in chatBotStore.chatHistoryArray"
-            :key="chat.Id"
-            @click="setActiveTabHistory(chat.Id)"
-          >
-            <ConversationHistoryPage
-              :id="chat.Id"
-              :content="chat.Content"
-              :conversationId="chat.conversationId"
-              :createdAt="chat.createdAt"
-              :title="chat.title"
-            />
+        <div
+          :class="{ invisible: chatBotStore.collapse }"
+          class="relative w-56 overflow-y-auto h-full"
+        >
+          <div v-for="(chats, date) in groupChatbyMonth()" :key="date">
+            <h1 class="backdrop-blur bg-white z-10 font-bold text-md sticky top-0 pb-2">
+              {{ date }}
+            </h1>
+            <div v-for="chat in chats" :key="chat.Id" @click="setActiveTabHistory(chat.Id)">
+              <ConversationHistoryPage
+                :id="chat.Id"
+                :content="chat.Content"
+                :conversationId="chat.conversationId"
+                :createdAt="chat.createdAt"
+                :title="chat.title"
+              />
+            </div>
           </div>
-          <!--          <button><span class="material-icons-outlined"> expand_more </span></button>-->
-          <!--          <button><span class="material-icons-outlined"> expand_less </span></button>-->
         </div>
 
-        <div class="h-full mt-8"></div>
-
-        <div class="w-60 pb-6">
+        <div class="w-60 pt-10">
           <div class="relative">
             <button
               :class="{ 'hover:btn-circle btn-sm  rounded-full ': chatBotStore.collapse }"
@@ -257,7 +255,7 @@ const groupChatbyMonth = () => {
             >
               <span
                 :class="{ 'text-sm px-1': chatBotStore.collapse }"
-                class="material-icons-outlined"
+                class="material-icons-outlined !text-lg"
                 >logout</span
               >
               <span :class="{ 'opacity-0': chatBotStore.collapse }" class="pl-3 text-sm"
