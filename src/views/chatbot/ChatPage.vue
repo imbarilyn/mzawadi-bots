@@ -6,12 +6,12 @@ import ConversationHistoryPage from '@/views/chatbot/ConversationHistoryPage.vue
 import { useAuthStore } from '@/stores/auth'
 import { useNotificationsStore } from '@/stores/notifications'
 import { useRouter } from 'vue-router'
+import moment from 'moment'
 
 const homeStore = useAdminHomeStore()
 const authStore = useAuthStore()
 const notification = useNotificationsStore()
 const router = useRouter()
-
 const currentYear = new Date().getFullYear()
 const hideSetting = () => {
   setting.value = false
@@ -115,6 +115,40 @@ const showSetting = () => {
 
 const setActiveTabHistory = (id: number) => {
   chatBotStore.setActiveHistory(id)
+}
+
+interface ChatHistory {
+  Content: string
+  Id: number
+  conversationId: string
+  createdAt: string
+  title: string
+}
+
+const groupChatbyMonth = () => {
+  const chatHistoryArray: ChatHistory[] = chatBotStore.chatHistoryArray
+  const grouped = chatHistoryArray.reduce(
+    (acc, chat) => {
+      let date = moment(chat.createdAt).toISOString()
+      let now = moment()
+      if (now.isSame(date, 'day')) {
+        date = 'Today'
+      } else if (now.subtract(1, 'days').isSame(date, 'day')) {
+        date = 'Yesterday'
+      } else if (now.subtract(1, 'weeks').isBefore(date)) {
+        date = 'Previous 7 Days'
+      } else {
+        date = moment(chat.createdAt).format('MMMM-YYYY')
+      }
+      if (!acc[date]) {
+        acc[date] = []
+      }
+      acc[date].push(chat)
+      return acc
+    },
+    {} as Record<string, ChatHistory[]>
+  )
+  return grouped
 }
 </script>
 
