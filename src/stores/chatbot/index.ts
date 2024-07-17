@@ -43,6 +43,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
   const chatDisplayArray = ref<ChatDisplay[]>([])
   const activeHistory = ref<number>()
   const reloadNeChat = ref<boolean>(false)
+  const isMedium = ref<boolean>(false)
 
   // getters
 
@@ -69,6 +70,10 @@ export const useChatbotStore = defineStore('chatbot', () => {
 
   const setNewChatButton = (value: boolean) => {
     return (reloadNeChat.value = value)
+  }
+
+  const setIsMedium = (value: boolean) => {
+    return (isMedium.value = value)
   }
 
   // actions
@@ -293,6 +298,8 @@ export const useChatbotStore = defineStore('chatbot', () => {
     setActiveHistory,
     getActiveHistory,
     setNewChatButton,
-    reloadNeChat
+    reloadNeChat,
+    setIsMedium,
+    isMedium
   }
 })
