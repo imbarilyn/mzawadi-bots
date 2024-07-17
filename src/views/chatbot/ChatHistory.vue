@@ -707,16 +707,19 @@ const hideExpand = () => {
 }
 const isMedium = ref(false)
 const expandMenuMedium = () => {
-  hideExpand()
+  // hideExpand()
   const sidebar = document.getElementById('application-sidebar')
   sidebar?.classList.remove('hidden')
   chatBotStore.setIsMedium(true)
 
-  isMedium.value = true
-  const btn_medium = document.getElementById('btn-medium')
-  btn_medium?.classList.add('hidden')
-
-  console.log('expand menu') // hideExpand()
+  //   const main_container = document.getElementById('main-container')
+  //   main_container?.classList.add('z-[30]')
+  //
+  //   isMedium.value = true
+  //   const btn_medium = document.getElementById('btn-medium')
+  //   btn_medium?.classList.add('hidden')
+  //
+  //   console.log('expand menu') // hideExpand()
 }
 </script>
 
@@ -744,7 +747,9 @@ const expandMenuMedium = () => {
 
       <div class="py-10 lg:py-14">
         <!-- Title -->
-        <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
+        <div
+          class="sticky top-0 z-10 backdrop-blur max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center"
+        >
           <div class="flex justify-center items-center">
             <img class="h-14 w-14 rounded-full" src="@/assets/imgs/chatbot.png" />
 
