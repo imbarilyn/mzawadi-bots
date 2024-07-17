@@ -710,8 +710,7 @@ const expandMenuMedium = () => {
   hideExpand()
   const sidebar = document.getElementById('application-sidebar')
   sidebar?.classList.remove('hidden')
-  const main_container = document.getElementById('main-container')
-  main_container?.classList.add('z-[30]')
+  chatBotStore.setIsMedium(true)
 
   isMedium.value = true
   const btn_medium = document.getElementById('btn-medium')
