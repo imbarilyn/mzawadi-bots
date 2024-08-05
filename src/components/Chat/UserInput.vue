@@ -957,6 +957,15 @@ function transcribeWithOpenAI(audioAsBlob: Blob) {
 //   draw();
 // };
 
+const isDelete = ref<boolean>(false)
+const showPhotoDelete = (value: boolean) => {
+  isDelete.value = value
+}
+
+const deletePhoto = () => {
+  isImage.value = false
+}
+
 onMounted(() => {
   // if(!micPulse.value) return
   micPulse.value = document.getElementById('micPulse')
