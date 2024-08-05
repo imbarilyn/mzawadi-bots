@@ -1059,6 +1059,28 @@ onUnmounted(() => {
             </button>
             <!-- End Pause Button -->
 
+            <!--            add photo-->
+
+            <input
+              id="file-img"
+              ref="photoRef"
+              accept=".jpeg,.jpg,.png,.gif,.webp"
+              class="hidden"
+              type="file"
+              @change="onPhotoChange"
+            />
+            <!--            <button-->
+            <!--              class="btn btn-sm btn-ghost btn-circle normal-case flex items-center justify-center"-->
+            <!--              @click.prevent="uploadImg"-->
+            <!--            >-->
+            <!--              <span class="material-icons-outlined"> camera_alt </span>-->
+            <!--            </button>-->
+            <button
+              class="btn btn-sm btn-ghost btn-circle normal-case flex items-center justify-center"
+              @click="openPhotoModal"
+            >
+              <span class="material-icons-outlined"> camera_alt </span>
+            </button>
             <!-- Send Button -->
             <button
               :disabled="props.isGenerating || (!hasText && !hasAudioRecording)"
