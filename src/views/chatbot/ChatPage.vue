@@ -283,6 +283,18 @@ const groupChatbyMonth = () => {
         </template>
       </Transition>
     </RouterView>
+    <ToastContainer v-if="notificationsStore.hasNotifications">
+      <!--        <ToastAlert text="Page name is required" type="error" id=""/>-->
+      <template v-for="notification in notificationsStore.getNotifications" :key="notification.id">
+        <ToastAlert
+          v-if="notification.id && notification.isShown"
+          :id="notification.id"
+          :is-shown="notification.isShown"
+          :message="notification.message"
+          :type="notification.type"
+        />
+      </template>
+    </ToastContainer>
   </div>
 </template>
 
