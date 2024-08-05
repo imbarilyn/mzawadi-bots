@@ -1495,7 +1495,8 @@ const moreSetting = () => {
 .sidebar-con {
   height: calc(100% - 3.5rem);
 }
-.underline{
-  border-bottom: 2px solid #3B82F6;
+
+.underline {
+  border-bottom: 2px solid #3b82f6;
 }
 </style>
