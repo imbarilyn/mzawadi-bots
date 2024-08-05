@@ -3,6 +3,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useNotificationsStore } from '../notifications'
+import type { CapturedImageItem } from '@/views/chatbot/ChatPage.vue'
 
 // const BASE_URL = import.meta.env.VITE_API_URL as string;
 
@@ -44,6 +45,12 @@ export const useChatbotStore = defineStore('chatbot', () => {
   const activeHistory = ref<number>()
   const reloadNeChat = ref<boolean>(false)
   const isMedium = ref<boolean>(false)
+  const openPhoto = ref({
+    isOpen: false
+  })
+  const isFile = ref<boolean>(false)
+  const cameraModalIsOpen = ref<boolean>(false)
+  const capturedImages = ref<CapturedImageItem[]>([])
 
   // getters
 
@@ -60,6 +67,21 @@ export const useChatbotStore = defineStore('chatbot', () => {
     return stringArray.value[stringArray.value.length - 1]
   })
 
+  const openCameraModal = (value: boolean) => {
+    cameraModalIsOpen.value = value
+  }
+
+  const openFileDialog = () => {
+    return (isFile.value = true)
+  }
+
+  const openPhotoDialog = () => {
+    openPhoto.value.isOpen = true
+  }
+
+  const closePhotoDialog = () => {
+    openPhoto.value.isOpen = false
+  }
   const getActiveHistory = computed(() => {
     return activeHistory.value
   })
@@ -300,6 +322,14 @@ export const useChatbotStore = defineStore('chatbot', () => {
     setNewChatButton,
     reloadNeChat,
     setIsMedium,
-    isMedium
+    isMedium,
+    openPhoto,
+    openPhotoDialog,
+    closePhotoDialog,
+    isFile,
+    openFileDialog,
+    openCameraModal,
+    cameraModalIsOpen,
+    capturedImages
   }
 })
