@@ -13,6 +13,7 @@ import {
 import DOMPurify from 'dompurify'
 // import RecordRtc from "recordrtc";
 import { useNotificationsStore } from '@/stores/notifications'
+import { useChatbotStore } from '@/stores/chatbot'
 
 interface UserInputProps {
   userInput: string
@@ -25,7 +26,6 @@ interface UserInputProps {
 }
 
 const props = defineProps<UserInputProps>()
-
 const notificationsStore = useNotificationsStore()
 
 const userInput = ref<string>(props.userInput)
