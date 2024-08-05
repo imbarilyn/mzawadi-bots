@@ -4,8 +4,65 @@ import anime from 'animejs'
 import MyListBox from '../../components/form/MyListBox.vue'
 import { type PageContent, usePageContentStore } from '@/stores/admin/page-data'
 import { useField } from 'vee-validate'
-import { useAdminHomeStore } from '@/stores/admin/home'
-import { useRouter} from 'vue-router'
+import { type dataContext, useAdminHomeStore } from '@/stores/admin/home'
+import { useNotificationsStore } from '@/stores/notifications'
+import { useRouter } from 'vue-router'
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
+
+const chatbotContext = [{ name: 'Openai & Documents' }, { name: 'Documents' }]
+const selectedContext = ref(chatbotContext[0])
+const isContextSelected = ref<boolean>(false)
+const pageContentStore = usePageContentStore()
+const adminHomeStore = useAdminHomeStore()
+const homeStore = useAdminHomeStore()
+const notification = useNotificationsStore()
+const chatbotContextPayload = ref<dataContext[]>([])
+const contextIsLoading = ref<boolean>(false)
+
+watch(
+  () => selectedContext.value,
+  (value) => {
+    isContextSelected.value = true
+    console.log(selectedContext.value.name, props.currentPage.name)
+  }
+)
+
+const addContext = () => {
+  contextIsLoading.value = true
+
+  if (selectedContext.value.name === 'openai & Documents') {
+    chatbotContextPayload.value.push({
+      pageSlug: props.currentPage.name,
+      dataLimit: false
+    })
+  } else {
+    chatbotContextPayload.value.push({
+      pageSlug: props.currentPage.name,
+      dataLimit: true
+    })
+  }
+  chatbotContextPayload.value.map((value) => {
+    adminHomeStore
+      .dataLimit(value)
+      .then((resp) => {
+        if (resp.result === 'ok') {
+          notification.addNotification('chatbot context added suuccesfully', 'success')
+        } else {
+          notification.addNotification('Failed to add chatbot context', 'error')
+        }
+      })
+      .catch((err: Error) => {
+        console.log('error:', err)
+        notification.addNotification('Failed to add chatbot context, please try again', 'error')
+      })
+      .finally(() => {
+        setTimeout(() => {
+          contextIsLoading.value = false
+        }, 1000)
+      })
+  })
+}
 
 // interface PageContent {
 //   pageId: string
@@ -48,10 +105,6 @@ interface Option {
 }
 
 const props = defineProps<SidebarDataProps>()
-
-const pageContentStore = usePageContentStore()
-const adminHomeStore = useAdminHomeStore()
-const homeStore = useAdminHomeStore()
 
 const activePageContentItem = ref<PageContent>(props.pageContent)
 
@@ -849,7 +902,7 @@ const onAddUrl = () => {
   // add url links to the chatbot
 }
 
-const router = useRouter();
+const router = useRouter()
 
 const moreSetting = () => {
   router.push({
@@ -864,7 +917,7 @@ const moreSetting = () => {
   <div
     v-if="props.isOpen"
     aria-hidden="true"
-    class=" absolute inset-0 z-30 bg-black bg-opacity-10 cursor-pointer"
+    class="absolute inset-0 z-30 bg-black bg-opacity-10 cursor-pointer"
     @click="emit('close-sidebar-data')"
     @keyup.esc="emit('close-sidebar-data')"
   ></div>
@@ -883,9 +936,8 @@ const moreSetting = () => {
           class="tab tab-bordered grow h-8 sm:h-10 md:h-12 lg:h-14"
           role="presentation"
           @click="toggleTab(<string>tab.value)"
-
         >
-          <p :class="{'text-blue-500': activeSidebarDataTab === tab.value}">{{ tab.name }}</p>
+          <p :class="{ 'text-blue-500': activeSidebarDataTab === tab.value }">{{ tab.name }}</p>
         </li>
       </ul>
 
@@ -1011,8 +1063,8 @@ const moreSetting = () => {
             id="content-tab"
             ref="contentRef"
             aria-labelledby="tabs-profile-tab02"
-            role="tabpanel"
             class="px-5 grow h-full"
+            role="tabpanel"
           >
             <!--          <div-->
             <!--            v-else-if="activeSidebarDataTab === 'content'"-->
@@ -1335,22 +1387,93 @@ const moreSetting = () => {
                 </button>
               </div>
               <hr class="my-3 h-0.5" />
-<!--              <div class="flex flex-col rounded bg-slate-200 p-3">-->
-<!--                <p class="text-sm">-->
-<!--                  Click on the below link to add url for your chatbot to add on the data, it can be-->
-<!--                  link to your website for example-->
-<!--                </p>-->
-<!--                <button-->
-<!--                  :disabled="!imgUploadBtnEnabled"-->
-<!--                  class="btn btn-primary btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm w-full"-->
-<!--                  @click="onAddUrl"-->
-<!--                >-->
-<!--                  Add Url-->
-<!--                </button>-->
-<!--              </div>-->
-              <button @click="moreSetting" type="button" class="btn bg-blue-500 hover:bg-blue-400 w-[120px]">more</button>
-            </div>
+              <!--              <div class="flex flex-col rounded bg-slate-200 p-3">-->
+              <!--                <p class="text-sm">-->
+              <!--                  Click on the below link to add url for your chatbot to add on the data, it can be-->
+              <!--                  link to your website for example-->
+              <!--                </p>-->
+              <!--                <button-->
+              <!--                  :disabled="!imgUploadBtnEnabled"-->
+              <!--                  class="btn btn-primary btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm w-full"-->
+              <!--                  @click="onAddUrl"-->
+              <!--                >-->
+              <!--                  Add Url-->
+              <!--                </button>-->
+              <!--              </div>-->
 
+              <div class="w-72">
+                <span class="text-sm mb-4">Select the span of chatbot context</span>
+                <Listbox v-model="selectedContext">
+                  <div class="relative">
+                    <ListboxButton
+                      class="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+                    >
+                      <span class="block truncate">{{ selectedContext.name }}</span>
+                      <span
+                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                      >
+                        <ChevronUpDownIcon aria-hidden="true" class="h-5 w-5 text-gray-400" />
+                      </span>
+                    </ListboxButton>
+
+                    <transition
+                      leave-active-class="transition duration-100 ease-in"
+                      leave-from-class="opacity-100"
+                      leave-to-class="opacity-0"
+                    >
+                      <ListboxOptions
+                        class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+                      >
+                        <ListboxOption
+                          v-for="context in chatbotContext"
+                          :key="context.name"
+                          v-slot="{ active, selected }"
+                          :value="context"
+                          as="template"
+                        >
+                          <li
+                            :class="[
+                              active ? 'bg-sky-100 text-sky-900' : 'text-gray-900',
+                              'relative cursor-default select-none py-2 pl-10 pr-4'
+                            ]"
+                          >
+                            <span
+                              :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']"
+                              >{{ context.name }}</span
+                            >
+                            <span
+                              v-if="selected"
+                              class="absolute inset-y-0 left-0 flex items-center pl-3 text-sky-600"
+                            >
+                              <CheckIcon aria-hidden="true" class="h-5 w-5" />
+                            </span>
+                          </li>
+                        </ListboxOption>
+                      </ListboxOptions>
+                    </transition>
+                  </div>
+                </Listbox>
+                <button
+                  :disabled="!isContextSelected"
+                  class="btn btn-sm mt-3 bg-blue-200 text-sm font-normal"
+                  @click="addContext"
+                >
+                  <span
+                    v-if="contextIsLoading"
+                    className="loading loading-spinner loading-md"
+                  ></span>
+                  <span v-else>Add context</span>
+                </button>
+              </div>
+              <hr class="my-3 h-0.5" />
+              <button
+                class="btn btn-sm bg-blue-200 hover:bg-blue-400"
+                type="button"
+                @click="moreSetting"
+              >
+                more
+              </button>
+            </div>
           </div>
         </Transition>
       </div>
