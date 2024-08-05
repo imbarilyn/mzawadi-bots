@@ -15,6 +15,7 @@ import ChatbotBubble from '../../components/Chat/ChatbotBubble.vue'
 import LoadingOverlay from '../../components/LoadingOverlay.vue'
 import DialogModal from '@/components/DialogModal.vue'
 import { useChatbotStore } from '@/stores/chatbot'
+import type { CapturedImageItem } from '@/views/chatbot/ChatPage.vue'
 
 interface ChatbotPageProps {
   cbName: string
@@ -117,7 +118,6 @@ const pageContent = ref<PageContent | null>(null)
 const chatbotName = ref<string>('')
 const promptPlaceholder = ref<string>('')
 const staticGreeting = ref<string>('')
-const currentYear = new Date().getFullYear()
 // const iconImg = pageContent.value?.iconName
 // const imgUrl = `${import.meta.env.VITE_IMG_BASE_URL}/${iconImg}`
 
@@ -280,6 +280,7 @@ const userInputContainerHeightRef = ref<HTMLDivElement | null>()
 const conversation = ref<Ref<Conversation>[]>([])
 const aiResponses = ref<string[]>([])
 const isGeneratingResponse = ref(false)
+const openPhotoDialog = ref(false)
 
 // create sample conversations from the sample data
 
@@ -857,6 +858,7 @@ const closePhotoDialog = () => {
                   :prompt-placeholder="promptPlaceholder"
                   :ring-color="inputRingColor"
                   user-input=""
+                  @openPhotoModal="openPhotoModal"
                   @userInput="handleUserInput"
                 />
               </div>
@@ -888,6 +890,33 @@ const closePhotoDialog = () => {
               <button class="btn bg-emerald-100 me-5" @click="logOut">Sign Out</button>
               <button class="btn bg-emerald-400 w-[200px]" @click="homeStore.closeSignOutDialog()">
                 Cancel
+              </button>
+            </div>
+          </template>
+        </DialogModal>
+        <DialogModal
+          :is-open="chatBotStore.openPhoto.isOpen"
+          @closeModal="chatBotStore.closePhotoDialog()"
+        >
+          <template #title>
+            <div class="w-full flex justify-end">
+              <button class="btn btn-sm btn-circle" @click="closePhotoDialog">
+                <span class="material-icons-outlined"> clear </span>
+              </button>
+            </div>
+          </template>
+          <template #body>
+            <h1 class="font-semibold text-normal text-center">Upload a file or take a photo</h1>
+          </template>
+
+          <template #footer>
+            <div class="flex justify-center">
+              <button class="btn btn-sm bg-emerald-300" @click="openFileDialog">Upload</button>
+              <button
+                class="btn btn-sm bg-emerald-300 ms-2"
+                @click="chatBotStore.openCameraModal(true)"
+              >
+                Take Photo
               </button>
             </div>
           </template>
