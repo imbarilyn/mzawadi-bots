@@ -22,6 +22,11 @@ interface Products {
   pageId: string
 }
 
+export interface dataContext {
+  pageSlug: string
+  dataLimit: boolean
+}
+
 export const useAdminHomeStore = defineStore('adminHomeStore', () => {
   // state
 
@@ -234,6 +239,30 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
 
       // enable the create button
       enabledCreateDialogBtn.value = true
+    }
+  }
+
+
+  // dataLimit context
+  async function dataLimit (dataContext: dataContext ){
+    const notification = useNotificationsStore()
+    console.log(dataContext)
+    
+    try{
+      const response  = await fetch(`${BASE_URL}/data/get-content-limit/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json' 
+        },
+        mode: 'cors',
+        body: JSON.stringify(dataContext)
+      })
+      const res = await response.json();
+      return res
+    }
+    catch(error){
+      console.log(error)
+      // notification.addNotification('Failed to add chatbot context, please try again', 'error')
     }
   }
 
@@ -465,6 +494,7 @@ export const useAdminHomeStore = defineStore('adminHomeStore', () => {
     closeLinkDialog,
     linkDialog,
     signOutDialog,
-    closeSignOutDialog
+    closeSignOutDialog,
+    dataLimit
   }
 })
