@@ -706,6 +706,21 @@ const expandMenuMedium = () => {
   //
   //   console.log('expand menu') // hideExpand()
 }
+
+const openPhotoModal = () => {
+  console.log('Open Photo Dialog')
+  chatBotStore.openPhotoDialog()
+}
+
+const openFileDialog = () => {
+  console.log('upload File', chatBotStore.isFile)
+  chatBotStore.openFileDialog()
+}
+
+const closePhotoDialog = () => {
+  chatBotStore.closePhotoDialog()
+  chatBotStore.isFile = false
+}
 </script>
 
 <template>
