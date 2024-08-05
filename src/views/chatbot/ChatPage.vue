@@ -7,10 +7,18 @@ import { useAuthStore } from '@/stores/auth'
 import { useNotificationsStore } from '@/stores/notifications'
 import { useRouter } from 'vue-router'
 import moment from 'moment'
+import ToastContainer from '@/views/Admin/toasts/ToastContainer.vue'
+import ToastAlert from '@/views/Admin/toasts/ToastAlert.vue'
+import CameraModal from '@/views/Admin/toasts/CameraModal.vue'
+
+export interface CapturedImageItem {
+  imgDataUrl: string
+  timestamp: number
+}
 
 const homeStore = useAdminHomeStore()
 const authStore = useAuthStore()
-const notification = useNotificationsStore()
+const notificationsStore = useNotificationsStore()
 const router = useRouter()
 const currentYear = new Date().getFullYear()
 const hideSetting = () => {
@@ -152,11 +160,43 @@ const groupChatbyMonth = () => {
   )
   return grouped
 }
+// const capturedImages = ref<CapturedImageItem[]>([])
+
+const onCapture = (capturedImageItem: CapturedImageItem) => {
+  chatBotStore.capturedImages.splice(0, 1)
+  if (getImageSize(capturedImageItem) > 20) {
+    setTimeout(() => {
+      notificationsStore.addNotification('Image size should be less than 20MB', 'error')
+    }, 500)
+    return
+  } else {
+    console.log('captured before', chatBotStore.capturedImages)
+    chatBotStore.capturedImages.push(capturedImageItem)
+    console.log('captured after', chatBotStore.capturedImages)
+    // console.log(chatBotStore.capturedImages.pop()?.imgDataUrl)
+  }
+}
+
+function getImageSize(image: CapturedImageItem) {
+  const base64String = image.imgDataUrl.replace(/^data:image\/\w+;base64,/, '')
+  const binaryString = atob(base64String)
+  const bytes = binaryString.length
+  console.log(bytes)
+  return bytes / (1024 * 1024)
+}
 </script>
 
 <template>
   <div class="chat-page relative flex min-h-full">
+    <CameraModal
+      v-if="chatBotStore.cameraModalIsOpen"
+      :img-count="chatBotStore.capturedImages.length"
+      :is-open="chatBotStore.cameraModalIsOpen"
+      @closeModal="chatBotStore.openCameraModal(false)"
+      @capture-image="onCapture"
+    />
     <div
+      v-else
       id="application-sidebar"
       :class="{ 'w-[70px]': chatBotStore.collapse }"
       class="hs-overlay duration-500 inset-y-0 fixed left-0 transform hidden top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 lg:block lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
