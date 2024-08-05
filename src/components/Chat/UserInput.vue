@@ -39,6 +39,71 @@ const formattedUserInput = computed(() => {
   return purifiedBreak
 })
 
+const photoRef = ref<HTMLImageElement | null>(null)
+
+// open the file dialog modal
+const uploadImg = () => {
+  photoRef.value?.click()
+}
+
+const chatbotStore = useChatbotStore()
+
+watch(
+  () => chatbotStore.isFile,
+  (value) => {
+    if (value) {
+      uploadImg()
+      chatbotStore.closePhotoDialog()
+      chatbotStore.isFile = false
+    } else {
+      return
+    }
+  }
+)
+
+const isImage = ref<boolean>(false)
+const onPhotoChange = (e: Event) => {
+  chatbotStore.capturedImages.splice(0, 1)
+  const target = e.target as HTMLInputElement
+  const files: any = target.files as FileList
+  // console.log(typeof files)
+  // console.log(files.item(0))
+  const ImgSize = files.item(0).size / (1024 * 1024)
+  if (files.length > 0 && ImgSize < 20) {
+    isImage.value = true
+    const file = files[0]
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      if (e.target) {
+        const img = e.target as FileReader
+        // console.log(img.result)
+        const image_url = img.result as string
+        console.log(image_url)
+        console.log(typeof file.lastModified)
+        // const image_upload: any = document.getElementById('image-upload')
+        // image_upload.src = img.result as string
+        chatbotStore.capturedImages.push({
+          imgDataUrl: image_url,
+          timestamp: file.lastModified
+        })
+        console.log(chatbotStore.capturedImages)
+      }
+    }
+    reader.onerror = (e) => {
+      console.log(`Error reading ${file.name}`, e.target?.error)
+      setTimeout(() => {
+        notificationsStore.addNotification('Error loading image', 'error')
+      }, 500)
+    }
+    reader.readAsDataURL(file)
+  } else {
+    console.log('file size is too large')
+    setTimeout(() => {
+      notificationsStore.addNotification('Image size should be less than 20MB', 'error')
+    }, 500)
+  }
+}
+
 const hasText = computed(() => {
   return userInput.value.length > 0 && userInput.value.trim().length > 0
 })
