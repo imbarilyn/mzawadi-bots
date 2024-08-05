@@ -989,17 +989,44 @@ onUnmounted(() => {
     class="relative text-sm border-2 border-emerald-200 bg-white rounded-xl shadow-lg shadow-slate-300/10 flex flex-row items-center m-0 p-4 pb-14"
     @click.stop="addFocus"
   >
-    <textarea
-      ref="textareaRef"
-      v-model="userInput"
-      :disabled="props.disabled || micIsListening"
-      :placeholder="promptPlaceholderText"
-      class="w-full border-none resize-none focus:outline-none bg-transparent h-6 text-sm grow transition duration-150 my-1.5 bottom-0"
-      rows="1"
-      @blur="inputHasFocus = false"
-      @focus="inputHasFocus = true"
-      @keydown="onTextAreaKeydown"
-    ></textarea>
+    <div class="w-full">
+      <div>
+        <textarea
+          ref="textareaRef"
+          v-model="userInput"
+          :disabled="props.disabled || micIsListening"
+          :placeholder="promptPlaceholderText"
+          class="w-full border-none resize-none focus:outline-none bg-transparent h-6 text-sm grow transition duration-150 my-1.5 bottom-0"
+          @blur="inputHasFocus = false"
+          @focus="inputHasFocus = true"
+          @keydown="onTextAreaKeydown"
+        ></textarea>
+      </div>
+
+      <div
+        v-if="isImage"
+        class="flex relative w-20 shadow-2xl pt-4"
+        @mouseleave="showPhotoDelete(false)"
+        @mouseover="showPhotoDelete(true)"
+      >
+        <div v-for="image in chatbotStore.capturedImages" :key="image.timestamp">
+          <img
+            id="image-upload"
+            :src="image.imgDataUrl"
+            alt="Uploaded image"
+            class="h-20 w-20 rounded-lg outline outline-offset-2 outline-4 outline-gray-200"
+          />
+        </div>
+        <button
+          v-if="isDelete"
+          id="delete-image"
+          class="btn btn-sm btn-circle absolute left-6 top-10 bg-gray-400 hover:bg-gray-400"
+          @click="deletePhoto"
+        >
+          <span class="material-icons-outlined text-gray-300"> clear </span>
+        </button>
+      </div>
+    </div>
 
     <Transition name="slide-fade-y">
       <button
