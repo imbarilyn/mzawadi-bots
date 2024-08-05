@@ -140,6 +140,7 @@ const emits = defineEmits<{
       // audio: Audio,
     }
   ): void
+  (event: 'openPhotoModal'): void
 }>()
 
 const onTextAreaKeydown = (e: KeyboardEvent) => {
@@ -211,6 +212,9 @@ const sendButtonClicked = (audioData?: {
   adjustTextareaHeight(textareaRef.value as HTMLTextAreaElement)
 }
 
+const openPhotoModal = () => {
+  emits('openPhotoModal')
+}
 const addFocus = () => {
   if (inputHasFocus.value || props.disabled) {
     return
