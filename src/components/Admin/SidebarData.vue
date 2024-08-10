@@ -1458,10 +1458,7 @@ const moreSetting = () => {
                   class="btn btn-sm mt-3 bg-blue-200 text-sm font-normal"
                   @click="addContext"
                 >
-                  <span
-                    v-if="contextIsLoading"
-                    className="loading loading-spinner loading-md"
-                  ></span>
+                  <span v-if="contextIsLoading" class="loading loading-spinner loading-md"></span>
                   <span v-else>Add context</span>
                 </button>
               </div>
