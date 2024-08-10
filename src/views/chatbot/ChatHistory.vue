@@ -30,9 +30,57 @@ const sesh_id = ref('')
 const chatbotImg = ref('')
 
 // mesRes declaration
-// step 1
+// step 1="plan.duration"
+
+const props = withDefaults(defineProps<ChatbotPageProps>(), {
+  cbName: 'Mzawadi',
+  convId: '1'
+})
 
 const mesRes = ref('')
+chatBotStore
+  .getConversationHistory(props.cbName, authStore.getMemberData.phoneNo)
+  .then((response) => {
+    if (response.result === 'ok') {
+      chatBotStore.chatHistoryArray = response.data
+      console.log(typeof chatBotStore.chatHistoryArray[0].Id)
+      console.log(chatBotStore.chatHistoryArray)
+    }
+  })
+// on refreshing
+const chatUser: any = authStore.getUserDetails()
+console.log(chatUser)
+
+// trying to get conversationId guess what for chatting to happen
+const conversationIdTrigger = ref<boolean>(false)
+console.log(chatUser.value)
+chatBotStore
+  .getConvId({
+    userName: chatUser.fullNames,
+    phoneNo: chatUser.phoneNo,
+    memberNo: chatUser.memberNo,
+    pageSlug: chatUser.pageSlug
+  })
+  .then((response) => {
+    if (response.conversationId) {
+      sesh_id.value = response.conversationId
+      console.log('Coversation-Id', response.conversationId)
+      console.log(sesh_id.value)
+      notificationsStore.addNotification('The chat bot is ready', 'success')
+    } else {
+      notificationsStore.addNotification('The chat bot is not ready, kindly reload', 'error')
+      setTimeout(() => {
+        conversationIdTrigger.value = true
+      }, 1000)
+    }
+  })
+  .catch((err) => {
+    console.log(err)
+    return
+  })
+  .finally(() => {
+    conversationIdTrigger.value = false
+  })
 
 //establish connections with socket io
 const socket = io('wss://botsockets.mzawadi.com/', {
@@ -42,12 +90,6 @@ const socket = io('wss://botsockets.mzawadi.com/', {
   reconnectionDelayMax: 5000
   // timeout: 20000,
 })
-
-const props = withDefaults(defineProps<ChatbotPageProps>(), {
-  cbName: 'Mzawadi',
-  convId: '1'
-})
-
 const emits = defineEmits<{
   (event: 'pgSlug', value: string): void
 }>()
@@ -67,11 +109,11 @@ socket.on('connect', () => {
 })
 //getting session id for established session
 
-socket.on('set_conv_id', (sesh) => {
-  console.log('Coversation-Id', sesh)
-  sesh_id.value = sesh.conversationId
-  console.log(sesh_id.value)
-})
+// socket.on('set_conv_id', (sesh) => {
+//   console.log('Coversation-Id', sesh)
+//   sesh_id.value = sesh.conversationId
+//   console.log(sesh_id.value)
+// })
 
 chatBotStore
   .getConversationHistory(props.cbName, authStore.getMemberData.phoneNo)
@@ -81,17 +123,6 @@ chatBotStore
       console.log(chatBotStore.chatHistoryArray)
     }
   })
-// on refreshing
-console.log('At chat history')
-const chatUser: any = authStore.getUserDetails()
-console.log(chatUser)
-socket.emit('get_conv_id', {
-  userName: chatUser.fullNames,
-  phoneNo: chatUser.phoneNo,
-  pageSlug: chatUser.pageSlug,
-  memberNo: chatUser.memberNo
-})
-
 const confirmSignOut = () => {
   homeStore.signOutDialog.isOpen = true
 }
@@ -721,6 +752,29 @@ const expandMenuMedium = () => {
   //
   //   console.log('expand menu') // hideExpand()
 }
+const openPhotoModal = () => {
+  console.log('Open Photo Dialog')
+  chatBotStore.openPhotoDialog()
+}
+
+const openFileDialog = () => {
+  console.log('upload File', chatBotStore.isFile)
+  chatBotStore.openFileDialog()
+}
+
+const closePhotoDialog = () => {
+  chatBotStore.closePhotoDialog()
+  chatBotStore.isFile = false
+}
+
+const closeConversationIdDialog = () => {
+  conversationIdTrigger.value = false
+}
+
+const reloadPage = () => {
+  chatBotStore.reloadForConvesationId()
+  closeConversationIdDialog()
+}
 </script>
 
 <template>
@@ -859,6 +913,7 @@ const expandMenuMedium = () => {
                 :prompt-placeholder="promptPlaceholder"
                 :ring-color="inputRingColor"
                 user-input=""
+                @openPhotoModal="openPhotoModal"
                 @userInput="handleUserInput"
               />
             </div>
@@ -890,6 +945,56 @@ const expandMenuMedium = () => {
             <button class="btn bg-emerald-100 me-5" @click="logOut">Sign Out</button>
             <button class="btn bg-emerald-400 w-[200px]" @click="homeStore.closeSignOutDialog()">
               Cancel
+            </button>
+          </div>
+        </template>
+      </DialogModal>
+
+      <DialogModal
+        :is-open="chatBotStore.openPhoto.isOpen"
+        @closeModal="chatBotStore.closePhotoDialog()"
+      >
+        <template #title>
+          <div class="w-full flex justify-end">
+            <button class="btn btn-sm btn-circle" @click="closePhotoDialog">
+              <span class="material-icons-outlined"> clear </span>
+            </button>
+          </div>
+        </template>
+        <template #body>
+          <h1 class="font-semibold text-normal text-center">Upload a file or take a photo</h1>
+        </template>
+
+        <template #footer>
+          <div class="flex justify-center">
+            <button class="btn btn-sm bg-emerald-300" @click="openFileDialog">Upload</button>
+            <button class="btn btn-sm bg-emerald-300 ms-2">Take Photo</button>
+          </div>
+        </template>
+      </DialogModal>
+      <DialogModal :is-open="conversationIdTrigger" @closeModal="closeConversationIdDialog">
+        <template #title>
+          <div class="w-full flex justify-end">
+            <button class="btn btn-sm btn-ghost btn-circle" @click="closeConversationIdDialog">
+              <span class="material-icons-outlined">close</span>
+            </button>
+          </div>
+          <div class="flex justify-center">
+            <span class="material-icons-outlined !text-6xl pb-2">&#x1F622;</span>
+          </div>
+        </template>
+        <template #body>
+          <div class="flex justify-center">
+            <h1 class="text-xl font-bold">Oh no! The chatbot is not ready</h1>
+          </div>
+          <div class="flex justify-center">
+            <p class="text-lg font-semibold">Kindly refresh</p>
+          </div>
+        </template>
+        <template #footer>
+          <div class="flex justify-center">
+            <button class="btn btn-primary btn-sm px-6" @click="reloadPage">
+              <span class="material-icons-outlined text-white">refresh</span>
             </button>
           </div>
         </template>
