@@ -13,6 +13,13 @@ const BASE_URL = 'http://192.168.100.12:5001'
 const BOT_URL = import.meta.env.VITE_API_URL as string
 const pgSlug = ref('')
 
+export interface convIdPayload {
+  userName: string
+  phoneNo: string
+  memberNo?: string
+  pageSlug: string
+}
+
 export const useChatbotStore = defineStore('chatbot', () => {
   // state
 
