@@ -65,13 +65,6 @@ socket.on('connect_error', (error) => {
 socket.on('connect', () => {
   console.log('connected!')
 })
-//getting session id for established session
-
-socket.on('set_conv_id', (sesh) => {
-  console.log('Coversation-Id', sesh)
-  sesh_id.value = sesh.conversationId
-  console.log(sesh_id.value)
-})
 
 chatBotStore
   .getConversationHistory(props.cbName, authStore.getMemberData.phoneNo)
@@ -85,16 +78,42 @@ chatBotStore
 // on refreshing
 const chatUser: any = authStore.getUserDetails()
 console.log(chatUser)
-socket.emit('get_conv_id', {
-  userName: chatUser.fullNames,
-  phoneNo: chatUser.phoneNo,
-  pageSlug: chatUser.pageSlug,
-  memberNo: chatUser.memberNo
-})
 
-const confirmSignOut = () => {
-  homeStore.signOutDialog.isOpen = true
-}
+// trying to get conversationId guess what for chatting to happen
+const conversationIdTrigger = ref<boolean>(false)
+console.log(chatUser.value)
+chatBotStore
+  .getConvId({
+    userName: chatUser.fullNames,
+    phoneNo: chatUser.phoneNo,
+    memberNo: chatUser.memberNo,
+    pageSlug: chatUser.pageSlug
+  })
+  .then((response) => {
+    if (response.conversationId) {
+      sesh_id.value = response.conversationId
+      console.log('Coversation-Id', response.conversationId)
+      console.log(sesh_id.value)
+      notificationsStore.addNotification('The chat bot is ready', 'success')
+    } else {
+      notificationsStore.addNotification('The chat bot is not ready, kindly reload', 'error')
+      setTimeout(() => {
+        conversationIdTrigger.value = true
+      }, 1000)
+    }
+  })
+  .catch((err) => {
+    console.log(err)
+    return
+  })
+  .finally(() => {
+    conversationIdTrigger.value = false
+  })
+
+//
+// const confirmSignOut = () => {
+//   homeStore.signOutDialog.isOpen = true
+// }
 
 const logOut = () => {
   if (authStore.userRole === 'user') {
@@ -722,6 +741,15 @@ const closePhotoDialog = () => {
   chatBotStore.closePhotoDialog()
   chatBotStore.isFile = false
 }
+
+const closeConversationIdDialog = () => {
+  conversationIdTrigger.value = false
+}
+
+const reloadPage = () => {
+  chatBotStore.reloadForConvesationId()
+  closeConversationIdDialog()
+}
 </script>
 
 <template>
@@ -748,7 +776,9 @@ const closePhotoDialog = () => {
       <div>
         <div class="py-10 lg:py-14">
           <!-- Title -->
-          <div class="sticky top-0 z-10 max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
+          <div
+            class="sticky top-0 backdrop-blur z-10 max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center"
+          >
             <div class="flex justify-center items-center">
               <img class="h-14 w-14 rounded-full" src="@/assets/imgs/chatbot.png" />
 
@@ -917,6 +947,33 @@ const closePhotoDialog = () => {
                 @click="chatBotStore.openCameraModal(true)"
               >
                 Take Photo
+              </button>
+            </div>
+          </template>
+        </DialogModal>
+        <DialogModal :is-open="conversationIdTrigger" @closeModal="closeConversationIdDialog">
+          <template #title>
+            <div class="w-full flex justify-end">
+              <button class="btn btn-sm btn-ghost btn-circle" @click="closeConversationIdDialog">
+                <span class="material-icons-outlined">close</span>
+              </button>
+            </div>
+            <div class="flex justify-center">
+              <span class="material-icons-outlined !text-6xl pb-2">&#x1F622;</span>
+            </div>
+          </template>
+          <template #body>
+            <div class="flex justify-center">
+              <h1 class="text-xl font-bold">Oh no! The chatbot is not ready</h1>
+            </div>
+            <div class="flex justify-center">
+              <p class="text-lg font-semibold">Kindly refresh</p>
+            </div>
+          </template>
+          <template #footer>
+            <div class="flex justify-center">
+              <button class="btn btn-primary btn-sm px-6" @click="reloadPage">
+                <span class="material-icons-outlined text-white">refresh</span>
               </button>
             </div>
           </template>
