@@ -364,6 +364,8 @@ export const useChatbotStore = defineStore('chatbot', () => {
     openFileDialog,
     openCameraModal,
     cameraModalIsOpen,
-    capturedImages
+    capturedImages,
+    getConvId,
+    reloadForConvesationId
   }
 })
