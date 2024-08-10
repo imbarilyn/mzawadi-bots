@@ -308,6 +308,33 @@ export const useChatbotStore = defineStore('chatbot', () => {
     }
   }
 
+  async function getConvId(convIdPayload: convIdPayload) {
+    console.log(convIdPayload)
+    try {
+      const response = await fetch(`${BOT_URL}/data/get-conversation-id/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify(convIdPayload)
+      })
+      const resp = await response.json()
+      if (resp.conversationId) {
+        return resp
+      } else {
+        return
+      }
+    } catch (err) {
+      console.log(err)
+      // notification.addNotification('There is an error fetching conversation id', 'error')
+    }
+  }
+
+  const reloadForConvesationId = () => {
+    window.location.reload()
+  }
+
   return {
     stringArray,
     responseString,
