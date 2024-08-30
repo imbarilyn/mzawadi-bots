@@ -1,17 +1,22 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import {computed, onMounted, ref} from 'vue'
 
 interface UserBubbleProps {
   userName: string
   userMessage: string
+  userBubbleBg: string
+  themeName: string
   audioData?: {
     audioUrl: string
     audioBlob: Blob
   }
   chatTextColor?: string
+
 }
 
+
 const props = defineProps<UserBubbleProps>()
+console.log(props.chatTextColor)
 
 const hasAudio = computed(() => {
   return props.audioData !== undefined
@@ -68,21 +73,24 @@ const pauseAudio = () => {
           <!--            <span class="text-white text-lg font-poppins-semi-bold">YOU</span>-->
           <!--          </div>-->
           <div
-            class="flex-shrink-0 w-10 space h-10 rounded-full bg-secondary inline-flex items-center justify-center"
+              class="flex-shrink-0 w-10 space h-10 rounded-full bg-secondary inline-flex items-center justify-center"
           >
             <span class="text-lg font-poppins-semi-bold text-white leading-none">ME</span>
           </div>
 
           <div
-            class="flex flex-col mt-10 space-y-3 text-sm bg-emerald-500 rounded-t-2xl rounded-bl-2xl p-2"
+              :class="[props.userBubbleBg]"
+              class="flex flex-col mt-10 space-y-3 text-sm rounded-t-2xl rounded-bl-2xl p-2"
           >
-            <div :class="chatTextColor" class="text-sm" v-html="props.userMessage"></div>
+            <div
+
+                class="font-medium" v-html="props.userMessage"></div>
             <div class="mt-3">
               <template v-if="hasAudio">
                 <button
-                  class="btn btn-primary btn-outline btn-sm normal-case group"
-                  type="button"
-                  @click="onPlayAudioClick(isPlaying ? 'pause' : 'play')"
+                    class="btn btn-primary btn-outline btn-sm normal-case group"
+                    type="button"
+                    @click="onPlayAudioClick(isPlaying ? 'pause' : 'play')"
                 >
                   <i v-if="!isPlaying" class="material-icons !text-2xl">play_arrow</i>
                   <i v-else class="material-icons !text-2xl">pause</i>
