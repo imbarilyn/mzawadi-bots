@@ -1,19 +1,9 @@
 <script lang="ts" setup>
-import {
-  computed,
-  nextTick,
-  onMounted,
-  onUnmounted,
-  reactive,
-  type Ref,
-  ref,
-  type UnwrapRef,
-  watch
-} from 'vue'
+import {computed, nextTick, onMounted, onUnmounted, reactive, type Ref, ref, type UnwrapRef, watch} from 'vue'
 import DOMPurify from 'dompurify'
 // import RecordRtc from "recordrtc";
-import { useNotificationsStore } from '@/stores/notifications'
-import { useChatbotStore } from '@/stores/chatbot'
+import {useNotificationsStore} from '@/stores/notifications'
+import {useChatbotStore} from '@/stores/chatbot'
 
 interface UserInputProps {
   userInput: string
@@ -23,6 +13,8 @@ interface UserInputProps {
   ringColor?: string
   inputBtnColor?: string
   hasBgImg?: boolean
+  themeName: string
+  textareaColor: string
 }
 
 const props = defineProps<UserInputProps>()
@@ -49,16 +41,16 @@ const uploadImg = () => {
 const chatbotStore = useChatbotStore()
 
 watch(
-  () => chatbotStore.isFile,
-  (value) => {
-    if (value) {
-      uploadImg()
-      chatbotStore.closePhotoDialog()
-      chatbotStore.isFile = false
-    } else {
-      return
+    () => chatbotStore.isFile,
+    (value) => {
+      if (value) {
+        uploadImg()
+        chatbotStore.closePhotoDialog()
+        chatbotStore.isFile = false
+      } else {
+        return
+      }
     }
-  }
 )
 
 const isImage = ref<boolean>(false)
@@ -131,14 +123,14 @@ const inputHasFocus = ref<boolean>(false)
 
 const emits = defineEmits<{
   (
-    event: 'userInput',
-    value: string,
-    formatted: string,
-    audioData?: {
-      audioBlob: Blob
-      audioUrl: string
-      // audio: Audio,
-    }
+      event: 'userInput',
+      value: string,
+      formatted: string,
+      audioData?: {
+        audioBlob: Blob
+        audioUrl: string
+        // audio: Audio,
+      }
   ): void
   (event: 'openPhotoModal'): void
 }>()
@@ -295,26 +287,26 @@ const onRecordAudioControlClick = (data: string) => {
       micIsListening.value = false
       micIsStopped.value = false
       stopAudioRecording()
-        .then((audioAsBlob: Blob) => {
-          return transcribeWithOpenAI(audioAsBlob)
-        })
-        .then(() => {
-          // sendButtonClicked({
-          //   audioBlob: audioRecorder.audioBlobs[0],
-          //   audioUrl: recordedAudioURL.value,
-          //   // audio: recordedAudio.value,
-          // });
-        })
-        .catch((error) => {
-          //Error handling structure
-          switch (error.name) {
-            case 'InvalidStateError': //error from the MediaRecorder.stop
-              console.log('An InvalidStateError has occurred.')
-              break
-            default:
-              console.log('An error occurred with the error name ', error)
-          }
-        })
+          .then((audioAsBlob: Blob) => {
+            return transcribeWithOpenAI(audioAsBlob)
+          })
+          .then(() => {
+            // sendButtonClicked({
+            //   audioBlob: audioRecorder.audioBlobs[0],
+            //   audioUrl: recordedAudioURL.value,
+            //   // audio: recordedAudio.value,
+            // });
+          })
+          .catch((error) => {
+            //Error handling structure
+            switch (error.name) {
+              case 'InvalidStateError': //error from the MediaRecorder.stop
+                console.log('An InvalidStateError has occurred.')
+                break
+              default:
+                console.log('An error occurred with the error name ', error)
+            }
+          })
     } else {
       sendButtonClicked()
     }
@@ -365,52 +357,52 @@ const audioRecorder = reactive({
       //Feature is not supported in browser
       //return a custom error
       return Promise.reject(
-        new Error('mediaDevices API or getUserMedia method is not supported in this browser.')
+          new Error('mediaDevices API or getUserMedia method is not supported in this browser.')
       )
     } else {
       //Feature is supported in browser
 
       //create an audio stream
       return (
-        navigator.mediaDevices
-          .getUserMedia({ audio: true } /*of type MediaStreamConstraints*/)
-          //returns a promise that resolves to the audio stream
-          .then((stream) /*of type MediaStream*/ => {
-            console.log('stream', stream)
+          navigator.mediaDevices
+              .getUserMedia({audio: true} /*of type MediaStreamConstraints*/)
+              //returns a promise that resolves to the audio stream
+              .then((stream) /*of type MediaStream*/ => {
+                console.log('stream', stream)
 
-            //save the reference of the stream to be able to stop it when necessary
-            audioRecorder.streamBeingCaptured = stream
+                //save the reference of the stream to be able to stop it when necessary
+                audioRecorder.streamBeingCaptured = stream
 
-            //create a media recorder instance by passing that stream into the MediaRecorder constructor
-            audioRecorder.mediaRecorder = new MediaRecorder(
-              stream
-            ) /*the MediaRecorder interface of the MediaStream Recording
+                //create a media recorder instance by passing that stream into the MediaRecorder constructor
+                audioRecorder.mediaRecorder = new MediaRecorder(
+                    stream
+                ) /*the MediaRecorder interface of the MediaStream Recording
                     API provides functionality to easily record media*/
 
-            //clear previously saved audio Blobs, if any
-            audioRecorder.audioBlobs = []
+                //clear previously saved audio Blobs, if any
+                audioRecorder.audioBlobs = []
 
-            // console.log('audioRecorder.mediaRecorder', audioRecorder.mediaRecorder);
-            audioRecorder.mediaRecorder.start()
+                // console.log('audioRecorder.mediaRecorder', audioRecorder.mediaRecorder);
+                audioRecorder.mediaRecorder.start()
 
-            //add a dataavailable event listener in order to store the audio data Blobs when recording
-            audioRecorder.mediaRecorder.addEventListener('dataavailable', (event) => {
-              console.log('data available event')
-              //store audio Blob object
-              audioRecorder.audioBlobs.push(event.data)
+                //add a dataavailable event listener in order to store the audio data Blobs when recording
+                audioRecorder.mediaRecorder.addEventListener('dataavailable', (event) => {
+                  console.log('data available event')
+                  //store audio Blob object
+                  audioRecorder.audioBlobs.push(event.data)
 
-              console.log('audioRecorder.audioBlobs', audioRecorder.audioBlobs)
-            })
+                  console.log('audioRecorder.audioBlobs', audioRecorder.audioBlobs)
+                })
 
-            //start the recording by calling the start method on the media recorder
+                //start the recording by calling the start method on the media recorder
 
-            // audioRecorder.recorder = new RecordRTCPromisesHandler(stream, {
-            //
-            // });
-          })
-          .catch((error) => {
-            console.error('Error getting user media:', error)
-          })
+                // audioRecorder.recorder = new RecordRTCPromisesHandler(stream, {
+                //
+                // });
+              })
+              .catch((error) => {
+                console.error('Error getting user media:', error)
+              })
       )
 
       /* errors are not handled in the API because if its handled and the promise is chained, the .then after the catch will be executed*/
@@ -434,7 +426,7 @@ const audioRecorder = reactive({
       audioRecorder.mediaRecorder.addEventListener('pause', () => {
         console.log('pause media event')
         //create a single blob object, as we might have gathered a few Blob objects that needs to be joined as one
-        let audioBlob = new Blob(audioRecorder.audioBlobs, { type: mimeType })
+        let audioBlob = new Blob(audioRecorder.audioBlobs, {type: mimeType})
 
         //resolve promise with the single audio blob representing the recorded audio
         resolve(audioBlob)
@@ -472,7 +464,7 @@ const audioRecorder = reactive({
           console.log('stop media event')
           //create a single blob object, as we might have gathered a few Blob objects that needs to be joined as one
           // let audioBlob = new Blob(audioRecorder.audioBlobs, {type: mimeType});
-          let audioBlob = new Blob(audioRecorder.audioBlobs, { type: 'audio/ogg' })
+          let audioBlob = new Blob(audioRecorder.audioBlobs, {type: 'audio/ogg'})
 
           audioRecorder.tempAudioBlob = audioBlob
 
@@ -507,8 +499,8 @@ const audioRecorder = reactive({
 
     //stopping the capturing request by stopping all the tracks on the active stream
     audioRecorder.streamBeingCaptured
-      .getTracks() //get all tracks from the stream
-      .forEach((track) /*of type MediaStreamTrack*/ => track.stop()) //stop each one
+        .getTracks() //get all tracks from the stream
+        .forEach((track) /*of type MediaStreamTrack*/ => track.stop()) //stop each one
   },
   /** Reset all the recording properties including the media recorder and stream being captured*/
   resetRecordingProperties: function () {
@@ -540,60 +532,60 @@ function startAudioRecording() {
 
   //start recording using the audio recording API
   audioRecorder
-    .start()
-    .then(() => {
-      //on success
+      .start()
+      .then(() => {
+        //on success
 
-      //store the recording start time to display the elapsed time according to it
-      audioRecordStartTime.value = new Date()
+        //store the recording start time to display the elapsed time according to it
+        audioRecordStartTime.value = new Date()
 
-      //display control buttons to offer the functionality of stop and cancel
-      handleDisplayingRecordingControlButtons()
+        //display control buttons to offer the functionality of stop and cancel
+        handleDisplayingRecordingControlButtons()
 
-      hasAudioRecording.value = true
-    })
-    .catch((error) => {
-      //on error
-      //No Browser Support Error
-      if (
-        error.message.includes(
-          'mediaDevices API or getUserMedia method is not supported in this browser.'
-        )
-      ) {
-        console.log('To record audio, use browsers like Chrome and Firefox.')
-        // displayBrowserNotSupportedOverlay();
-      }
+        hasAudioRecording.value = true
+      })
+      .catch((error) => {
+        //on error
+        //No Browser Support Error
+        if (
+            error.message.includes(
+                'mediaDevices API or getUserMedia method is not supported in this browser.'
+            )
+        ) {
+          console.log('To record audio, use browsers like Chrome and Firefox.')
+          // displayBrowserNotSupportedOverlay();
+        }
 
-      //Error handling structure
-      switch (error.name) {
-        case 'AbortError': //error from navigator.mediaDevices.getUserMedia
-          console.log('An AbortError has occured.')
-          break
-        case 'NotAllowedError': //error from navigator.mediaDevices.getUserMedia
-          console.log('A NotAllowedError has occured. User might have denied permission.')
-          break
-        case 'NotFoundError': //error from navigator.mediaDevices.getUserMedia
-          console.log('A NotFoundError has occured.')
-          break
-        case 'NotReadableError': //error from navigator.mediaDevices.getUserMedia
-          console.log('A NotReadableError has occured.')
-          break
-        case 'SecurityError': //error from navigator.mediaDevices.getUserMedia or from the MediaRecorder.start
-          console.log('A SecurityError has occured.')
-          break
-        case 'TypeError': //error from navigator.mediaDevices.getUserMedia
-          console.log('A TypeError has occured.')
-          break
-        case 'InvalidStateError': //error from the MediaRecorder.start
-          console.log('An InvalidStateError has occured.')
-          break
-        case 'UnknownError': //error from the MediaRecorder.start
-          console.log('An UnknownError has occured.')
-          break
-        default:
-          console.log('An error occured with the error name ' + error.name)
-      }
-    })
+        //Error handling structure
+        switch (error.name) {
+          case 'AbortError': //error from navigator.mediaDevices.getUserMedia
+            console.log('An AbortError has occured.')
+            break
+          case 'NotAllowedError': //error from navigator.mediaDevices.getUserMedia
+            console.log('A NotAllowedError has occured. User might have denied permission.')
+            break
+          case 'NotFoundError': //error from navigator.mediaDevices.getUserMedia
+            console.log('A NotFoundError has occured.')
+            break
+          case 'NotReadableError': //error from navigator.mediaDevices.getUserMedia
+            console.log('A NotReadableError has occured.')
+            break
+          case 'SecurityError': //error from navigator.mediaDevices.getUserMedia or from the MediaRecorder.start
+            console.log('A SecurityError has occured.')
+            break
+          case 'TypeError': //error from navigator.mediaDevices.getUserMedia
+            console.log('A TypeError has occured.')
+            break
+          case 'InvalidStateError': //error from the MediaRecorder.start
+            console.log('An InvalidStateError has occured.')
+            break
+          case 'UnknownError': //error from the MediaRecorder.start
+            console.log('An UnknownError has occured.')
+            break
+          default:
+            console.log('An error occured with the error name ' + error.name)
+        }
+      })
 }
 
 /** Displays recording control buttons */
@@ -655,14 +647,14 @@ function elapsedTimeReachedMaximumNumberOfHours(elapsedTime: string) {
 
   //Turn the maximum recording time in hours to a string and pad it with zero if less than 10
   let maximumRecordingTimeInHoursAsString =
-    maximumRecordingTimeInHours.value < 10
-      ? '0' + maximumRecordingTimeInHours.value
-      : maximumRecordingTimeInHours.value.toString()
+      maximumRecordingTimeInHours.value < 10
+          ? '0' + maximumRecordingTimeInHours.value
+          : maximumRecordingTimeInHours.value.toString()
 
   //if it the elapsed time reach hours and also reach the maximum recording time in hours return true
   return (
-    elapsedTimeSplitted.length === 3 &&
-    elapsedTimeSplitted[0] === maximumRecordingTimeInHoursAsString
+      elapsedTimeSplitted.length === 3 &&
+      elapsedTimeSplitted[0] === maximumRecordingTimeInHoursAsString
   )
 }
 
@@ -744,19 +736,19 @@ async function stopAudioRecording() {
 
   //stop the recording using the audio recording API
   return audioRecorder
-    .stop()
-    .then((audioAsBlob: Blob) => {
-      //Play recorder audio
+      .stop()
+      .then((audioAsBlob: Blob) => {
+        //Play recorder audio
 
-      return storeAudio(audioAsBlob)
-    })
-    .then((audioAsBlob: Blob) => {
-      audioIsLoadingDuration.value = false
+        return storeAudio(audioAsBlob)
+      })
+      .then((audioAsBlob: Blob) => {
+        audioIsLoadingDuration.value = false
 
-      handleHidingRecordingControlButtons()
+        handleHidingRecordingControlButtons()
 
-      return audioAsBlob
-    })
+        return audioAsBlob
+      })
 }
 
 // store the audio
@@ -828,7 +820,7 @@ function playAudio() {
     recordedAudio.value!.ontimeupdate = () => {
       if (recordedAudio.value) {
         if (
-          recordedAudio.value!.currentTime.toString() === recordedAudio.value!.duration.toString()
+            recordedAudio.value!.currentTime.toString() === recordedAudio.value!.duration.toString()
         ) {
           // audioElement.value!.pause();
           recordedAudio.value!.pause()
@@ -908,25 +900,25 @@ function transcribeWithOpenAI(audioAsBlob: Blob) {
     },
     body: formData
   })
-    .then((response) => {
-      return response.json()
-    })
-    .then((data) => {
-      if (data.error) {
-        notificationsStore.addNotification(data.error.message, 'error')
-        return
-      }
-      userInput.value = data.text
-      sendButtonClicked({
-        audioBlob: { ...audioRecorder.audioBlobs[0] },
-        audioUrl: recordedAudioURL.value
-        // audio: audio,
+      .then((response) => {
+        return response.json()
       })
-      deleteAudio()
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+      .then((data) => {
+        if (data.error) {
+          notificationsStore.addNotification(data.error.message, 'error')
+          return
+        }
+        userInput.value = data.text
+        sendButtonClicked({
+          audioBlob: {...audioRecorder.audioBlobs[0]},
+          audioUrl: recordedAudioURL.value
+          // audio: audio,
+        })
+        deleteAudio()
+      })
+      .catch((err) => {
+        console.log(err)
+      })
 }
 
 // const animateMicPulse = () => {
@@ -985,43 +977,43 @@ onUnmounted(() => {
 
 <template>
   <div
-    :class="[inputHasFocus ? `ring-2 ${ringColor} ring-opacity-50` : '']"
-    class="relative text-sm border-2 border-emerald-200 bg-white rounded-xl shadow-lg shadow-slate-300/10 flex flex-row items-center m-0 p-4 pb-14"
-    @click.stop="addFocus"
+      :class="[inputHasFocus ? `ring-2 ${ringColor} ring-opacity-50` : '', props.textareaColor]"
+      class="relative text-sm border-2 bg-white rounded-xl shadow-lg shadow-slate-300/10 flex flex-row items-center m-0 p-4 pb-14"
+      @click.stop="addFocus"
   >
     <div class="w-full">
       <div>
         <textarea
-          ref="textareaRef"
-          v-model="userInput"
-          :disabled="props.disabled || micIsListening"
-          :placeholder="promptPlaceholderText"
-          class="w-full border-none resize-none focus:outline-none bg-transparent h-6 text-sm grow transition duration-150 my-1.5 bottom-0"
-          @blur="inputHasFocus = false"
-          @focus="inputHasFocus = true"
-          @keydown="onTextAreaKeydown"
+            ref="textareaRef"
+            v-model="userInput"
+            :disabled="props.disabled || micIsListening"
+            :placeholder="promptPlaceholderText"
+            class="w-full border-none resize-none focus:outline-none bg-transparent h-6 text-sm grow transition duration-150 my-1.5 bottom-0"
+            @blur="inputHasFocus = false"
+            @focus="inputHasFocus = true"
+            @keydown="onTextAreaKeydown"
         ></textarea>
       </div>
 
       <div
-        v-if="isImage"
-        class="flex relative w-20 shadow-2xl pt-4"
-        @mouseleave="showPhotoDelete(false)"
-        @mouseover="showPhotoDelete(true)"
+          v-if="isImage"
+          class="flex relative w-20 shadow-2xl pt-4"
+          @mouseleave="showPhotoDelete(false)"
+          @mouseover="showPhotoDelete(true)"
       >
         <div v-for="image in chatbotStore.capturedImages" :key="image.timestamp">
           <img
-            id="image-upload"
-            :src="image.imgDataUrl"
-            alt="Uploaded image"
-            class="h-20 w-20 rounded-lg outline outline-offset-2 outline-4 outline-gray-200"
+              id="image-upload"
+              :src="image.imgDataUrl"
+              alt="Uploaded image"
+              class="h-20 w-20 rounded-lg outline outline-offset-2 outline-4 outline-gray-200"
           />
         </div>
         <button
-          v-if="isDelete"
-          id="delete-image"
-          class="btn btn-sm btn-circle absolute left-6 top-10 bg-gray-400 hover:bg-gray-400"
-          @click="deletePhoto"
+            v-if="isDelete"
+            id="delete-image"
+            class="btn btn-sm btn-circle absolute left-6 top-10 bg-gray-400 hover:bg-gray-400"
+            @click="deletePhoto"
         >
           <span class="material-icons-outlined text-gray-300"> clear </span>
         </button>
@@ -1030,12 +1022,12 @@ onUnmounted(() => {
 
     <Transition name="slide-fade-y">
       <button
-        v-if="micIsListening"
-        class="absolute right-1/2 -top-12 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-lg font-medium bg-primary text-white shadow-sm align-middle text-sm"
-        type="button"
+          v-if="micIsListening"
+          class="absolute right-1/2 -top-12 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-lg font-medium bg-primary text-white shadow-sm align-middle text-sm"
+          type="button"
       >
         <svg class="flex-shrink-0 w-3 h-3" fill="currentColor" viewBox="0 0 12 12">
-          <circle cx="6" cy="6" r="6" />
+          <circle cx="6" cy="6" r="6"/>
         </svg>
         Listening...
       </button>
@@ -1063,10 +1055,10 @@ onUnmounted(() => {
             <div class="flex items-center space-x-2">
               <!-- Delete Button -->
               <button
-                v-if="micIsListening || micIsStopped"
-                class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
-                type="button"
-                @click.prevent="onRecordAudioControlClick('delete')"
+                  v-if="micIsListening || micIsStopped"
+                  class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
+                  type="button"
+                  @click.prevent="onRecordAudioControlClick('delete')"
               >
                 <span class="material-icons-round !text-2xl"> delete </span>
               </button>
@@ -1074,30 +1066,30 @@ onUnmounted(() => {
 
               <div v-if="micIsListening" class="flex items-center self-center space-x-2">
                 <span
-                  class="text-base font-poppins-semi-bold text-neutral-700 dark:text-neutral-300"
+                    class="text-base font-poppins-semi-bold text-neutral-700 dark:text-neutral-300"
                 >
                   {{ elapsedDuration }}
                 </span>
               </div>
 
               <div
-                v-show="micIsStopped && !audioIsLoadingDuration"
-                class="flex items-center space-x-2"
+                  v-show="micIsStopped && !audioIsLoadingDuration"
+                  class="flex items-center space-x-2"
               >
                 <!-- Play Button -->
                 <button
-                  v-if="!audioIsPlaying"
-                  class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
-                  type="button"
-                  @click.prevent="onAudioControlClick('play')"
+                    v-if="!audioIsPlaying"
+                    class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
+                    type="button"
+                    @click.prevent="onAudioControlClick('play')"
                 >
                   <span class="material-icons-round !text-2xl"> play_arrow </span>
                 </button>
                 <button
-                  v-else
-                  class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
-                  type="button"
-                  @click.prevent="onAudioControlClick('pause')"
+                    v-else
+                    class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
+                    type="button"
+                    @click.prevent="onAudioControlClick('pause')"
                 >
                   <span class="material-icons-round !text-2xl"> pause </span>
                 </button>
@@ -1106,12 +1098,12 @@ onUnmounted(() => {
                 <!-- Audio slider -->
                 <div class="space-x-2 p-2 rounded-full bg-neutral-200">
                   <input
-                    ref="seekBar"
-                    class="w-32 h-2 bg-neutral-200 cursor-pointer rounded-lg"
-                    max=""
-                    min="0"
-                    type="range"
-                    value=""
+                      ref="seekBar"
+                      class="w-32 h-2 bg-neutral-200 cursor-pointer rounded-lg"
+                      max=""
+                      min="0"
+                      type="range"
+                      value=""
                   />
                 </div>
 
@@ -1120,7 +1112,7 @@ onUnmounted(() => {
                 <!-- Elapsed Time -->
                 <div class="flex items-center self-center space-x-2">
                   <span
-                    class="text-base font-poppins-semi-bold text-neutral-700 dark:text-neutral-300"
+                      class="text-base font-poppins-semi-bold text-neutral-700 dark:text-neutral-300"
                   >
                     {{ audioDuration }}
                   </span>
@@ -1129,7 +1121,7 @@ onUnmounted(() => {
               <div v-show="audioIsLoadingDuration" class="flex items-center self-center space-x-2">
                 <span class="loading loading-dots loading-sm"></span>
                 <span
-                  class="text-sm font-poppins-semi-bold text-neutral-700 dark:text-neutral-300 animate-pulse"
+                    class="text-sm font-poppins-semi-bold text-neutral-700 dark:text-neutral-300 animate-pulse"
                 >
                   Processing audio...
                 </span>
@@ -1138,11 +1130,11 @@ onUnmounted(() => {
 
             <!-- Mic Button -->
             <button
-              v-if="!micIsListening || micIsStopped"
-              :disabled="hasText || isGenerating"
-              class="relative btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
-              type="button"
-              @click.prevent="onRecordAudioControlClick('start')"
+                v-if="!micIsListening || micIsStopped"
+                :disabled="hasText || isGenerating"
+                class="relative btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
+                type="button"
+                @click.prevent="onRecordAudioControlClick('start')"
             >
               <span class="material-icons-round !text-2xl"> mic_none </span>
               <!--                                  <span v-else class="material-icons-round !text-2xl">-->
@@ -1155,10 +1147,10 @@ onUnmounted(() => {
 
             <!-- Pause Button -->
             <button
-              v-if="micIsListening && !micIsStopped"
-              class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
-              type="button"
-              @click.prevent="onRecordAudioControlClick('stop')"
+                v-if="micIsListening && !micIsStopped"
+                class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
+                type="button"
+                @click.prevent="onRecordAudioControlClick('stop')"
             >
               <span class="material-icons-round !text-2xl text-red-500"> stop </span>
             </button>
@@ -1167,12 +1159,12 @@ onUnmounted(() => {
             <!--            add photo-->
 
             <input
-              id="file-img"
-              ref="photoRef"
-              accept=".jpeg,.jpg,.png,.gif,.webp"
-              class="hidden"
-              type="file"
-              @change="onPhotoChange"
+                id="file-img"
+                ref="photoRef"
+                accept=".jpeg,.jpg,.png,.gif,.webp"
+                class="hidden"
+                type="file"
+                @change="onPhotoChange"
             />
             <!--            <button-->
             <!--              class="btn btn-sm btn-ghost btn-circle normal-case flex items-center justify-center"-->
@@ -1181,25 +1173,25 @@ onUnmounted(() => {
             <!--              <span class="material-icons-outlined"> camera_alt </span>-->
             <!--            </button>-->
             <button
-              class="btn btn-sm btn-ghost btn-circle normal-case flex items-center justify-center"
-              @click="openPhotoModal"
+                class="btn btn-sm btn-ghost btn-circle normal-case flex items-center justify-center"
+                @click="openPhotoModal"
             >
               <span class="material-icons-outlined"> camera_alt </span>
             </button>
             <!-- Send Button -->
             <button
-              :disabled="props.isGenerating || (!hasText && !hasAudioRecording)"
-              class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
-              type="button"
-              @click.prevent="onRecordAudioControlClick('send')"
+                :disabled="props.isGenerating || (!hasText && !hasAudioRecording)"
+                class="btn btn-sm btn-circle btn-ghost normal-case flex items-center justify-center"
+                type="button"
+                @click.prevent="onRecordAudioControlClick('send')"
             >
               <!--                @click.stop="sendButtonClicked(undefined)">-->
               <span
-                :class="
+                  :class="
                   props.isGenerating ||
                   (!hasText && !hasAudioRecording ? 'text-neutral-400' : `${inputBtnColor}`)
                 "
-                class="material-icons-round !text-xl"
+                  class="material-icons-round !text-xl"
               >
                 send
               </span>
