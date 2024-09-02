@@ -13,21 +13,22 @@ const props = defineProps<SettingsTabProps>();
 const router = useRouter();
 
 const onClick = () => {
+  console.log(props.name)
   router.push({name: "AdminSettingsTab", params: {tab: props.name}});
 }
 
 const activeClass = computed(() => {
-  return props.active ? "btn-active" : ""
+  return props.active ? "text-blue-500 !text-xl" : ""
 })
 </script>
 
 <template>
-  <button
+  <div
       :class="activeClass"
-      class="btn btn-ghost btn-md normal-case w-full justify-start"
+      class="flex justify-center hover:cursor-pointer"
       @click="onClick">
     <span>{{ props.title }}</span>
-  </button>
+  </div>
 </template>
 
 <style scoped>
