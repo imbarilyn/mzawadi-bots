@@ -9,7 +9,7 @@ const settingsData = reactive({
 </script>
 
 <template>
-  <div class="flex flex-col py-5">
+  <div class="flex flex-col justify-center">
     <div class="flex flex-col rounded-lg bg-white">
       <div class="flex flex-row items-center justify-between px-4 py-2 bg-white border-b border-gray-200">
         <div>
