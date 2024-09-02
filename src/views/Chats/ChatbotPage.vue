@@ -2,32 +2,33 @@
 import UserBubble from '../../components/Chat/UserBubble.vue'
 import UserInput from '../../components/Chat/UserInput.vue'
 import ChatbotBubble from '../../components/Chat/ChatbotBubble.vue'
-import { computed, onBeforeMount, onMounted, type Ref, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { type PageContent, usePageContentStore } from '@/stores/admin/page-data'
-import { useChatbotStore } from '@/stores/chatbot'
-import { marked } from 'marked'
+import {computed, onBeforeMount, onMounted, type Ref, ref, watch} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import {type PageContent, usePageContentStore} from '@/stores/admin/page-data'
+import {useChatbotStore} from '@/stores/chatbot'
+import {marked} from 'marked'
 import LoadingOverlay from '../../components/LoadingOverlay.vue'
 import _ from 'lodash'
 import hljs from 'highlight.js'
-import { useNotificationsStore } from '@/stores/notifications'
-import { useAuthStore, type UserInfo } from '@/stores/auth'
-import { io } from 'socket.io-client'
-import { useAdminHomeStore } from '@/stores/admin/home'
+import {useNotificationsStore} from '@/stores/notifications'
+import {useAuthStore, type UserInfo} from '@/stores/auth'
+import {io} from 'socket.io-client'
+import {useAdminHomeStore} from '@/stores/admin/home'
 import DialogModal from '@/components/DialogModal.vue'
+import type {ThemeSettings} from "@/components/Settings/ThemeSettings.vue";
 
 interface ChatbotPageProps {
   chatbotNameprop: string
 }
 
-const notificationsStore = useNotificationsStore()
+const notificationStore = useNotificationsStore()
 const tokenStore = useAuthStore()
 const authStore = useAuthStore()
 const homeStore = useAdminHomeStore()
 
 const route = useRoute()
 const pageContentStore = usePageContentStore()
-const chatbot = useChatbotStore()
+const chatbotStore = useChatbotStore()
 const router = useRouter()
 const sesh_id = ref('')
 const chatbotImg = ref('')
@@ -72,12 +73,12 @@ const confirmSignOut = () => {
 const logOut = () => {
   if (authStore.userRole === 'user') {
     authStore.chatBotUser = ''
-    router.push({ name: 'lets-chat' })
+    router.push({name: 'lets-chat'})
     console.log('user is logged out')
   } else {
     authStore.logoutAdmin()
     console.log('Admin logged out')
-    router.push({ name: 'admin-login' })
+    router.push({name: 'admin-login'})
   }
 }
 
@@ -110,7 +111,7 @@ onBeforeMount(() => {
   console.log('Inside the before mount')
   if (authStore.chatBotUser === '') {
     console.log('No user data')
-    router.push({ name: 'lets-chat' })
+    router.push({name: 'lets-chat'})
   }
   if (authStore.userRole === 'user') {
     console.log(authStore.chatBotUser)
@@ -161,61 +162,61 @@ onBeforeMount(() => {
       console.log(error)
       appIsFetching.value = false
 
-      notificationsStore.addNotification(
-        error ?? 'Oops! Something went wrong. Please try again.',
-        'error'
+      notificationStore.addNotification(
+          error ?? 'Oops! Something went wrong. Please try again.',
+          'error'
       )
     }
   } else if (authStore.adminIsLoggedIn) {
     console.log('Hey it admin user!')
     pageContentStore
-      .fetchPageContentItems()
-      .then(() => {
-        pageContent.value = pageContentStore.getPageContentByPageId(pageId.value)
-        console.log('admin details -', pageContent.value)
-        const chatbotUrl = pageContent.value?.iconName
-        console.log(chatbotUrl)
-        chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${chatbotUrl}`
+        .fetchPageContentItems()
+        .then(() => {
+          pageContent.value = pageContentStore.getPageContentByPageId(pageId.value)
+          console.log('admin details -', pageContent.value)
+          const chatbotUrl = pageContent.value?.iconName
+          console.log(chatbotUrl)
+          chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${chatbotUrl}`
 
-        console.log('pageContent', pageContent.value)
-        // if (!pageContent.value) {
-        //   router.replace({ name: 'not-found' })
-        // }
+          console.log('pageContent', pageContent.value)
+          // if (!pageContent.value) {
+          //   router.replace({ name: 'not-found' })
+          // }
 
-        if (!pageContent.value) return
+          if (!pageContent.value) return
 
-        chatbotName.value = pageContent.value.chatbotName
-        promptPlaceholder.value = pageContent.value.promptPlaceholder
-        staticGreeting.value = pageContent.value.staticGreeting
+          chatbotName.value = pageContent.value.chatbotName
+          promptPlaceholder.value = pageContent.value.promptPlaceholder
+          staticGreeting.value = pageContent.value.staticGreeting
 
-        window.document.title = pageContent.value.chatbotName
+          window.document.title = pageContent.value.chatbotName
 
-        if (pageContent.value)
-          if (pageContent.value.pageSlug === 'gilbert') {
-            titleTextColor.value = 'text-[#A42035]'
-            chatTextColor.value = 'text-[#650B10]'
-            inputRingColor.value = 'ring-[#B61D3A]'
-            inputBtnColor.value = 'text-[#B61D3A]'
+          if (pageContent.value)
+            if (pageContent.value.pageSlug === 'gilbert') {
+              titleTextColor.value = 'text-[#A42035]'
+              chatTextColor.value = 'text-[#650B10]'
+              inputRingColor.value = 'ring-[#B61D3A]'
+              inputBtnColor.value = 'text-[#B61D3A]'
 
-            // bgImg.value = '/Homepage_Grouse_Hero.png';
+              // bgImg.value = '/Homepage_Grouse_Hero.png';
 
-            bgImg.value = 'url("/Homepage_Grouse_Hero.png")'
-            inputBg.value = 'bg-transparent'
-          }
+              bgImg.value = 'url("/Homepage_Grouse_Hero.png")'
+              inputBg.value = 'bg-transparent'
+            }
 
-        setTimeout(() => {
+          setTimeout(() => {
+            appIsFetching.value = false
+          }, 500)
+        })
+        .catch((error) => {
+          console.log(error)
           appIsFetching.value = false
-        }, 500)
-      })
-      .catch((error) => {
-        console.log(error)
-        appIsFetching.value = false
 
-        notificationsStore.addNotification(
-          error ?? 'Oops! Something went wrong. Please try again.',
-          'error'
-        )
-      })
+          notificationStore.addNotification(
+              error ?? 'Oops! Something went wrong. Please try again.',
+              'error'
+          )
+        })
   }
 })
 
@@ -287,11 +288,11 @@ const renderer: any = {
       return `
   <div class="p-2 flex w-full">
        <pre class="w-full"><div class="mockup-code bg-neutral-800 my-3 relative shadow-xl w-full overflow-auto"><div class="px-4 flex-1 overflow-auto h-full w-full"><code class="language-${language}">${
-         hljs.highlight(code, {
-           language,
-           ignoreIllegals
-         }).value
-       }</code></div></div></pre>
+          hljs.highlight(code, {
+            language,
+            ignoreIllegals
+          }).value
+      }</code></div></div></pre>
   </div>
     `
     } else {
@@ -398,13 +399,13 @@ const currentText = ref('')
 // `)
 
 const handleUserInput = (
-  _value: string,
-  formatted: string,
-  audioData?: {
-    audioBlob: Blob
-    // audioDuration: number;
-    audioUrl: string
-  }
+    _value: string,
+    formatted: string,
+    audioData?: {
+      audioBlob: Blob
+      // audioDuration: number;
+      audioUrl: string
+    }
 ) => {
   // add the user's response to the conversation
   // scroll to the bottom of the conversation
@@ -481,7 +482,7 @@ const handleUserInput = (
 
     isGeneratingResponse.value = false
 
-    notificationsStore.addNotification('Oops! Something went wrong. Please try again.', 'error')
+    notificationStore.addNotification('Oops! Something went wrong. Please try again.', 'error')
   }
 }
 
@@ -501,34 +502,34 @@ socket.on('message', (response) => {
 })
 
 watch(
-  () => mesRes.value,
-  (value) => {
-    // console.log(value)
+    () => mesRes.value,
+    (value) => {
+      // console.log(value)
 
-    if (!value) return
+      if (!value) return
 
-    const responsesArr = value.split('~~~ENDOFSTREAM~~~')
+      const responsesArr = value.split('~~~ENDOFSTREAM~~~')
 
-    console.log('responseArr: ', responsesArr)
+      console.log('responseArr: ', responsesArr)
 
-    const currentMsg = responsesArr[0]
+      const currentMsg = responsesArr[0]
 
-    const aiResponses = conversation.value.filter((convo) => !convo.value.isUser)
+      const aiResponses = conversation.value.filter((convo) => !convo.value.isUser)
 
-    const currentAiMsg = aiResponses[aiResponses.length - 1]
-    console.log(aiResponses)
+      const currentAiMsg = aiResponses[aiResponses.length - 1]
+      console.log(aiResponses)
 
-    currentAiMsg.value.message = currentMsg
+      currentAiMsg.value.message = currentMsg
 
-    console.log(currentMsg)
+      console.log(currentMsg)
 
-    if (value.includes('~~~ENDOFSTREAM~~~')) {
-      mesRes.value = ''
-      isGeneratingResponse.value = false
-      currentAiMsg.value.isTyping = false
-      // console.log(mesRes.value);
+      if (value.includes('~~~ENDOFSTREAM~~~')) {
+        mesRes.value = ''
+        isGeneratingResponse.value = false
+        currentAiMsg.value.isTyping = false
+        // console.log(mesRes.value);
+      }
     }
-  }
 )
 
 const isScrollable = ref(false)
@@ -593,33 +594,51 @@ const currentScrollPosition = ref(0)
 
 // We'll also create a variable for the height of the conversation container
 const conversationContainerHeight = ref(0)
-
-onMounted(() => {
-  // socket.connect()
-  // socket.on('connect', () => {
-  //   console.log('connected!')
-  // })
-  // // socket.emit('message', formatted)
-  // socket.on('message', (response) => {
-  //   console.log(response)
-  //   // stop generating ressponse if end of string
-  //   if (response === '~~~ENDOFSTREAM~~~') {
-  //     isGeneratingResponse.value = false
-  //   }
-  //   // else {
-  //   // isGeneratingResponse.value = true;
-  //   // }
-  //   chatbotMessageResponse.value += response
-  //   // else{
-  //   aiMessage.value.isTyping = false;
-  //   socket.disconnect();
-  //   socket.on("disconnect", ()=>{
-  //     console.log("disconnect!")
-  //     aiMessage.value.message += '|| -- last message -- ||';
-  //   })
-  //   console.log("**disconnected**!")
-  // }
+const theme = ref<ThemeSettings>()
+onMounted(async () => {
+  try {
+    await chatbotStore.getTheme()
+        .then((resp) => {
+          console.log(resp)
+          const {result, data} = resp
+          if (result === 'ok') {
+            theme.value = {...data}
+            console.log(theme.value?.sideNavColor)
+            notificationStore.addNotification('Theme Settings fetched successfully', 'success')
+          } else {
+            notificationStore.addNotification('An error occurred fetching Theme Settings', 'error')
+          }
+        })
+  } catch (error) {
+    console.log('error--', error)
+  }
 })
+// onMounted(() => {
+// socket.connect()
+// socket.on('connect', () => {
+//   console.log('connected!')
+// })
+// // socket.emit('message', formatted)
+// socket.on('message', (response) => {
+//   console.log(response)
+//   // stop generating ressponse if end of string
+//   if (response === '~~~ENDOFSTREAM~~~') {
+//     isGeneratingResponse.value = false
+//   }
+//   // else {
+//   // isGeneratingResponse.value = true;
+//   // }
+//   chatbotMessageResponse.value += response
+//   // else{
+//   aiMessage.value.isTyping = false;
+//   socket.disconnect();
+//   socket.on("disconnect", ()=>{
+//     console.log("disconnect!")
+//     aiMessage.value.message += '|| -- last message -- ||';
+//   })
+//   console.log("**disconnected**!")
+// }
+// })
 
 // document.querySelector('#main-container')?.addEventListener('scroll', (evt) => {
 document.addEventListener('scroll', (_evt) => {
@@ -632,8 +651,8 @@ document.addEventListener('scroll', (_evt) => {
   // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
   if (conversationContainerRef.value)
     isBottom.value =
-      conversationContainerRef.value?.scrollTop >=
-      conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight
+        conversationContainerRef.value?.scrollTop >=
+        conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight
 
   // console.log({
   //   'scrollHeight': document.documentElement.scrollHeight,
@@ -720,15 +739,15 @@ const activateTextarea = () => {
 </script>
 
 <template>
-  <div :class="[bgImg ? 'page-bg-color' : 'bg-requested-color']" class="chat-page">
+  <div v-if="theme" :class="[bgImg ? 'page-bg-color' : 'bg-requested-color']" class="chat-page">
     <!-- Sidebar -->
     <div
-      id="application-sidebar"
-      class="hs-overlay hs-overlay-open:translate-x-0 -translate-x-full duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
+        id="application-sidebar"
+        class="hs-overlay hs-overlay-open:translate-x-0 -translate-x-full duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
     >
       <nav
-        class="hs-accordion-group w-full h-full flex flex-col justify-center ml-4"
-        data-hs-accordion-always-open
+          class="hs-accordion-group w-full h-full flex flex-col justify-center ml-4"
+          data-hs-accordion-always-open
       >
         <!--        <div class="flex items-center justify-center pt-4 pe-4 ps-7">-->
         <!--          <div class="h-10 sm:h-14 p-2 sm:p-3 flex flex-row">-->
@@ -750,8 +769,8 @@ const activateTextarea = () => {
         </div>
         <div class="mt-10">
           <button
-            class="btn btn-sm btn-ghost rounded-full bg-emerald-100"
-            @click="activateTextarea"
+              class="btn btn-sm btn-ghost rounded-full bg-emerald-100"
+              @click="activateTextarea"
           >
             <span class="material-icons-outlined"> add </span>
             <span>New Chat</span>
@@ -793,15 +812,15 @@ const activateTextarea = () => {
           <div class="border-t border-gray-200 dark:border-gray-700">
             <ul class="w-56 my-3">
               <li
-                class="relative flex items-center y-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
+                  class="relative flex items-center y-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
               >
                 <span class="material-icons-outlined S">settings</span>
                 <span class="pl-3">Setting</span>
               </li>
 
               <li
-                class="flex items-center py-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
-                @click="confirmSignOut"
+                  class="flex items-center py-2 cursor-pointer hover:bg-gray-200 rounded-lg p-2"
+                  @click="confirmSignOut"
               >
                 <span class="material-icons-outlined"> logout </span>
                 <span class="pl-3">Sign Out</span>
@@ -817,15 +836,15 @@ const activateTextarea = () => {
     <!-- End Sidebar -->
 
     <div
-      id="main-container"
-      ref="conversationContainerRef"
-      class="relative min-h-screen w-full lg:ps-64"
+        id="main-container"
+        ref="conversationContainerRef"
+        class="relative min-h-screen w-full lg:ps-64"
     >
       <div class="py-10 lg:py-14">
         <!-- Title -->
         <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
           <div class="flex justify-center items-center">
-            <img class="h-14 w-14 rounded-full" src="@/assets/imgs/chatbot.png" />
+            <img class="h-14 w-14 rounded-full" src="@/assets/imgs/chatbot.png"/>
 
             <h1 :class="titleTextColor" class="text-3xl font-bold sm:text-4xl ps-2">
               {{ chatbotName }} AI
@@ -843,48 +862,54 @@ const activateTextarea = () => {
             <template v-if="!appIsFetching">
               <div class="">
                 <ChatbotBubble
-                  :key="1"
-                  :chat-text-color="chatTextColor"
-                  :chatbot-message="
+                    :key="1"
+                    :botBubbleColor="theme?.botBubbleColor as string"
+                    :botBubbleTextColor="theme?.botBubbleTextColor as string"
+                    :chat-text-color="chatTextColor"
+                    :chatbot-message="
                     staticGreeting
                       ? marked.parse(staticGreeting)
                       : 'Hello there! How can I help you today?'
                   "
-                  :chatbot-name="chatbotName"
-                  :icon-name="pageContent?.iconName"
-                  :is-typing="false"
+                    :chatbot-name="chatbotName"
+                    :icon-name="pageContent?.iconName"
+                    :is-typing="false"
                 />
 
                 <ul class="space-y-5">
                   <template v-for="(message, index) in conversation" :key="index">
                     <UserBubble
-                      v-if="
+                        v-if="
                         message.value.isUser &&
                         message.value.message &&
                         message.value.message.length > 0
                       "
-                      :key="message.value.uniqueId"
-                      :audio-data="message.value?.audioData"
-                      :chat-text-color="chatTextColor"
-                      :user-message="message.value.message"
-                      user-name="John Doe"
+                        :key="message.value.uniqueId"
+                        :audio-data="message.value?.audioData"
+                        :chat-text-color="chatTextColor"
+                        :user-message="message.value.message"
+                        :userBubbleColor="theme?.userBubbleColor as string"
+                        :userBubbleTextColor="theme?.userBubbleTextColor as string"
+                        user-name="John Doe"
                     />
                     <!-- <div class="ai-respose"> -->
                     <!-- :key="message.value.uniqueId" -->
 
                     <ChatbotBubble
-                      v-else-if="!message.value.isUser"
-                      :key="index"
-                      :chat-text-color="chatTextColor"
-                      :chatbot-message="marked.parse(message.value.message)"
-                      :chatbot-name="chatbotName"
-                      :disclosure-message="pageContent?.closureMessage"
-                      :has-disclosure-message="pageContent?.displayClosureMessage"
-                      :has-error="message.value?.hasError"
-                      :icon-name="pageContent?.iconName"
-                      :is-copyable="index !== 0"
-                      :is-typing="message.value?.isTyping"
-                      :original-message="message.value?.originalMessage"
+                        v-else-if="!message.value.isUser"
+                        :key="index"
+                        :botBubbleColor="theme?.botBubbleColor as string"
+                        :botBubbleTextColor="theme?.botBubbleTextColor as string"
+                        :chat-text-color="chatTextColor"
+                        :chatbot-message="marked.parse(message.value.message)"
+                        :chatbot-name="chatbotName"
+                        :disclosure-message="pageContent?.closureMessage"
+                        :has-disclosure-message="pageContent?.displayClosureMessage"
+                        :has-error="message.value?.hasError"
+                        :icon-name="pageContent?.iconName"
+                        :is-copyable="index !== 0"
+                        :is-typing="message.value?.isTyping"
+                        :original-message="message.value?.originalMessage"
                     />
 
                     <!-- </div> -->
@@ -893,7 +918,7 @@ const activateTextarea = () => {
               </div>
             </template>
             <template v-else-if="appIsFetching">
-              <LoadingOverlay :show="appIsFetching" />
+              <LoadingOverlay :show="appIsFetching"/>
             </template>
           </Transition>
         </div>
@@ -901,39 +926,41 @@ const activateTextarea = () => {
       <div ref="userInputContainerHeightRef" class="sticky w-full bottom-0">
         <div class="relative">
           <button
-            v-if="showScrollToBottomButton"
-            class="absolute -top-4 right-1/2 rounded-full bg-neutral-500 shadow-lg shadow-slate-300/10 p-2 opacity-30 hover:opacity-100 transition-opacity duration-300 active:scale-95 focus:outline-none"
-            @click="scrollToBottom"
+              v-if="showScrollToBottomButton"
+              class="absolute -top-4 right-1/2 rounded-full bg-neutral-500 shadow-lg shadow-slate-300/10 p-2 opacity-30 hover:opacity-100 transition-opacity duration-300 active:scale-95 focus:outline-none"
+              @click="scrollToBottom"
           >
             <svg
-              class="h-5 w-5 text-slate-200"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 text-slate-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
               />
             </svg>
           </button>
           <div v-if="isBottom" class="py-4 bg-gradient-to-t from-requested-color block"></div>
           <div
-            :class="!isBottom ? inputBg : 'bg-requested-color'"
-            class="w-full px-4 md:px-6 pb-8 flex-1"
+              :class="!isBottom ? inputBg : 'bg-requested-color'"
+              class="w-full px-4 md:px-6 pb-8 flex-1"
           >
             <div class="grid grid-cols-1 w-11/12 md:w-10/12 mx-auto">
               <UserInput
-                :disabled="false"
-                :input-btn-color="inputBtnColor"
-                :is-generating="isGeneratingResponse"
-                :prompt-placeholder="promptPlaceholder"
-                :ring-color="inputRingColor"
-                user-input=""
-                @userInput="handleUserInput"
+                  :disabled="false"
+                  :input-btn-color="inputBtnColor"
+                  :inputColor="theme.inputColor"
+                  :inputTextColor="theme.inputTextColor"
+                  :is-generating="isGeneratingResponse"
+                  :prompt-placeholder="promptPlaceholder"
+                  :ring-color="inputRingColor"
+                  user-input=""
+                  @userInput="handleUserInput"
               />
             </div>
           </div>
@@ -943,8 +970,8 @@ const activateTextarea = () => {
     </div>
     <teleport to="body">
       <DialogModal
-        :is-open="homeStore.signOutDialog.isOpen"
-        @closeModal="homeStore.closeSignOutDialog"
+          :is-open="homeStore.signOutDialog.isOpen"
+          @closeModal="homeStore.closeSignOutDialog"
       >
         <template #title>
           <div class="flex justify-center">
@@ -970,14 +997,16 @@ const activateTextarea = () => {
       </DialogModal>
     </teleport>
   </div>
+  <div v-else>
+    <loading-overlay/>
+  </div>
 </template>
 
 <style scoped>
 .fade-slide-enter-active,
 .fade-slide-leave-active {
-  transition:
-    opacity 0.5s,
-    transform 0.5s;
+  transition: opacity 0.5s,
+  transform 0.5s;
 }
 
 .fade-slide-enter,

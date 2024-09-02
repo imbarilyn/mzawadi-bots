@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { useColorGenerator } from '../../composables/color-generator'
+import {computed, onMounted, ref, watch} from 'vue'
+import {useColorGenerator} from '../../composables/color-generator'
+import {useChatbotStore} from "@/stores/chatbot";
 // import { inline } from "rules";
 
 //seting the chatbot response div to null for no response at first time
@@ -26,6 +27,8 @@ interface ChatbotBubble {
   originalMessage?: string
   chatTextColor?: string
   iconName?: string
+  chatBubbleBg: string
+  themeName: string
   // uniqueId:
 }
 
@@ -34,7 +37,7 @@ const props = withDefaults(defineProps<ChatbotBubble>(), {
   isCopyable: false,
   hasDisclosureMessage: false
 })
-
+console.log(props)
 // watch(()=>props.chatbotMessage.length, ()=>{
 //   if (chatbotMsgRef.value){
 //     scrollDown();
@@ -46,7 +49,7 @@ const props = withDefaults(defineProps<ChatbotBubble>(), {
 // })
 
 watch
-const { darkBgColor, setColor } = useColorGenerator(props.chatbotName)
+const {darkBgColor, setColor} = useColorGenerator(props.chatbotName)
 
 onMounted(() => {
   setColor()
@@ -61,6 +64,7 @@ const hasText = computed(() => {
 })
 
 const smallChatbotName = computed(() => {
+  console.log('chatbotName', props)
   if (props.chatbotName.length > 2) {
     // return props.chatbotName.substring(0, 2).toUpperCase();
     if (props.chatbotName.includes(' ')) {
@@ -89,12 +93,12 @@ onMounted(() => {
 })
 
 watch(
-  () => props.chatbotMessage,
-  () => {
-    // if (chatbotMsgRef.value) {
-    //   cursorLeftOffset.value = chatbotMsgRef.value.offsetWidth;
-    // }
-  }
+    () => props.chatbotMessage,
+    () => {
+      // if (chatbotMsgRef.value) {
+      //   cursorLeftOffset.value = chatbotMsgRef.value.offsetWidth;
+      // }
+    }
 )
 
 // const cursorLeftOffset = ref(0);
@@ -123,6 +127,8 @@ const onCopyClick = () => {
     isTextCopied.value = false
   }, 2000)
 }
+chatbotStore.getTheme()
+
 
 // const onCopyTextMouseLeave = () => {
 //   isTextCopied.value = false;
@@ -132,13 +138,13 @@ const onCopyClick = () => {
 <template>
   <li class="max-w-4xl py-2 px-4 sm:px-6 lg:px-8 mx-auto flex gap-x-2 sm:gap-x-4">
     <div
-      :class="[!iconName ? darkBgColor : 'border border-gray-200 dark:border-gray-700']"
-      class="flex-shrink-0 w-10 h-full p-0.5 rounded-full inline-flex items-center justify-center"
+        :class="[!iconName ? darkBgColor : 'border border-gray-200 dark:border-gray-700']"
+        class="flex-shrink-0 w-10 h-full p-0.5 rounded-full inline-flex items-center justify-center"
     >
-      <img v-if="iconName" :src="chatbotImgUrl" alt="Bot Icon" class="w-10 h-10 rounded-full" />
+      <img v-if="iconName" :src="chatbotImgUrl" alt="Bot Icon" class="w-10 h-10 rounded-full"/>
       <span v-else class="text-lg font-poppins-semi-bold text-white leading-none">{{
-        smallChatbotName
-      }}</span>
+          smallChatbotName
+        }}</span>
     </div>
 
     <div class="flex flex-col space-y-3 items-start w-full">
@@ -147,13 +153,14 @@ const onCopyClick = () => {
           <!--          {{ props.chatbotName }}-->
         </div>
       </div>
-      <div class="space-y-3 text-sm bg-emerald-100 rounded-t-2xl rounded-bl-2xl p-3">
+      <div
+          :class="[props.chatBubbleBg]" class="space-y-3 text-sm rounded-t-2xl rounded-bl-2xl p-3">
         <div class="h-full w-full inline-flex flex-col relative overflow-hidden">
           <template v-if="hasText">
             <div
-              ref="chatbotMsgRef"
-              class="space-y-1.5 font-medium md:space-y-2 lg:space-y-3 inline overflow-auto"
-              v-html="props.chatbotMessage"
+                ref="chatbotMsgRef"
+                class="space-y-1.5 text-black font-medium md:space-y-2 lg:space-y-3 inline overflow-auto"
+                v-html="props.chatbotMessage"
             ></div>
 
             <!--            <span v-if="isTyping" class="loading loading-ring loading-md"></span>-->
@@ -165,34 +172,34 @@ const onCopyClick = () => {
       </div>
       <div v-if="hasText && !props.hasError" class="flex w-full">
         <div
-          v-if="hasText && hasCopyButton"
-          class="flex flex-row items-center justify-between grow"
+            v-if="hasText && hasCopyButton"
+            class="flex flex-row items-center justify-between grow"
         >
           <div class="">
             <div
-              v-if="false"
-              class="inline-flex border border-gray-200 rounded-full p-0.5 space-x-0.5 dark:border-gray-700"
+                v-if="false"
+                class="inline-flex border border-gray-200 rounded-full p-0.5 space-x-0.5 dark:border-gray-700"
             >
               <button
-                class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-800 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:bg-blue-900 dark:hover:text-blue-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                type="button"
+                  class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-800 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:bg-blue-900 dark:hover:text-blue-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                  type="button"
               >
                 <span class="sr-only">Like</span>
                 <span class="material-icons-outlined !text-base">thumb_up</span>
               </button>
               <button
-                class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-800 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:bg-blue-900 dark:hover:text-blue-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                type="button"
+                  class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-800 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:bg-blue-900 dark:hover:text-blue-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                  type="button"
               >
                 <span class="sr-only">Dislike</span>
                 <span class="material-icons-outlined !text-base">thumb_down</span>
               </button>
             </div>
             <button
-              v-if="hasCopyButton"
-              class="py-2 px-3 inline-flex items-center gap-x-2 text-sm rounded-full border border-transparent text-gray-500 hover:text-lime-500 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none hover:text-primary active:scale-95 transition duration-300"
-              type="button"
-              @click="onCopyClick"
+                v-if="hasCopyButton"
+                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm rounded-full border border-transparent text-gray-500 hover:text-lime-500 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none hover:text-primary active:scale-95 transition duration-300"
+                type="button"
+                @click="onCopyClick"
             >
               <span v-if="!isTextCopied" class="material-icons-round !text-xl">content_copy</span>
               <span v-else class="material-icons-round !text-xl">check</span>
@@ -210,8 +217,8 @@ const onCopyClick = () => {
 
           <div v-if="false" class="mt-1 sm:mt-0 self-end">
             <button
-              class="py-2 px-3 inline-flex items-center gap-x-2 text-sm rounded-full border border-transparent text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none hover:text-red-500 active:scale-95 transition duration-300"
-              type="button"
+                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm rounded-full border border-transparent text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none hover:text-red-500 active:scale-95 transition duration-300"
+                type="button"
             >
               <span class="material-icons-round !text-xl">restart_alt</span>
               <span class="font-poppins-semi-bold text-xs"> New answer </span>
