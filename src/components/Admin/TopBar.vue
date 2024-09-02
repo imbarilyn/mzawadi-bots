@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { type Tab, useTabsStore } from '../..//stores/admin/tabs'
-import { onUpdated, ref } from 'vue'
-import { useAdminHomeStore } from '../../stores/admin/home'
-import { useRouter } from 'vue-router'
+import {type Tab, useTabsStore} from '../..//stores/admin/tabs'
+import {onUpdated, ref} from 'vue'
+import {useAdminHomeStore} from '../../stores/admin/home'
+import {useRouter} from 'vue-router'
+import {usePageContentStore} from "@/stores/admin/page-data";
 
 const tabsStore = useTabsStore()
 const homeStore = useAdminHomeStore()
@@ -35,6 +36,7 @@ const openSearchModal = () => {
 
 
 const onSettingsClick = () => {
+  const pageStore = usePageContentStore()
   // navigate to the tab
 
   setTimeout(async () => {
@@ -44,8 +46,8 @@ const onSettingsClick = () => {
 
       await router.replace({
         name: 'AdminSettingsTab',
-        params: { tab: 'General' },
-        query: { pageId: settingsTab.value?.pageId }
+        params: {tab: 'General'},
+        query: {pageId: settingsTab.value?.pageId}
       })
     } catch (e) {
       console.log(e)
@@ -60,7 +62,7 @@ const activeTab = tabsStore.getActiveTab
 <template>
   <header class="z-30 flex flex-row w-full overflow-hidden p-2 border-b">
     <div class="h-10 sm:h-14 p-2 sm:p-3">
-      <img src="/icon.png" class="w-full h-full object-center" alt="Bot Icon Img" />
+      <img alt="Bot Icon Img" class="w-full h-full object-center" src="/icon.png"/>
     </div>
 
     <span class="self-center material-icons-round text-2xl text-neutral-400">
@@ -70,32 +72,25 @@ const activeTab = tabsStore.getActiveTab
     <div class="flex flex-row items-center w-full justify-between px-3">
       <div class="animate-slide-right flex items-center justify-center">
         <span class="self-center text-2xl font-poppins-bold whitespace-nowrap dark:text-white">{{
-          activeTab?.name
-        }}</span>
+            activeTab?.name
+          }}</span>
       </div>
 
       <div class="flex flex-row">
         <div class="flex flex-row items-center justify-center">
           <button
-            class="btn btn-sm btn-ghost normal-case rounded-full md:rounded-md font-medium"
-            @click="openSearchModal"
+              class="btn btn-sm btn-ghost normal-case rounded-full md:rounded-md font-medium"
+              @click="openSearchModal"
           >
             <i class="material-icons text-neutral-400 !text-2xl">search</i>
             <span class="hidden md:inline-block"> Search </span>
           </button>
           <button
-            class="btn btn-sm btn-ghost rounded-full md:rounded-md normal-case font-medium"
-            @click="openModal"
+              class="btn btn-sm btn-ghost rounded-full md:rounded-md normal-case font-medium"
+              @click="openModal"
           >
             <i class="material-icons text-neutral-400 !text-2xl">add_box</i>
             <span class="hidden md:inline-block"> New Bot </span>
-          </button>
-          <button
-            class="btn btn-sm btn-ghost rounded-full md:rounded-md normal-case font-medium"
-            @click="onSettingsClick"
-          >
-            <i class="material-icons text-neutral-400 !text-2xl">settings</i>
-            <span class="hidden md:inline-block"> Settings </span>
           </button>
         </div>
       </div>
