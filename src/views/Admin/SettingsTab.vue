@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { onBeforeRouteUpdate, useRoute } from 'vue-router'
-import { markRaw, onMounted, ref } from 'vue'
-import { useSettingsTabStore } from '../../stores/settings'
+import {onBeforeRouteUpdate, useRoute} from 'vue-router'
+import {onMounted, ref} from 'vue'
+import {useSettingsTabStore} from '../../stores/settings'
 import GeneralSettings from '../../components/Settings/GeneralSettings.vue'
 import ThemeSettings from '../../components/Settings/ThemeSettings.vue'
 import BrandingSettings from '../../components/Settings/BrandingSettings.vue'
@@ -21,7 +21,7 @@ const componentsArray = [
     name: 'Branding',
     component: BrandingSettings,
     to: 'branding'
-  }
+  },
 ]
 
 const route = useRoute()
@@ -37,14 +37,16 @@ const settingsTab = ref(settingsTabStore.getActiveTab)
 
 // const activeComponent = markRaw(componentsArray.find((c) => c.name.toLowerCase() === settingsTab.value.name.toLowerCase()));
 const activeComponent = ref(
-  componentsArray.find((c) => {
-    if (settingsTab.value) {
-      return c.name.toLowerCase() === settingsTab.value.name.toLowerCase()
-    } else {
-      return c.name.toLowerCase() === 'general'
-    }
-    // c.name.toLowerCase() === settingsTab.value.name.toLowerCase()
-  })
+    componentsArray.find((c) => {
+      if (settingsTab.value) {
+        console.log(c)
+        console.log(c.name.toLowerCase() === settingsTab.value.name.toLowerCase())
+        return c.name.toLowerCase() === settingsTab.value.name.toLowerCase()
+      } else {
+        return c.name.toLowerCase() === 'general'
+      }
+      // c.name.toLowerCase() === settingsTab.value.name.toLowerCase()
+    })
 )
 
 onBeforeRouteUpdate((to, _from, next) => {
@@ -67,7 +69,8 @@ onBeforeRouteUpdate((to, _from, next) => {
 
 <template>
   <div class="flex flex-col flex-1">
-    <Component v-if="activeComponent" :is="activeComponent.component" :key="activeComponent.name" />
+    <Component :is="activeComponent.component" v-if="activeComponent" :key="activeComponent.name"
+    />
   </div>
 </template>
 
