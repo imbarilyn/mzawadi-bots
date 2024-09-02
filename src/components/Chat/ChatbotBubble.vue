@@ -6,6 +6,7 @@ import { useColorGenerator } from '../../composables/color-generator'
 //seting the chatbot response div to null for no response at first time
 
 const chatbotMsgRef = ref(null)
+const chatbotStore = useChatbotStore()
 
 // const scrollDown = ()=>{
 //   const message_available = chatbotMsgRef.value;
@@ -14,7 +15,6 @@ const chatbotMsgRef = ref(null)
 //     message_available.scrollIntoView({behavior: "smooth", block: conversation_height, inline:"nearest"});
 
 // }
-
 interface ChatbotBubble {
   chatbotName: string
   chatbotMessage: string
