@@ -14,7 +14,7 @@ import UserInput from '../../components/Chat/UserInput.vue'
 import ChatbotBubble from '../../components/Chat/ChatbotBubble.vue'
 import LoadingOverlay from '../../components/LoadingOverlay.vue'
 import DialogModal from '@/components/DialogModal.vue'
-import {useChatbotStore} from '@/stores/chatbot'
+import {type ThemePayload, useChatbotStore} from '@/stores/chatbot'
 
 interface ChatbotPageProps {
   cbName: string
@@ -150,11 +150,20 @@ const inputBtnColor = ref('text-primary')
 const inputBg = ref<string>('bg-requested-color')
 
 const bgImg = ref('')
-
+const theme = ref<ThemePayload>()
 onMounted(() => {
-  console.log('Inside the before mount')
-  console.log('emitted', props.cbName)
-
+  chatBotStore.getTheme()
+      .then((resp) => {
+        console.log(resp)
+        const {result, data} = resp
+        if (result === 'ok') {
+          theme.value = {...data}
+          console.log("****theme-new-chat***", theme.value)
+          notificationsStore.addNotification('Theme Settings fetched successfully', 'success')
+        } else {
+          notificationsStore.addNotification('An error occurred fetching Theme Settings', 'error')
+        }
+      })
   if (authStore.memberData !== '') {
     authStore
         .createAccount({
@@ -272,6 +281,8 @@ onMounted(() => {
 
   console.log('Finished before mount')
 })
+
+console.log(theme.value)
 
 interface Conversation {
   originalMessage?: string
@@ -592,21 +603,20 @@ const scrollToBottom = () => {
 
   console.log('isBottom', isBottom.value)
 
-  if (currentScrollPosition.value > 0) {
+  if (currentScrollPosition.value > 0 && !isBottom.value) {
     isScrollable.value = true
+    const conversationCon = document.querySelector('#user-input-placeholder')
+    conversationCon?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+      inline: 'nearest'
+    })
   }
 
   // if (isScrolling.value) {
   //   return;
   // }
 
-  const conversationCon = document.querySelector('#user-input-placeholder')
-
-  conversationCon?.scrollIntoView({
-    behavior: 'smooth',
-    block: 'end',
-    inline: 'nearest'
-  })
 
   // console.log('conversationContainerHeight', conversationContainerHeight.value);
   // console.log('userInputContainerHeight', userInputContainerHeight.value);
@@ -655,28 +665,27 @@ document.addEventListener('scroll', (_evt) => {
 
   // we know that the user has reached at the bottom if the current scroll position is greater than or equal to the conversation container height minus the viewport height
   // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
-  if (conversationContainerRef.value)
-    isBottom.value =
-        conversationContainerRef.value?.scrollTop >=
-        conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight
+  if (conversationContainerRef.value) {
+    isBottom.value = conversationContainerRef.value?.scrollTop - (conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight) === 0
 
-  // console.log({
-  //   'scrollHeight': document.documentElement.scrollHeight,
-  //   'clientHeight': document.documentElement.clientHeight,
-  //   'scrollTop': document.documentElement.scrollTop,
-  // });
+    // console.log({
+    //   'scrollHeight': document.documentElement.scrollHeight,
+    //   'clientHeight': document.documentElement.clientHeight,
+    //   'scrollTop': document.documentElement.scrollTop,
+    // });
 
-  // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
-  // isScrolling.value = true;
+    // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
+    // isScrolling.value = true;
 
-  // set is scrolling to true if the user is scrolling to the top and has not reached 0
-  isScrolling.value = currentScrollPosition.value > 0 && !isBottom.value
+    // set is scrolling to true if the user is scrolling to the top and has not reached 0
+    isScrolling.value = currentScrollPosition.value > 0 && !isBottom.value
 
-  // console.log('isBottom', isBottom.value);
-  // console.log('isScrolling', isScrolling.value);
-  // console.log('conversationContainerHeight', conversationContainerHeight.value);
-  // console.log('userInputContainerHeight', userInputContainerHeight.value);
-  // console.log('currentScrollPosition', currentScrollPosition.value)
+    // console.log('isBottom', isBottom.value);
+    // console.log('isScrolling', isScrolling.value);
+    // console.log('conversationContainerHeight', conversationContainerHeight.value);
+    // console.log('userInputContainerHeight', userInputContainerHeight.value);
+    // console.log('currentScrollPosition', currentScrollPosition.value)
+  }
 })
 
 // conversationContainerHeight.value = conversationContainerRef.value?.clientHeight || 0;
@@ -685,7 +694,7 @@ document.addEventListener('scroll', (_evt) => {
 
 setTimeout(() => {
   scrollToBottom()
-  console.log('timeout for scrollTo Bottom')
+  console.log('timeout for scroll to Bottom')
 }, 800)
 
 // watch over the conversation array
@@ -754,6 +763,7 @@ const reloadPage = () => {
 
 <template>
   <div
+      v-if="theme"
       :class="[bgImg ? 'page-bg-color' : 'bg-requested-color']"
       class="chat-page relative flex min-h-full w-full"
   >
@@ -806,6 +816,7 @@ const reloadPage = () => {
                   <ChatbotBubble
                       :key="1"
                       :chat-text-color="chatTextColor"
+                      :chatBubbleBg="theme.chatBubble"
                       :chatbot-message="
                       staticGreeting
                         ? marked.parse(staticGreeting)
@@ -814,6 +825,7 @@ const reloadPage = () => {
                       :chatbot-name="chatbotName"
                       :icon-name="pageContent?.iconName"
                       :is-typing="false"
+                      :themeName="theme.name"
                   />
 
                   <ul class="space-y-5">
@@ -827,7 +839,9 @@ const reloadPage = () => {
                           :key="message.value.uniqueId"
                           :audio-data="message.value?.audioData"
                           :chat-text-color="chatTextColor"
+                          :themeName="theme.name"
                           :user-message="message.value.message"
+                          :userBubbleBg="theme.userBubble"
                           user-name="John Doe"
                       />
                       <!-- <div class="ai-respose"> -->
@@ -837,6 +851,7 @@ const reloadPage = () => {
                           v-else-if="!message.value.isUser"
                           :key="index"
                           :chat-text-color="chatTextColor"
+                          :chatBubbleBg="theme.chatBubble"
                           :chatbot-message="marked.parse(message.value.message)"
                           :chatbot-name="chatbotName"
                           :disclosure-message="pageContent?.closureMessage"
@@ -846,6 +861,7 @@ const reloadPage = () => {
                           :is-copyable="index !== 0"
                           :is-typing="message.value?.isTyping"
                           :original-message="message.value?.originalMessage"
+                          :themeName="theme.name"
                       />
 
                       <!-- </div> -->
@@ -893,6 +909,8 @@ const reloadPage = () => {
                     :is-generating="isGeneratingResponse"
                     :prompt-placeholder="promptPlaceholder"
                     :ring-color="inputRingColor"
+                    :textareaColor="theme.textAreaColor"
+                    :themeName="theme.name"
                     user-input=""
                     @openPhotoModal="openPhotoModal"
                     @userInput="handleUserInput"
@@ -923,8 +941,13 @@ const reloadPage = () => {
           </template>
           <template #footer>
             <div class="flex justify-center">
-              <button class="btn bg-emerald-100 me-5" @click="logOut">Sign Out</button>
-              <button class="btn bg-emerald-400 w-[200px]" @click="homeStore.closeSignOutDialog()">
+              <button
+                  :class="[`bg-${theme.name}-100`]"
+                  class="btn  me-5" @click="logOut">Sign Out
+              </button>
+              <button
+                  :class="[`bg-${theme.name}-400`]"
+                  class="btn   w-[200px]" @click="homeStore.closeSignOutDialog()">
                 Cancel
               </button>
             </div>
@@ -947,9 +970,13 @@ const reloadPage = () => {
 
           <template #footer>
             <div class="flex justify-center">
-              <button class="btn btn-sm bg-emerald-300" @click="openFileDialog">Upload</button>
               <button
-                  class="btn btn-sm bg-emerald-300 ms-2"
+                  :class="[`bg-${theme.name}-100`]"
+                  class="btn btn-sm" @click="openFileDialog">Upload
+              </button>
+              <button
+                  :class="[`bg-${theme.name}-400`]"
+                  class="btn btn-sm ms-2"
                   @click="chatBotStore.openCameraModal(true)"
               >
                 Take Photo
@@ -986,6 +1013,9 @@ const reloadPage = () => {
         </DialogModal>
       </teleport>
     </div>
+  </div>
+  <div v-else>
+    <loading-overlay/>
   </div>
 </template>
 
