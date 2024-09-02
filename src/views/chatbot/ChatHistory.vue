@@ -14,7 +14,8 @@ import UserInput from '../../components/Chat/UserInput.vue'
 import ChatbotBubble from '../../components/Chat/ChatbotBubble.vue'
 import LoadingOverlay from '../../components/LoadingOverlay.vue'
 import DialogModal from '@/components/DialogModal.vue'
-import {useChatbotStore} from '@/stores/chatbot'
+import {type ThemePayload, useChatbotStore} from '@/stores/chatbot'
+
 
 interface ChatbotPageProps {
   cbName: string
@@ -164,10 +165,21 @@ const inputBtnColor = ref('text-primary')
 const inputBg = ref<string>('bg-requested-color')
 
 const bgImg = ref('')
-
+const theme = ref<ThemePayload>()
 onMounted(() => {
   console.log('Inside the before mount')
   console.log('emitted', props.cbName)
+  chatBotStore.getTheme()
+      .then((resp) => {
+        console.log(resp)
+        const {result, data} = resp
+        if (result === 'ok') {
+          theme.value = {...data}
+          notificationsStore.addNotification('Theme Settings fetched successfully', 'success')
+        } else {
+          notificationsStore.addNotification('An error occurred fetching Theme Settings', 'error')
+        }
+      })
 
   if (authStore.memberData !== '') {
     authStore
@@ -779,6 +791,7 @@ const reloadPage = () => {
 
 <template>
   <div
+      v-if="theme"
       :class="[bgImg ? 'page-bg-color' : 'bg-requested-color']"
       class="chat-page relative flex min-h-full w-full"
   >
@@ -847,7 +860,9 @@ const reloadPage = () => {
                         :key="message.value.uniqueId"
                         :audio-data="message.value?.audioData"
                         :chat-text-color="chatTextColor"
+                        :themeName="theme.name"
                         :user-message="message.value.message"
+                        :userBubbleBg="theme.userBubble"
                         user-name="John Doe"
                     />
                     <!-- <div class="ai-respose"> -->
@@ -857,6 +872,7 @@ const reloadPage = () => {
                         v-else-if="!message.value.isUser"
                         :key="index"
                         :chat-text-color="chatTextColor"
+                        :chatBubbleBg="theme.chatBubble"
                         :chatbot-message="marked.parse(message.value.message)"
                         :chatbot-name="chatbotName"
                         :disclosure-message="pageContent?.closureMessage"
@@ -866,6 +882,7 @@ const reloadPage = () => {
                         :is-copyable="index !== 0"
                         :is-typing="message.value?.isTyping"
                         :original-message="message.value?.originalMessage"
+                        :themeName="theme.name"
                     />
 
                     <!-- </div> -->
@@ -913,6 +930,8 @@ const reloadPage = () => {
                   :is-generating="isGeneratingResponse"
                   :prompt-placeholder="promptPlaceholder"
                   :ring-color="inputRingColor"
+                  :textareaColor="theme.textAreaColor"
+                  :themeName="theme.name"
                   user-input=""
                   @openPhotoModal="openPhotoModal"
                   @userInput="handleUserInput"
@@ -943,8 +962,13 @@ const reloadPage = () => {
         </template>
         <template #footer>
           <div class="flex justify-center">
-            <button class="btn bg-emerald-100 me-5" @click="logOut">Sign Out</button>
-            <button class="btn bg-emerald-400 w-[200px]" @click="homeStore.closeSignOutDialog()">
+            <button
+                :class="[`bg-${theme.name}-100`]"
+                class="btn me-5" @click="logOut">Sign Out
+            </button>
+            <button
+                :class="[`bg-${theme.name}-400`]"
+                class="btn w-[200px]" @click="homeStore.closeSignOutDialog()">
               Cancel
             </button>
           </div>
@@ -968,8 +992,14 @@ const reloadPage = () => {
 
         <template #footer>
           <div class="flex justify-center">
-            <button class="btn btn-sm bg-emerald-300" @click="openFileDialog">Upload</button>
-            <button class="btn btn-sm bg-emerald-300 ms-2">Take Photo</button>
+            <button
+                :class="[`bg-${theme.name}-100`]"
+                class="btn btn-sm" @click="openFileDialog">Upload
+            </button>
+            <button
+                :class="[`bg-${theme.name}-400`]"
+                class="btn btn-sm ms-2">Take Photo
+            </button>
           </div>
         </template>
       </DialogModal>
@@ -1001,6 +1031,9 @@ const reloadPage = () => {
         </template>
       </DialogModal>
     </teleport>
+  </div>
+  <div v-else>
+    <loading-overlay/>
   </div>
 </template>
 
