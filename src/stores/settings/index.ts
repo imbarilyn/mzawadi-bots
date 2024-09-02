@@ -49,7 +49,9 @@ export const useSettingsTabStore = defineStore({
 
             // deactivate all tabs
             this.settingsTabs.forEach((tab) => {
-                tab.active = false;
+                if (tab.name != tabName) {
+                    tab.active = false;
+                }
             });
 
             // activate the tab
