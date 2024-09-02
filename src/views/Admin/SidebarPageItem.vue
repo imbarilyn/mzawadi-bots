@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { useRouter } from 'vue-router'
-import { useTabsStore } from '../../stores/admin/tabs'
-import { onMounted } from 'vue'
+import {useRouter} from 'vue-router'
+import {useTabsStore} from '../../stores/admin/tabs'
+import {onMounted} from 'vue'
 
 interface SidebarPageItem {
   name: string
@@ -26,16 +26,16 @@ const onClick = () => {
       if (props.name === 'Home') {
         await router.replace({
           name: 'AdminHome',
-          params: { page: props.to },
-          query: { pageId: props.pageId }
+          params: {page: props.to},
+          query: {pageId: props.pageId}
         })
         // router.go(0);
         return
       } else if (props.name === 'Settings') {
         await router.replace({
           name: 'AdminSettingsTab',
-          params: { tab: 'General' },
-          query: { pageId: props.pageId }
+          params: {tab: 'General'},
+          query: {pageId: props.pageId}
         })
         // router.go(0);
         return
@@ -43,7 +43,7 @@ const onClick = () => {
 
       await router.push({
         name: 'DynamicPage',
-        params: { pageId: props.pageId }
+        params: {pageId: props.pageId}
         // query: { pageId: props.pageId }
       })
       // router.go(0);
@@ -54,7 +54,7 @@ const onClick = () => {
 }
 
 onMounted(() => {
-  console.log(props)
+  // console.log(props)
 })
 
 // const onCloseTabClick = async (e: Event) => {
@@ -81,12 +81,12 @@ onMounted(() => {
 
 <template>
   <li
-    :class="[active ? 'bg-gray-100' : '', active ? 'text-blue-600' : '']"
-    class="flex items-center w-full gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100 group overflow-x-hidden transition duration-150 ease-in-out cursor-pointer active:scale-95"
-    @click="onClick"
+      :class="[active ? 'bg-gray-100' : '', active ? 'text-blue-600' : '']"
+      class="flex items-center w-full gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg hover:bg-gray-100 group overflow-x-hidden transition duration-150 ease-in-out cursor-pointer active:scale-95"
+      @click="onClick"
   >
     <span v-if="props.name === 'Home'" class="material-icons-outlined">home</span>
-    <span v-else-if="props.name === 'Settings'" class="material-icons-outlined">settings</span>
+    <!--    <span v-else-if="props.name === 'Settings'" class="material-icons-outlined">settings</span>-->
     <span v-else class="material-icons-outlined text-xl block">description</span>
     <div class="relative grow whitespace-nowrap overflow-hidden text-ellipsis">
       {{ name }}

@@ -1,16 +1,22 @@
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import {computed, onMounted, reactive, ref, watch} from 'vue'
 import anime from 'animejs'
 import MyListBox from '../../components/form/MyListBox.vue'
-import { type PageContent, usePageContentStore } from '@/stores/admin/page-data'
-import { useField } from 'vee-validate'
-import { type dataContext, useAdminHomeStore } from '@/stores/admin/home'
-import { useNotificationsStore } from '@/stores/notifications'
-import { useRouter } from 'vue-router'
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
+import {type PageContent, usePageContentStore} from '@/stores/admin/page-data'
+import {useField} from 'vee-validate'
+import {type dataContext, useAdminHomeStore} from '@/stores/admin/home'
+import {useNotificationsStore} from '@/stores/notifications'
+import {useRouter} from 'vue-router'
+import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/vue'
+import {CheckIcon, ChevronUpDownIcon} from '@heroicons/vue/20/solid'
 
-const chatbotContext = [{ name: 'Openai & Documents' }, { name: 'Documents' }]
+export interface ListOption {
+  name: string
+  value: string | boolean
+}
+
+const chatbotContext = [{name: 'Openai & Documents'}, {name: 'Documents'}]
+
 const selectedContext = ref(chatbotContext[0])
 const isContextSelected = ref<boolean>(false)
 const pageContentStore = usePageContentStore()
@@ -21,11 +27,11 @@ const chatbotContextPayload = ref<dataContext[]>([])
 const contextIsLoading = ref<boolean>(false)
 
 watch(
-  () => selectedContext.value,
-  (value) => {
-    isContextSelected.value = true
-    console.log(selectedContext.value.name, props.currentPage.name)
-  }
+    () => selectedContext.value,
+    (value) => {
+      isContextSelected.value = true
+      console.log(selectedContext.value.name, props.currentPage.name)
+    }
 )
 
 const addContext = () => {
@@ -44,23 +50,23 @@ const addContext = () => {
   }
   chatbotContextPayload.value.map((value) => {
     adminHomeStore
-      .dataLimit(value)
-      .then((resp) => {
-        if (resp.result === 'ok') {
-          notification.addNotification('chatbot context added suuccesfully', 'success')
-        } else {
-          notification.addNotification('Failed to add chatbot context', 'error')
-        }
-      })
-      .catch((err: Error) => {
-        console.log('error:', err)
-        notification.addNotification('Failed to add chatbot context, please try again', 'error')
-      })
-      .finally(() => {
-        setTimeout(() => {
-          contextIsLoading.value = false
-        }, 1000)
-      })
+        .dataLimit(value)
+        .then((resp) => {
+          if (resp.result === 'ok') {
+            notification.addNotification('chatbot context added suuccesfully', 'success')
+          } else {
+            notification.addNotification('Failed to add chatbot context', 'error')
+          }
+        })
+        .catch((err: Error) => {
+          console.log('error:', err)
+          notification.addNotification('Failed to add chatbot context, please try again', 'error')
+        })
+        .finally(() => {
+          setTimeout(() => {
+            contextIsLoading.value = false
+          }, 1000)
+        })
   })
 }
 
@@ -148,23 +154,23 @@ const savePageBtnIsActive = ref(false)
 
 // watch for changes in the page data item and activate save button
 watch(
-  () => thisPage,
-  (newVal) => {
-    if (JSON.stringify(newVal) !== JSON.stringify(pageOrgClone)) {
-      // activate save button
-      savePageBtnIsActive.value = true
-      // not only that but also check if the rest of the fields are valid
-      // savePageBtnIsActive.value = pageOptionsAreValid.value;
+    () => thisPage,
+    (newVal) => {
+      if (JSON.stringify(newVal) !== JSON.stringify(pageOrgClone)) {
+        // activate save button
+        savePageBtnIsActive.value = true
+        // not only that but also check if the rest of the fields are valid
+        // savePageBtnIsActive.value = pageOptionsAreValid.value;
 
-      emit('sidebar-data-changed', true)
-    } else {
-      // deactivate save button
-      savePageBtnIsActive.value = false
+        emit('sidebar-data-changed', true)
+      } else {
+        // deactivate save button
+        savePageBtnIsActive.value = false
 
-      emit('sidebar-data-changed', false)
-    }
-  },
-  { deep: true }
+        emit('sidebar-data-changed', false)
+      }
+    },
+    {deep: true}
 )
 
 const thisPageContentItem = reactive<PageContent>(<PageContent>{
@@ -209,23 +215,23 @@ const savePageContentBtnIsActive = ref(false)
 
 // watch for changes in the page data item and activate save button
 watch(
-  () => thisPageContentItem,
-  (newVal) => {
-    if (JSON.stringify(newVal) !== JSON.stringify(pageContentItemOrgClone)) {
-      // activate save button
-      savePageContentBtnIsActive.value = true
-      // not only that but also check if the rest of the fields are valid
-      // savePageContentBtnIsActive.value = pageContentsAreValid.value;
+    () => thisPageContentItem,
+    (newVal) => {
+      if (JSON.stringify(newVal) !== JSON.stringify(pageContentItemOrgClone)) {
+        // activate save button
+        savePageContentBtnIsActive.value = true
+        // not only that but also check if the rest of the fields are valid
+        // savePageContentBtnIsActive.value = pageContentsAreValid.value;
 
-      emit('sidebar-data-changed', true)
-    } else {
-      // deactivate save button
-      savePageContentBtnIsActive.value = false
+        emit('sidebar-data-changed', true)
+      } else {
+        // deactivate save button
+        savePageContentBtnIsActive.value = false
 
-      emit('sidebar-data-changed', false)
-    }
-  },
-  { deep: true }
+        emit('sidebar-data-changed', false)
+      }
+    },
+    {deep: true}
 )
 
 onMounted(() => {
@@ -250,13 +256,13 @@ onMounted(() => {
     newGreetingTextAreaText.value = activePageContentItem.value.staticGreeting
   } else {
     const newName =
-      activePageContentItem.value.chatbotName[0].toUpperCase() +
-      activePageContentItem.value.chatbotName.slice(1)
+        activePageContentItem.value.chatbotName[0].toUpperCase() +
+        activePageContentItem.value.chatbotName.slice(1)
     newGreetingTextAreaText.value = `Say I am ${newName}, how can I help you today?`
   }
 
   const foundType = greetingTypes.find(
-    (item) => item.value === activePageContentItem.value.greetingType
+      (item) => item.value === activePageContentItem.value.greetingType
   )
 
   if (foundType) {
@@ -269,37 +275,37 @@ const newGreetingType = ref<Option | null>(greetingTypes[0])
 
 // let's also subscribe to page data store changes
 watch(
-  () => pageContentStore.activePageContentItem,
-  (newVal) => {
-    if (!newVal) return
+    () => pageContentStore.activePageContentItem,
+    (newVal) => {
+      if (!newVal) return
 
-    activePageContentItem.value = newVal
+      activePageContentItem.value = newVal
 
-    thisPageContentItem.pageId = activePageContentItem.value.pageId
-    thisPageContentItem.chatbotName = activePageContentItem.value.chatbotName
-    thisPageContentItem.greetingType = activePageContentItem.value.greetingType
-    thisPageContentItem.staticGreeting = activePageContentItem.value.staticGreeting
-    thisPageContentItem.generatedGreeting = activePageContentItem.value.generatedGreeting
-    thisPageContentItem.promptPlaceholder = activePageContentItem.value.promptPlaceholder
-    thisPageContentItem.directive = activePageContentItem.value.directive
-    thisPageContentItem.model = activePageContentItem.value.model
-    thisPageContentItem.maxResponseLength = activePageContentItem.value.maxResponseLength
-    thisPageContentItem.creativity = activePageContentItem.value.creativity
-    thisPageContentItem.displayClosureMessage = activePageContentItem.value.displayClosureMessage
-    thisPageContentItem.scope = activePageContentItem.value.scope
-    thisPageContentItem.context = activePageContentItem.value.context
-    thisPageContentItem.micAccess = activePageContentItem.value.micAccess
-    thisPageContentItem.imageUploadAccess = activePageContentItem.value.imageUploadAccess
+      thisPageContentItem.pageId = activePageContentItem.value.pageId
+      thisPageContentItem.chatbotName = activePageContentItem.value.chatbotName
+      thisPageContentItem.greetingType = activePageContentItem.value.greetingType
+      thisPageContentItem.staticGreeting = activePageContentItem.value.staticGreeting
+      thisPageContentItem.generatedGreeting = activePageContentItem.value.generatedGreeting
+      thisPageContentItem.promptPlaceholder = activePageContentItem.value.promptPlaceholder
+      thisPageContentItem.directive = activePageContentItem.value.directive
+      thisPageContentItem.model = activePageContentItem.value.model
+      thisPageContentItem.maxResponseLength = activePageContentItem.value.maxResponseLength
+      thisPageContentItem.creativity = activePageContentItem.value.creativity
+      thisPageContentItem.displayClosureMessage = activePageContentItem.value.displayClosureMessage
+      thisPageContentItem.scope = activePageContentItem.value.scope
+      thisPageContentItem.context = activePageContentItem.value.context
+      thisPageContentItem.micAccess = activePageContentItem.value.micAccess
+      thisPageContentItem.imageUploadAccess = activePageContentItem.value.imageUploadAccess
 
-    if (activePageContentItem.value.greetingType === 'static') {
-      newGreetingTextAreaText.value = activePageContentItem.value.staticGreeting
-    } else {
-      const newName =
-        activePageContentItem.value.chatbotName[0].toUpperCase() +
-        activePageContentItem.value.chatbotName.slice(1)
-      newGreetingTextAreaText.value = `Say I am ${newName}, how can I help you today?`
+      if (activePageContentItem.value.greetingType === 'static') {
+        newGreetingTextAreaText.value = activePageContentItem.value.staticGreeting
+      } else {
+        const newName =
+            activePageContentItem.value.chatbotName[0].toUpperCase() +
+            activePageContentItem.value.chatbotName.slice(1)
+        newGreetingTextAreaText.value = `Say I am ${newName}, how can I help you today?`
+      }
     }
-  }
 )
 
 const isInitialized = ref(false)
@@ -377,7 +383,7 @@ const onGreetingTypeChange = (option: Option) => {
 
   if (option.value === 'generated') {
     const newName =
-      thisPageContentItem.chatbotName[0].toUpperCase() + thisPageContentItem.chatbotName.slice(1)
+        thisPageContentItem.chatbotName[0].toUpperCase() + thisPageContentItem.chatbotName.slice(1)
     newGreetingTextAreaText.value = `Say I am ${newName}, how can I help you today?`
   }
 }
@@ -387,12 +393,12 @@ const onClosureMsgChange = (option: Option) => {
 }
 
 watch(
-  () => newGreetingTextAreaText.value,
-  (newVal) => {
-    if (thisPageContentItem.greetingType === 'static') {
-      thisPageContentItem.staticGreeting = newVal
+    () => newGreetingTextAreaText.value,
+    (newVal) => {
+      if (thisPageContentItem.greetingType === 'static') {
+        thisPageContentItem.staticGreeting = newVal
+      }
     }
-  }
 )
 
 const pageUrlInputHasFocus = ref(false)
@@ -431,9 +437,9 @@ const pageNameValidator = (value: string) => {
   }
 
   if (
-    allPageNames
-      .filter((item: string) => item !== pageOrgClone.name.toLowerCase())
-      .includes(value.toLowerCase())
+      allPageNames
+          .filter((item: string) => item !== pageOrgClone.name.toLowerCase())
+          .includes(value.toLowerCase())
   ) {
     return 'Page name already exists'
   }
@@ -452,10 +458,10 @@ const {
 } = useField('pageName', pageNameValidator)
 
 watch(
-  () => thisPage.name,
-  (newVal) => {
-    pageName.value = newVal
-  }
+    () => thisPage.name,
+    (newVal) => {
+      pageName.value = newVal
+    }
 )
 
 // validation for page url
@@ -476,9 +482,9 @@ const pageUrlValidator = (value: string) => {
   }
 
   if (
-    allPageUrls
-      .filter((item: string) => item !== pageOrgClone.path.toLowerCase())
-      .includes(value.toLowerCase())
+      allPageUrls
+          .filter((item: string) => item !== pageOrgClone.path.toLowerCase())
+          .includes(value.toLowerCase())
   ) {
     return 'Page url already exists'
   }
@@ -536,17 +542,17 @@ const {
 } = useField('pageTitle', pageTitleValidator)
 
 watch(
-  () => thisPage.title,
-  (newVal) => {
-    pageTitle.value = newVal
-  }
+    () => thisPage.title,
+    (newVal) => {
+      pageTitle.value = newVal
+    }
 )
 
 watch(
-  () => thisPage.path,
-  (newVal) => {
-    pageUrl.value = newVal
-  }
+    () => thisPage.path,
+    (newVal) => {
+      pageUrl.value = newVal
+    }
 )
 
 // ----------------------------- end of page options validation -----------------------------
@@ -578,17 +584,17 @@ const {
 } = useField('chatbotName', chatbotNameValidator)
 
 watch(
-  () => thisPageContentItem.chatbotName,
-  (newVal) => {
-    chatbotName.value = newVal
+    () => thisPageContentItem.chatbotName,
+    (newVal) => {
+      chatbotName.value = newVal
 
-    emit('chatbot-name-change', newVal)
+      emit('chatbot-name-change', newVal)
 
-    if (thisPageContentItem.greetingType === 'generated') {
-      // const newName = newVal[0].toUpperCase() + activePageContentItem.value.chatbotName.slice(1);
-      newGreetingTextAreaText.value = `Say I am ${newVal}, how can I help you today?`
+      if (thisPageContentItem.greetingType === 'generated') {
+        // const newName = newVal[0].toUpperCase() + activePageContentItem.value.chatbotName.slice(1);
+        newGreetingTextAreaText.value = `Say I am ${newVal}, how can I help you today?`
+      }
     }
-  }
 )
 
 // validation for prompt placeholder
@@ -616,12 +622,12 @@ const {
 } = useField('promptPlaceholder', promptPlaceholderValidator)
 
 watch(
-  () => thisPageContentItem.promptPlaceholder,
-  (newVal) => {
-    promptPlaceholder.value = newVal
+    () => thisPageContentItem.promptPlaceholder,
+    (newVal) => {
+      promptPlaceholder.value = newVal
 
-    emit('prompt-placeholder-change', newVal)
-  }
+      emit('prompt-placeholder-change', newVal)
+    }
 )
 
 // validation for static greeting
@@ -649,12 +655,12 @@ const {
 } = useField('staticGreeting', staticGreetingValidator)
 
 watch(
-  () => thisPageContentItem.staticGreeting,
-  (newVal) => {
-    staticGreeting.value = newVal
+    () => thisPageContentItem.staticGreeting,
+    (newVal) => {
+      staticGreeting.value = newVal
 
-    emit('greeting-change', newVal)
-  }
+      emit('greeting-change', newVal)
+    }
 )
 
 // validation for directive
@@ -682,10 +688,10 @@ const {
 } = useField('directive', directiveValidator)
 
 watch(
-  () => thisPageContentItem.directive,
-  (newVal) => {
-    directive.value = newVal
-  }
+    () => thisPageContentItem.directive,
+    (newVal) => {
+      directive.value = newVal
+    }
 )
 
 // validation for model
@@ -713,10 +719,10 @@ const {
 } = useField('model', modelValidator)
 
 watch(
-  () => thisPageContentItem.model,
-  (newVal) => {
-    model.value = newVal
-  }
+    () => thisPageContentItem.model,
+    (newVal) => {
+      model.value = newVal
+    }
 )
 
 // validation for closure message
@@ -744,10 +750,10 @@ const {
 } = useField('closureMessage', closureMessageValidator)
 
 watch(
-  () => thisPageContentItem.closureMessage,
-  (newVal) => {
-    closureMessage.value = newVal
-  }
+    () => thisPageContentItem.closureMessage,
+    (newVal) => {
+      closureMessage.value = newVal
+    }
 )
 
 // validation for scope
@@ -775,10 +781,10 @@ const {
 } = useField('scope', scopeValidator)
 
 watch(
-  () => thisPageContentItem.scope,
-  (newVal) => {
-    scope.value = newVal
-  }
+    () => thisPageContentItem.scope,
+    (newVal) => {
+      scope.value = newVal
+    }
 )
 
 // validation for context
@@ -806,10 +812,10 @@ const {
 } = useField('context', contextValidator)
 
 watch(
-  () => thisPageContentItem.context,
-  (newVal) => {
-    context.value = newVal
-  }
+    () => thisPageContentItem.context,
+    (newVal) => {
+      context.value = newVal
+    }
 )
 
 // ----------------------------- end of page content validation -----------------------------
@@ -839,27 +845,27 @@ const dataFileEl = ref<HTMLInputElement | null>(null)
 const imgFileEl = ref<HTMLInputElement | null>(null)
 
 watch(
-  () => props.fileUploadBtnEnabled,
-  (newVal) => {
-    if (!newVal) {
-      // clear the file input
-      if (dataFileEl.value) {
-        dataFileEl.value.value = ''
+    () => props.fileUploadBtnEnabled,
+    (newVal) => {
+      if (!newVal) {
+        // clear the file input
+        if (dataFileEl.value) {
+          dataFileEl.value.value = ''
+        }
       }
     }
-  }
 )
 
 watch(
-  () => props.imgUploadBtnEnabled,
-  (newVal) => {
-    if (!newVal) {
-      // clear the file input
-      if (imgFileEl.value) {
-        imgFileEl.value.value = ''
+    () => props.imgUploadBtnEnabled,
+    (newVal) => {
+      if (!newVal) {
+        // clear the file input
+        if (imgFileEl.value) {
+          imgFileEl.value.value = ''
+        }
       }
     }
-  }
 )
 
 const onFileChange = (e: Event) => {
@@ -915,27 +921,27 @@ const moreSetting = () => {
   <!-- Sidenav -->
   <!-- Let's create an overlay that will cover the entire screen when the sidebar is open -->
   <div
-    v-if="props.isOpen"
-    aria-hidden="true"
-    class="absolute inset-0 z-30 bg-black bg-opacity-10 cursor-pointer"
-    @click="emit('close-sidebar-data')"
-    @keyup.esc="emit('close-sidebar-data')"
+      v-if="props.isOpen"
+      aria-hidden="true"
+      class="absolute inset-0 z-30 bg-black bg-opacity-10 cursor-pointer"
+      @click="emit('close-sidebar-data')"
+      @keyup.esc="emit('close-sidebar-data')"
   ></div>
   <nav
-    id="sidebar-data"
-    :class="props.isOpen ? 'translate-x-0' : 'translate-x-full'"
-    class="absolute right-0 top-0 z-40 h-full w-10/12 sm:w-8/12 md:w-6/12 lg:w-5/12 overflow-hidden bg-white dark:bg-neutral-900 shadow-lg transition duration-300 ease-in-out transform-gpu"
+      id="sidebar-data"
+      :class="props.isOpen ? 'translate-x-0' : 'translate-x-full'"
+      class="absolute right-0 top-0 z-40 h-full w-10/12 sm:w-8/12 md:w-6/12 lg:w-5/12 overflow-hidden bg-white dark:bg-neutral-900 shadow-lg transition duration-300 ease-in-out transform-gpu"
   >
     <div class="flex flex-col overflow-auto flex-1 sidebar-con">
       <!--Tabs navigation-->
       <ul class="tabs flex flex-row font-semibold sticky top-0 z-10 bg-white" role="tablist">
         <li
-          v-for="tab in sidebarTabs"
-          :key="tab.name"
-          :class="activeSidebarDataTab === tab.value ? 'tab-active border-primary' : ''"
-          class="tab tab-bordered grow h-8 sm:h-10 md:h-12 lg:h-14"
-          role="presentation"
-          @click="toggleTab(<string>tab.value)"
+            v-for="tab in sidebarTabs"
+            :key="tab.name"
+            :class="activeSidebarDataTab === tab.value ? 'tab-active border-primary' : ''"
+            class="tab tab-bordered grow h-8 sm:h-10 md:h-12 lg:h-14"
+            role="presentation"
+            @click="toggleTab(<string>tab.value)"
         >
           <p :class="{ 'text-blue-500': activeSidebarDataTab === tab.value }">{{ tab.name }}</p>
         </li>
@@ -945,35 +951,35 @@ const moreSetting = () => {
       <div class="pt-5 pb-10">
         <Transition mode="out-in" name="slide">
           <div
-            v-if="activeSidebarDataTab === 'options'"
-            id="data-tab"
-            ref="dataRef"
-            aria-labelledby="tabs-profile-tab02"
-            class="tab-options px-5 grow h-full"
-            role="tabpanel"
+              v-if="activeSidebarDataTab === 'options'"
+              id="data-tab"
+              ref="dataRef"
+              aria-labelledby="tabs-profile-tab02"
+              class="tab-options px-5 grow h-full"
+              role="tabpanel"
           >
             <div class="grid grid-cols-1 gap-3 py-3">
               <div class="flex flex-col space-y-2">
                 <label class="label text-xs font-semibold" for="page-name"> Page Name </label>
                 <input
-                  id="page-name"
-                  v-model="thisPage.name"
-                  :class="{
+                    id="page-name"
+                    v-model="thisPage.name"
+                    :class="{
                     'input-error': pageNameMeta.validated && !pageNameMeta.valid,
                     'input-primary': pageNameMeta.validated && pageNameMeta.valid
                   }"
-                  class="input input-primary input-bordered w-full text-sm"
-                  placeholder="Page Name"
-                  type="text"
+                    class="input input-primary input-bordered w-full text-sm"
+                    placeholder="Page Name"
+                    type="text"
                 />
                 <small
-                  v-if="pageNameMeta.validated && !pageNameMeta.valid"
-                  class="text-xs text-rose-500"
+                    v-if="pageNameMeta.validated && !pageNameMeta.valid"
+                    class="text-xs text-rose-500"
                 >
                   {{ pageNameErrorMessage }}
                 </small>
                 <small class="text-xs text-gray-500"
-                  >This is the name that will appear on the sidebar, and on the navigation bar. It
+                >This is the name that will appear on the sidebar, and on the navigation bar. It
                   should be short and descriptive.
                 </small>
               </div>
@@ -982,48 +988,48 @@ const moreSetting = () => {
               <div class="flex flex-col space-y-2">
                 <label class="label text-xs font-semibold" for="meta-title"> Meta Title </label>
                 <input
-                  id="meta-title"
-                  v-model="thisPage.title"
-                  :class="{
+                    id="meta-title"
+                    v-model="thisPage.title"
+                    :class="{
                     'input-error': pageTitleMeta.validated && !pageTitleMeta.valid,
                     'input-primary': pageTitleMeta.validated && pageTitleMeta.valid
                   }"
-                  class="input input-bordered input-primary w-full text-sm"
-                  placeholder="Meta Title"
-                  type="text"
+                    class="input input-bordered input-primary w-full text-sm"
+                    placeholder="Meta Title"
+                    type="text"
                 />
                 <small
-                  v-if="pageTitleMeta.validated && !pageTitleMeta.valid"
-                  class="text-xs text-rose-500"
+                    v-if="pageTitleMeta.validated && !pageTitleMeta.valid"
+                    class="text-xs text-rose-500"
                 >
                   {{ pageTitleErrorMessage }}
                 </small>
                 <small class="text-xs text-gray-500"
-                  >This is the title that will appear on the browser tab.</small
+                >This is the title that will appear on the browser tab.</small
                 >
               </div>
               <div class="flex flex-col space-y-2">
                 <label class="label text-xs font-semibold" for="page-url"> Page Url </label>
                 <div
-                  :class="[pageUrlInputHasFocus ? pageUrlInputClass : '']"
-                  class="rounded-md border border-primary flex flex-col"
+                    :class="[pageUrlInputHasFocus ? pageUrlInputClass : '']"
+                    class="rounded-md border border-primary flex flex-col"
                 >
                   <div class="bg-stone-200 text-black px-2 py-1 rounded-t-md">
                     <span class="text-xs"> {{ baseUrl }}/chat/ </span>
                   </div>
                   <input
-                    id="page-url"
-                    v-model="thisPage.path"
-                    class="bg-transparent focus:outline-none input w-full text-sm"
-                    placeholder="page-url"
-                    type="text"
-                    @blur="pageUrlInputHasFocus = false"
-                    @focus="pageUrlInputHasFocus = true"
+                      id="page-url"
+                      v-model="thisPage.path"
+                      class="bg-transparent focus:outline-none input w-full text-sm"
+                      placeholder="page-url"
+                      type="text"
+                      @blur="pageUrlInputHasFocus = false"
+                      @focus="pageUrlInputHasFocus = true"
                   />
                 </div>
                 <small
-                  v-if="pageUrlMeta.validated && !pageUrlMeta.valid"
-                  class="text-xs text-rose-500"
+                    v-if="pageUrlMeta.validated && !pageUrlMeta.valid"
+                    class="text-xs text-rose-500"
                 >
                   {{ pageUrlErrorMessage }}
                 </small>
@@ -1035,22 +1041,22 @@ const moreSetting = () => {
               </div>
 
               <div
-                class="sticky bottom-0 z-30 h-24 flex flex-col justify-between items-center w-full"
+                  class="sticky bottom-0 z-30 h-24 flex flex-col justify-between items-center w-full"
               >
                 <div class="py-3 bg-gradient-to-t from-white block basis-2/12 w-full"></div>
                 <div
-                  class="bg-white w-full px-4 md:px-6 basis-10/12 flex flex-row justify-between items-center space-x-4"
+                    class="bg-white w-full px-4 md:px-6 basis-10/12 flex flex-row justify-between items-center space-x-4"
                 >
                   <button
-                    :disabled="!savePageBtnIsActive"
-                    class="btn btn-primary btn-sm md:btn-md normal-case text-xs md:text-sm basis-1/2"
-                    @click="onSavePageOptions"
+                      :disabled="!savePageBtnIsActive"
+                      class="btn btn-primary btn-sm md:btn-md normal-case text-xs md:text-sm basis-1/2"
+                      @click="onSavePageOptions"
                   >
                     Save Changes
                   </button>
 
                   <button
-                    class="btn btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm basis-1/2"
+                      class="btn btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm basis-1/2"
                   >
                     Cancel
                   </button>
@@ -1059,12 +1065,12 @@ const moreSetting = () => {
             </div>
           </div>
           <div
-            v-else-if="activeSidebarDataTab === 'content'"
-            id="content-tab"
-            ref="contentRef"
-            aria-labelledby="tabs-profile-tab02"
-            class="px-5 grow h-full"
-            role="tabpanel"
+              v-else-if="activeSidebarDataTab === 'content'"
+              id="content-tab"
+              ref="contentRef"
+              aria-labelledby="tabs-profile-tab02"
+              class="px-5 grow h-full"
+              role="tabpanel"
           >
             <!--          <div-->
             <!--            v-else-if="activeSidebarDataTab === 'content'"-->
@@ -1078,54 +1084,54 @@ const moreSetting = () => {
               <div class="flex flex-col space-y-2">
                 <label class="label text-xs font-semibold" for="chatbot-name"> Chatbot name </label>
                 <input
-                  id="chatbot-name"
-                  v-model="thisPageContentItem.chatbotName"
-                  :class="{
+                    id="chatbot-name"
+                    v-model="thisPageContentItem.chatbotName"
+                    :class="{
                     'input-error': chatbotNameMeta.validated && !chatbotNameMeta.valid,
                     'input-primary': chatbotNameMeta.validated && chatbotNameMeta.valid
                   }"
-                  class="input input-bordered input-primary w-full text-sm"
-                  placeholder="Chatbot Name"
-                  type="text"
+                    class="input input-bordered input-primary w-full text-sm"
+                    placeholder="Chatbot Name"
+                    type="text"
                 />
                 <small
-                  v-if="chatbotNameMeta.validated && !chatbotNameMeta.valid"
-                  class="text-xs text-rose-500"
+                    v-if="chatbotNameMeta.validated && !chatbotNameMeta.valid"
+                    class="text-xs text-rose-500"
                 >
                   {{ chatbotNameErrorMessage }}
                 </small>
                 <small class="text-xs text-gray-500"
-                  >This is the name that will appear on the chatbot bubble.</small
+                >This is the name that will appear on the chatbot bubble.</small
                 >
                 <div></div>
               </div>
               <div>
                 <label class="label text-xs font-semibold"> Greeting </label>
                 <MyListBox
-                  :options="greetingTypes"
-                  :selected-value="thisPageContentItem.greetingType"
-                  @change="onGreetingTypeChange"
+                    :options="greetingTypes"
+                    :selected-value="thisPageContentItem.greetingType"
+                    @change="onGreetingTypeChange"
                 />
                 <small class="text-xs text-gray-500"
-                  >This is the greeting that will appear on the chatbot bubble.</small
+                >This is the greeting that will appear on the chatbot bubble.</small
                 >
               </div>
               <div
-                v-if="thisPageContentItem.greetingType === 'static'"
-                class="flex flex-col space-y-2"
+                  v-if="thisPageContentItem.greetingType === 'static'"
+                  class="flex flex-col space-y-2"
               >
                 <textarea
-                  v-model="newGreetingTextAreaText"
-                  :class="{
+                    v-model="newGreetingTextAreaText"
+                    :class="{
                     'textarea-error': staticGreetingMeta.validated && !staticGreetingMeta.valid,
                     'textarea-primary': staticGreetingMeta.validated && staticGreetingMeta.valid
                   }"
-                  class="textarea textarea-primary w-full resize-y"
-                  placeholder="Bio"
+                    class="textarea textarea-primary w-full resize-y"
+                    placeholder="Bio"
                 ></textarea>
                 <small
-                  v-if="staticGreetingMeta.validated && !staticGreetingMeta.valid"
-                  class="text-xs text-rose-500"
+                    v-if="staticGreetingMeta.validated && !staticGreetingMeta.valid"
+                    class="text-xs text-rose-500"
                 >
                   {{ staticGreetingErrorMessage }}
                 </small>
@@ -1138,41 +1144,41 @@ const moreSetting = () => {
                   Prompt placeholder
                 </label>
                 <input
-                  id="chatbot-name"
-                  v-model="thisPageContentItem.promptPlaceholder"
-                  :class="{
+                    id="chatbot-name"
+                    v-model="thisPageContentItem.promptPlaceholder"
+                    :class="{
                     'input-error': promptPlaceholderMeta.validated && !promptPlaceholderMeta.valid,
                     'input-primary': promptPlaceholderMeta.validated && promptPlaceholderMeta.valid
                   }"
-                  class="input input-bordered input-primary w-full text-sm"
-                  placeholder="Chatbot Name"
-                  type="text"
+                    class="input input-bordered input-primary w-full text-sm"
+                    placeholder="Chatbot Name"
+                    type="text"
                 />
                 <small
-                  v-if="promptPlaceholderMeta.validated && !promptPlaceholderMeta.valid"
-                  class="text-xs text-rose-500"
+                    v-if="promptPlaceholderMeta.validated && !promptPlaceholderMeta.valid"
+                    class="text-xs text-rose-500"
                 >
                   {{ promptPlaceholderErrorMessage }}
                 </small>
                 <small class="text-xs text-gray-500"
-                  >This is the placeholder that will appear on the user input.</small
+                >This is the placeholder that will appear on the user input.</small
                 >
               </div>
-              <hr class="my-3 h-0.5" />
+              <hr class="my-3 h-0.5"/>
               <div class="flex flex-col space-y-2">
                 <label class="label text-xs font-semibold" for="directive"> Directive </label>
                 <textarea
-                  v-model="thisPageContentItem.directive"
-                  :class="{
+                    v-model="thisPageContentItem.directive"
+                    :class="{
                     'textarea-error': directiveMeta.validated && !directiveMeta.valid,
                     'textarea-primary': directiveMeta.validated && directiveMeta.valid
                   }"
-                  class="textarea textarea-primary w-full resize-y"
-                  placeholder="Add new directive..."
+                    class="textarea textarea-primary w-full resize-y"
+                    placeholder="Add new directive..."
                 ></textarea>
                 <small
-                  v-if="directiveMeta.validated && !directiveMeta.valid"
-                  class="text-xs text-rose-500"
+                    v-if="directiveMeta.validated && !directiveMeta.valid"
+                    class="text-xs text-rose-500"
                 >
                   {{ directiveErrorMessage }}
                 </small>
@@ -1183,13 +1189,13 @@ const moreSetting = () => {
               <div class="flex flex-col space-y-2">
                 <label class="label text-xs font-semibold" for="directive"> Scope </label>
                 <textarea
-                  v-model="thisPageContentItem.scope"
-                  :class="{
+                    v-model="thisPageContentItem.scope"
+                    :class="{
                     'textarea-error': scopeMeta.validated && !scopeMeta.valid,
                     'textarea-primary': scopeMeta.validated && scopeMeta.valid
                   }"
-                  class="textarea textarea-primary w-full resize-y"
-                  placeholder="Add new scope..."
+                    class="textarea textarea-primary w-full resize-y"
+                    placeholder="Add new scope..."
                 ></textarea>
                 <small v-if="scopeMeta.validated && !scopeMeta.valid" class="text-xs text-rose-500">
                   {{ scopeErrorMessage }}
@@ -1202,17 +1208,17 @@ const moreSetting = () => {
               <div class="flex flex-col space-y-2">
                 <label class="label text-xs font-semibold" for="directive"> Context </label>
                 <textarea
-                  v-model="thisPageContentItem.context"
-                  :class="{
+                    v-model="thisPageContentItem.context"
+                    :class="{
                     'textarea-error': contextMeta.validated && !contextMeta.valid,
                     'textarea-primary': contextMeta.validated && contextMeta.valid
                   }"
-                  class="textarea textarea-primary w-full resize-y"
-                  placeholder="Add new context..."
+                    class="textarea textarea-primary w-full resize-y"
+                    placeholder="Add new context..."
                 ></textarea>
                 <small
-                  v-if="contextMeta.validated && !contextMeta.valid"
-                  class="text-xs text-rose-500"
+                    v-if="contextMeta.validated && !contextMeta.valid"
+                    class="text-xs text-rose-500"
                 >
                   {{ contextErrorMessage }}
                 </small>
@@ -1220,17 +1226,17 @@ const moreSetting = () => {
                   This is the context that will be used to generate the chatbot's response.
                 </small>
               </div>
-              <hr class="my-3 h-0.5" />
+              <hr class="my-3 h-0.5"/>
               <div>
                 <label class="label text-xs font-semibold" for="creativity"> Creativity </label>
                 <input
-                  id="creativity"
-                  v-model="thisPageContentItem.creativity"
-                  class="range range-xs"
-                  max="10"
-                  min="1"
-                  step="1"
-                  type="range"
+                    id="creativity"
+                    v-model="thisPageContentItem.creativity"
+                    class="range range-xs"
+                    max="10"
+                    min="1"
+                    step="1"
+                    type="range"
                 />
                 <div class="w-full flex justify-between text-xs px-2">
                   <span>0</span>
@@ -1250,9 +1256,9 @@ const moreSetting = () => {
               <div class="flex flex-col space-y-2">
                 <label class="label text-xs font-semibold"> Display closure message </label>
                 <MyListBox
-                  :options="closureMsgOptions"
-                  :selected-value="thisPageContentItem.displayClosureMessage"
-                  @change="onClosureMsgChange"
+                    :options="closureMsgOptions"
+                    :selected-value="thisPageContentItem.displayClosureMessage"
+                    @change="onClosureMsgChange"
                 />
                 <small class="text-xs text-gray-500">
                   This is will determine whether the closure message will be displayed at the bottom
@@ -1264,17 +1270,17 @@ const moreSetting = () => {
                   Closure message
                 </label>
                 <textarea
-                  v-model="thisPageContentItem.closureMessage"
-                  :class="{
+                    v-model="thisPageContentItem.closureMessage"
+                    :class="{
                     'textarea-error': closureMessageMeta.validated && !closureMessageMeta.valid,
                     'textarea-primary': closureMessageMeta.validated && closureMessageMeta.valid
                   }"
-                  class="textarea textarea-primary w-full resize-y"
-                  placeholder="Add new closure messsage..."
+                    class="textarea textarea-primary w-full resize-y"
+                    placeholder="Add new closure messsage..."
                 ></textarea>
                 <small
-                  v-if="closureMessageMeta.validated && !closureMessageMeta.valid"
-                  class="text-xs text-rose-500"
+                    v-if="closureMessageMeta.validated && !closureMessageMeta.valid"
+                    class="text-xs text-rose-500"
                 >
                   {{ closureMessageErrorMessage }}
                 </small>
@@ -1285,15 +1291,15 @@ const moreSetting = () => {
               <div class="flex flex-col space-y-2">
                 <label class="label text-xs font-semibold" for="model"> Model </label>
                 <input
-                  id="model"
-                  v-model="thisPageContentItem.model"
-                  :class="{
+                    id="model"
+                    v-model="thisPageContentItem.model"
+                    :class="{
                     'input-error': modelMeta.validated && !modelMeta.valid,
                     'input-primary': modelMeta.validated && modelMeta.valid
                   }"
-                  class="input input-bordered input-primary w-full text-sm"
-                  placeholder="Model"
-                  type="text"
+                    class="input input-bordered input-primary w-full text-sm"
+                    placeholder="Model"
+                    type="text"
                 />
                 <small v-if="modelMeta.validated && !modelMeta.valid" class="text-xs text-rose-500">
                   {{ modelErrorMessage }}
@@ -1303,14 +1309,14 @@ const moreSetting = () => {
                 </small>
               </div>
               <div
-                class="sticky bottom-0 z-30 h-24 flex flex-col justify-between items-center w-full"
+                  class="sticky bottom-0 z-30 h-24 flex flex-col justify-between items-center w-full"
               >
                 <div class="py-3 bg-gradient-to-t from-white block basis-2/12 w-full"></div>
                 <div class="bg-white w-full px-4 md:px-6 basis-10/12">
                   <button
-                    :disabled="!savePageContentBtnIsActive"
-                    class="btn btn-primary btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
-                    @click="onSavePageContent"
+                      :disabled="!savePageContentBtnIsActive"
+                      class="btn btn-primary btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
+                      @click="onSavePageContent"
                   >
                     Save Changes
                   </button>
@@ -1320,12 +1326,12 @@ const moreSetting = () => {
           </div>
 
           <div
-            v-else-if="activeSidebarDataTab === 'data'"
-            id="data-tab"
-            ref="dataRef"
-            aria-labelledby="tabs-profile-tab02"
-            class="tab-data px-5 grow h-full"
-            role="tabpanel"
+              v-else-if="activeSidebarDataTab === 'data'"
+              id="data-tab"
+              ref="dataRef"
+              aria-labelledby="tabs-profile-tab02"
+              class="tab-data px-5 grow h-full"
+              role="tabpanel"
           >
             <div class="grid grid-cols-1 gap-3 py-3">
               <!-- This part if for uploading data files -->
@@ -1336,28 +1342,28 @@ const moreSetting = () => {
                 </label>
                 <!-- Accept .txt, .pdf, .docx, .csv -->
                 <input
-                  id="data-file"
-                  ref="dataFileEl"
-                  accept=".pdf"
-                  class="file-input file-input-ghost w-full max-w-xs"
-                  type="file"
-                  @change="onFileChange"
+                    id="data-file"
+                    ref="dataFileEl"
+                    accept=".pdf"
+                    class="file-input file-input-ghost w-full max-w-xs"
+                    type="file"
+                    @change="onFileChange"
                 />
                 <small class="text-xs text-gray-500"
-                  >This is the data file that will be used to train the chatbot.</small
+                >This is the data file that will be used to train the chatbot.</small
                 >
               </div>
               <div class="bg-white w-full px-4 md:px-6 basis-10/12">
                 <!--                :disabled="!uploadDataBtnIsActive"-->
                 <button
-                  :disabled="!fileUploadBtnEnabled"
-                  class="btn btn-primary btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
-                  @click="onUploadData"
+                    :disabled="!fileUploadBtnEnabled"
+                    class="btn btn-primary btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
+                    @click="onUploadData"
                 >
                   Upload Data
                 </button>
               </div>
-              <hr class="my-3 h-0.5" />
+              <hr class="my-3 h-0.5"/>
 
               <div class="flex flex-col rounded bg-slate-200 p-3 w-full">
                 <label class="label text-sm font-semibold text-center" for="data-file">
@@ -1366,27 +1372,27 @@ const moreSetting = () => {
 
                 <!-- Accept .png, .jpg, .jpeg, .webp -->
                 <input
-                  id="data-file"
-                  ref="dataFileEl"
-                  accept=".png, .jpg, .jpeg, .webp"
-                  class="file-input file-input-ghost w-full max-w-xs"
-                  type="file"
-                  @change="onImageChange"
+                    id="data-file"
+                    ref="dataFileEl"
+                    accept=".png, .jpg, .jpeg, .webp"
+                    class="file-input file-input-ghost w-full max-w-xs"
+                    type="file"
+                    @change="onImageChange"
                 />
                 <small class="text-xs text-gray-500"
-                  >This is the image that will be used as the chatbot icon.</small
+                >This is the image that will be used as the chatbot icon.</small
                 >
               </div>
               <div class="bg-white w-full px-4 md:px-6 basis-10/12">
                 <button
-                  :disabled="!imgUploadBtnEnabled"
-                  class="btn btn-primary btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
-                  @click="onUploadImg"
+                    :disabled="!imgUploadBtnEnabled"
+                    class="btn btn-primary btn-outline btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
+                    @click="onUploadImg"
                 >
                   Upload Image
                 </button>
               </div>
-              <hr class="my-3 h-0.5" />
+              <hr class="my-3 h-0.5"/>
               <!--              <div class="flex flex-col rounded bg-slate-200 p-3">-->
               <!--                <p class="text-sm">-->
               <!--                  Click on the below link to add url for your chatbot to add on the data, it can be-->
@@ -1406,46 +1412,46 @@ const moreSetting = () => {
                 <Listbox v-model="selectedContext">
                   <div class="relative">
                     <ListboxButton
-                      class="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+                        class="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
                     >
                       <span class="block truncate">{{ selectedContext.name }}</span>
                       <span
-                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                          class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                       >
-                        <ChevronUpDownIcon aria-hidden="true" class="h-5 w-5 text-gray-400" />
+                        <ChevronUpDownIcon aria-hidden="true" class="h-5 w-5 text-gray-400"/>
                       </span>
                     </ListboxButton>
 
                     <transition
-                      leave-active-class="transition duration-100 ease-in"
-                      leave-from-class="opacity-100"
-                      leave-to-class="opacity-0"
+                        leave-active-class="transition duration-100 ease-in"
+                        leave-from-class="opacity-100"
+                        leave-to-class="opacity-0"
                     >
                       <ListboxOptions
-                        class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+                          class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
                       >
                         <ListboxOption
-                          v-for="context in chatbotContext"
-                          :key="context.name"
-                          v-slot="{ active, selected }"
-                          :value="context"
-                          as="template"
+                            v-for="context in chatbotContext"
+                            :key="context.name"
+                            v-slot="{ active, selected }"
+                            :value="context"
+                            as="template"
                         >
                           <li
-                            :class="[
+                              :class="[
                               active ? 'bg-sky-100 text-sky-900' : 'text-gray-900',
                               'relative cursor-default select-none py-2 pl-10 pr-4'
                             ]"
                           >
                             <span
-                              :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']"
-                              >{{ context.name }}</span
+                                :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']"
+                            >{{ context.name }}</span
                             >
                             <span
-                              v-if="selected"
-                              class="absolute inset-y-0 left-0 flex items-center pl-3 text-sky-600"
+                                v-if="selected"
+                                class="absolute inset-y-0 left-0 flex items-center pl-3 text-sky-600"
                             >
-                              <CheckIcon aria-hidden="true" class="h-5 w-5" />
+                              <CheckIcon aria-hidden="true" class="h-5 w-5"/>
                             </span>
                           </li>
                         </ListboxOption>
@@ -1454,19 +1460,19 @@ const moreSetting = () => {
                   </div>
                 </Listbox>
                 <button
-                  :disabled="!isContextSelected"
-                  class="btn btn-sm mt-3 bg-blue-200 text-sm font-normal"
-                  @click="addContext"
+                    :disabled="!isContextSelected"
+                    class="btn btn-sm mt-3 bg-blue-200 text-sm font-normal"
+                    @click="addContext"
                 >
                   <span v-if="contextIsLoading" class="loading loading-spinner loading-md"></span>
                   <span v-else>Add context</span>
                 </button>
               </div>
-              <hr class="my-3 h-0.5" />
+              <hr class="my-3 h-0.5"/>
               <button
-                class="btn btn-sm bg-blue-200 hover:bg-blue-400"
-                type="button"
-                @click="moreSetting"
+                  class="btn btn-sm bg-blue-200 hover:bg-blue-400"
+                  type="button"
+                  @click="moreSetting"
               >
                 more
               </button>
@@ -1485,7 +1491,8 @@ const moreSetting = () => {
   transition: transform 0.2s;
 }
 
-.slide-enter, .slide-leave-to /* .slide-leave-active in <2.1.8 */ {
+.slide-enter, .slide-leave-to /* .slide-leave-active in <2.1.8 */
+{
   transform: translateX(0);
 }
 
