@@ -15,7 +15,6 @@ import {useAuthStore, type UserInfo} from '@/stores/auth'
 import {io} from 'socket.io-client'
 import {useAdminHomeStore} from '@/stores/admin/home'
 import DialogModal from '@/components/DialogModal.vue'
-import type {ThemeSettings} from "@/components/Settings/ThemeSettings.vue";
 
 interface ChatbotPageProps {
   chatbotNameprop: string
@@ -594,7 +593,7 @@ const currentScrollPosition = ref(0)
 
 // We'll also create a variable for the height of the conversation container
 const conversationContainerHeight = ref(0)
-const theme = ref<ThemeSettings>()
+const theme = ref()
 onMounted(async () => {
   try {
     await chatbotStore.getTheme()
@@ -863,9 +862,8 @@ const activateTextarea = () => {
               <div class="">
                 <ChatbotBubble
                     :key="1"
-                    :botBubbleColor="theme?.botBubbleColor as string"
-                    :botBubbleTextColor="theme?.botBubbleTextColor as string"
                     :chat-text-color="chatTextColor"
+                    :chatBubbleBg="theme.chatBubble"
                     :chatbot-message="
                     staticGreeting
                       ? marked.parse(staticGreeting)
@@ -874,6 +872,7 @@ const activateTextarea = () => {
                     :chatbot-name="chatbotName"
                     :icon-name="pageContent?.iconName"
                     :is-typing="false"
+                    :themeName="theme.name"
                 />
 
                 <ul class="space-y-5">
@@ -887,9 +886,9 @@ const activateTextarea = () => {
                         :key="message.value.uniqueId"
                         :audio-data="message.value?.audioData"
                         :chat-text-color="chatTextColor"
+                        :themeName="theme.name"
                         :user-message="message.value.message"
-                        :userBubbleColor="theme?.userBubbleColor as string"
-                        :userBubbleTextColor="theme?.userBubbleTextColor as string"
+                        :userBubbleBg="theme.userBubble"
                         user-name="John Doe"
                     />
                     <!-- <div class="ai-respose"> -->
@@ -898,9 +897,8 @@ const activateTextarea = () => {
                     <ChatbotBubble
                         v-else-if="!message.value.isUser"
                         :key="index"
-                        :botBubbleColor="theme?.botBubbleColor as string"
-                        :botBubbleTextColor="theme?.botBubbleTextColor as string"
                         :chat-text-color="chatTextColor"
+                        :chatBubbleBg="theme.chatBubble"
                         :chatbot-message="marked.parse(message.value.message)"
                         :chatbot-name="chatbotName"
                         :disclosure-message="pageContent?.closureMessage"
@@ -910,6 +908,7 @@ const activateTextarea = () => {
                         :is-copyable="index !== 0"
                         :is-typing="message.value?.isTyping"
                         :original-message="message.value?.originalMessage"
+                        :themeName="theme.name"
                     />
 
                     <!-- </div> -->
@@ -954,11 +953,11 @@ const activateTextarea = () => {
               <UserInput
                   :disabled="false"
                   :input-btn-color="inputBtnColor"
-                  :inputColor="theme.inputColor"
-                  :inputTextColor="theme.inputTextColor"
                   :is-generating="isGeneratingResponse"
                   :prompt-placeholder="promptPlaceholder"
                   :ring-color="inputRingColor"
+                  :textareaColor="theme.textAreaColor"
+                  :themeName="theme.name"
                   user-input=""
                   @userInput="handleUserInput"
               />
