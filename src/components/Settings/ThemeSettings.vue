@@ -43,6 +43,21 @@ const getSelectedTheme = () => {
   }
 
 }
+onMounted(() => {
+  rotateBtn.value = true
+  getSelectedTheme()
+  themeContainer.value = chatbotStore.themes
+  console.log('themeContainer', themeContainer.value)
+})
+
+
+const themeContainer = ref()
+
+const showThemes = ref<boolean>(false)
+const selectThemes = () => {
+  showThemes.value = !showThemes.value
+  console.log(showThemes.value)
+}
 
 
 const selectedTheme = (value: ThemeColors) => {
