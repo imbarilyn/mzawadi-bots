@@ -142,6 +142,7 @@ interface ChatHistory {
 }
 
 const groupChatbyMonth = () => {
+  console.log(chatBotStore.chatHistoryArray)
   const chatHistoryArray: ChatHistory[] = chatBotStore.chatHistoryArray
   const grouped = chatHistoryArray.reduce(
       (acc, chat) => {

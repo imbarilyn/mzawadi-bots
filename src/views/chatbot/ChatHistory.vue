@@ -793,7 +793,7 @@ const reloadPage = () => {
   <div
       v-if="theme"
       :class="[bgImg ? 'page-bg-color' : 'bg-requested-color']"
-      class="chat-page relative flex min-h-full w-full"
+      class="chat-page relative flex min-h-full w-full bg-white"
   >
     <div
         id="main-container"
@@ -815,13 +815,13 @@ const reloadPage = () => {
       <div class="py-10 lg:py-14">
         <!-- Title -->
         <div
-            class="sticky top-0 z-10 flex flex-row gap-4 bg-requested-color max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center"
+            class="sticky top-0 z-10 flex flex-row gap-4 max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center"
         >
           <div class="lg:block hidden pb-8">
             <img class="h-14 w-14 rounded-full" src="@/assets/imgs/chatbot.png"/>
           </div>
 
-          <div>
+          <div class="">
             <h1 :class="titleTextColor" class="text-3xl font-bold sm:text-4xl ps-2">
               {{ chatbotName }} AI
             </h1>
@@ -920,7 +920,6 @@ const reloadPage = () => {
           </button>
           <div v-if="isBottom" class="py-4 bg-gradient-to-t from-requested-color block"></div>
           <div
-              :class="!isBottom ? inputBg : 'bg-requested-color'"
               class="w-full px-4 md:px-6 pb-8 flex-1"
           >
             <div class="grid grid-cols-1 w-11/12 md:w-10/12 mx-auto">
@@ -940,7 +939,7 @@ const reloadPage = () => {
           </div>
         </div>
       </div>
-      <div id="user-input-placeholder"></div>
+      <div id="user-input-placeholder bg-red-500"></div>
     </div>
     <teleport to="body">
       <DialogModal
@@ -967,7 +966,7 @@ const reloadPage = () => {
                 class="btn me-5" @click="logOut">Sign Out
             </button>
             <button
-                :class="[`bg-${theme.name}-400`]"
+                :class="[`bg-${theme.name}-300`]"
                 class="btn w-[200px]" @click="homeStore.closeSignOutDialog()">
               Cancel
             </button>
@@ -997,7 +996,7 @@ const reloadPage = () => {
                 class="btn btn-sm" @click="openFileDialog">Upload
             </button>
             <button
-                :class="[`bg-${theme.name}-400`]"
+                :class="[`bg-${theme.name}-300`]"
                 class="btn btn-sm ms-2">Take Photo
             </button>
           </div>
@@ -1032,9 +1031,9 @@ const reloadPage = () => {
       </DialogModal>
     </teleport>
   </div>
-  <div v-else>
-    <loading-overlay/>
-  </div>
+  <!--  <div v-else>-->
+  <!--    <loading-overlay/>-->
+  <!--  </div>-->
 </template>
 
 <style scoped>
