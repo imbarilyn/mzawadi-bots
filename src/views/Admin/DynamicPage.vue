@@ -13,7 +13,6 @@ import LoadingOverlay from '../../components/LoadingOverlay.vue'
 import {useNotificationsStore} from '@/stores/notifications'
 import DialogModal from '../../components/DialogModal.vue'
 import {useChatbotStore} from "@/stores/chatbot";
-import type {ThemeSettings} from "@/components/Settings/ThemeSettings.vue";
 
 interface DynamicPageProps {
   page?: string
@@ -58,11 +57,11 @@ const tab = ref<Tab | null>(null)
 const sidebarDataChanged = ref(false)
 
 const url = ref<string | null>(null)
-const theme = ref<ThemeSettings>()
+const theme = ref()
 onMounted(() => {
   chatbotStore.getTheme()
       .then((resp) => {
-        console.log(resp)
+        console.log("Dynamic page", resp)
         const {result, data} = resp
         if (result === 'ok') {
           theme.value = {...data}
@@ -380,35 +379,36 @@ const handleSidebarDataChanged = (value: boolean) => {
                 <template v-if="staticGreeting && chatbotName && promptPlaceholder">
                   <ChatbotBubble
                       :key="1"
-                      :botBubbleColor="theme?.botBubbleColor as string"
-                      :botBubbleTextColor="theme?.botBubbleTextColor as string"
+                      :chatBubbleBg="theme.chatBubble"
                       :chatbot-message="staticGreeting"
                       :chatbot-name="chatbotName"
                       :disclosure-message="pageContent?.closureMessage"
                       :has-disclosure-message="pageContent?.displayClosureMessage"
                       :is-typing="false"
+                      :themeName="theme.name"
                   />
 
                   <UserBubble
+                      :themeName="theme.name"
                       :user-message="`What is this?`"
-                      :userBubbleColor="theme?.userBubbleColor as string"
-                      :userBubbleTextColor="theme?.userBubbleTextColor as string" user-name="John Doe"/>
+                      :userBubbleBg="theme.userBubble"
+                      user-name="John Doe"/>
                   <ChatbotBubble
                       :key="2"
-                      :botBubbleColor="theme?.botBubbleColor as string"
-                      :botBubbleTextColor="theme?.botBubbleTextColor as string"
+                      :chatBubbleBg="theme.chatBubble"
                       :chatbot-message="`Sorry! I can't help you with that at the moment. Please try again later.`"
                       :chatbot-name="chatbotName"
                       :disclosure-message="pageContent?.closureMessage"
                       :has-disclosure-message="pageContent?.displayClosureMessage"
                       :icon-name="pageContent?.iconName"
                       :is-typing="false"
+                      :themeName="theme.name"
                       is-copyable
                   />
                   <UserInput
-                      :inputColor="theme?.inputColor"
-                      :inputTextColor="theme?.inputTextColor"
-                      :prompt-placeholder="promptPlaceholder" disabled user-input=""/>
+                      :prompt-placeholder="promptPlaceholder"
+                      :textareaColor="theme.textAreaColor"
+                      :themeName="theme.name" disabled user-input=""/>
                 </template>
               </ul>
               <!--              </div>-->
