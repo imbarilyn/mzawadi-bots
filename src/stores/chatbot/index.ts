@@ -281,7 +281,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
 
     async function getConversationHistory(pageSlug: string, phoneNo: string) {
         const notification = useNotificationsStore()
-        console.log(pageSlug, phoneNo)
+        console.log('Getting History', {pageSlug, phoneNo})
         pgSlug.value = pageSlug
         try {
             const response = await fetch(`${BOT_URL}/chat-history/${pageSlug}/titles/`, {
@@ -295,7 +295,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
                 })
             })
             const resp = await response.json()
-            console.log(resp)
+            console.log('after getting history', resp)
             return resp
         } catch (error) {
             console.log(error)
@@ -368,7 +368,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
                     Authorization: `${authStore.token}`
                 },
                 mode: 'cors',
-                body: JSON.stringify({...themePayload, pageSlug: pageSlug.value})
+                body: JSON.stringify({...themePayload.value, pageSlug: pageSlug.value})
             })
             const resp = await response.json()
             console.log(resp)
