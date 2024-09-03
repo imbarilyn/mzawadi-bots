@@ -62,7 +62,26 @@ const selectThemes = () => {
 
 const selectedTheme = (value: ThemeColors) => {
   console.log('selected theme', value)
-  const themePayload = {...value}
+
+  console.log('themePayload', themePayload)
+  themeContainer.value = value
+}
+const themePayload = ref({
+  name: '',
+  userBubble: '',
+  chatBubble: '',
+  textAreaColor: ''
+})
+const openAddThemeModal = ref<boolean>(false)
+const addTheme = (value: any) => {
+  openAddThemeModal.value = true
+  themePayload.value = {...value}
+  console.log("adding theme", themePayload.value)
+}
+
+const postTheme = () => {
+  console.log(themePayload.value)
+  closeAddThemeModal()
   chatbotStore.themeSetting(themePayload)
       .then((resp) => {
         console.log(resp)
