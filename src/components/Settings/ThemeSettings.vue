@@ -118,6 +118,39 @@ const closeAddThemeModal = () => {
         <PreviewSettings :chatBubble="themeContainer.chatBubble" :name="themeContainer.name"
                          :textAreaColor="themeContainer.textAreaColor" :userBubble="themeContainer.userBubble"/>
       </div>
+      <teleport to="body">
+        <DialogModal :is-open="openAddThemeModal" @closeModal="closeAddThemeModal">
+          <template #title>
+            <div class="w-full flex justify-end">
+              <button class="btn btn-sm btn-ghost btn-circle" @click="closeAddThemeModal">
+                <span class="material-icons-outlined">close</span>
+              </button>
+            </div>
+            <div class="flex justify-center">
+              <span class="material-icons-outlined !text-6xl pb-2"> &#128512;</span>
+            </div>
+          </template>
+          <template #body>
+            <div class="flex justify-center">
+              <p :class="[themePayload]" class="font-xs">Be aware you are about to change
+                theme to
+                <span :class="[`text-${themePayload.name}-500`, 'font-bold']">{{ themePayload.name }}</span></p>
+            </div>
+            <div class="flex justify-center">
+              <p class="text-lg font-semibold">Kindly click below</p>
+            </div>
+          </template>
+          <template #footer>
+            <div class="flex justify-center">
+              <button
+                  class="btn btn-sm px-6 btn-primary"
+                  @click="postTheme">
+                <span>Add {{ themePayload.name }}Theme</span>
+              </button>
+            </div>
+          </template>
+        </DialogModal>
+      </teleport>
     </div>
     <div v-else>
       <loading-overlay/>
