@@ -35,7 +35,9 @@ const chatbotImg = ref('')
 const mesRes = ref('')
 
 //establish connections with socket io
-const socket = io('wss://botsockets.mzawadi.com/', {
+// bots socket =wss://botsockets.mzawadi.com/
+
+const socket = io('wss://towersaccosocket.mzawadi.com/', {
   reconnection: true,
   reconnectionAttempts: Infinity,
   reconnectionDelay: 1000,
@@ -64,13 +66,13 @@ socket.on('connect_error', (error) => {
 socket.on('connect', () => {
   console.log('connected!')
 })
-
+console.log("There is a connection")
 chatBotStore
     .getConversationHistory(props.cbName, authStore.getMemberData.phoneNo)
     .then((response) => {
       if (response.result === 'ok') {
         chatBotStore.chatHistoryArray = response.data
-        console.log(typeof chatBotStore.chatHistoryArray[0].Id)
+        // console.log(typeof chatBotStore.chatHistoryArray[0].Id)
         console.log(chatBotStore.chatHistoryArray)
       }
     })
@@ -91,7 +93,7 @@ chatBotStore
     .then((response) => {
       if (response.conversationId) {
         sesh_id.value = response.conversationId
-        console.log('Coversation-Id', response.conversationId)
+        console.log('Conversation-Id', response.conversationId)
         console.log(sesh_id.value)
         notificationsStore.addNotification('The chat bot is ready', 'success')
       } else {
@@ -151,19 +153,20 @@ const inputBg = ref<string>('bg-requested-color')
 
 const bgImg = ref('')
 const theme = ref<ThemePayload>()
+chatBotStore.getTheme()
+    .then((resp) => {
+      console.log(resp)
+      const {result, data} = resp
+      if (result === 'ok') {
+        theme.value = {...data}
+        console.log("****theme-new-chat***", theme.value)
+        notificationsStore.addNotification('Theme Settings fetched successfully', 'success')
+      } else {
+        notificationsStore.addNotification('An error occurred fetching Theme Settings', 'error')
+      }
+    })
 onMounted(() => {
-  chatBotStore.getTheme()
-      .then((resp) => {
-        console.log(resp)
-        const {result, data} = resp
-        if (result === 'ok') {
-          theme.value = {...data}
-          console.log("****theme-new-chat***", theme.value)
-          notificationsStore.addNotification('Theme Settings fetched successfully', 'success')
-        } else {
-          notificationsStore.addNotification('An error occurred fetching Theme Settings', 'error')
-        }
-      })
+
   if (authStore.memberData !== '') {
     authStore
         .createAccount({
@@ -546,7 +549,7 @@ const handleUserInput = (
 }
 
 socket.on('message', (response) => {
-  console.log(response)
+  console.log("ai-stream***", response)
   const parsedResponse = JSON.parse(response)
   console.log(parsedResponse.message)
   mesRes.value += parsedResponse.message
@@ -572,6 +575,7 @@ watch(
       currentAiMsg.value.message = currentMsg
 
       console.log(currentMsg)
+      console.log(currentAiMsg.value.message)
 
       if (value.includes('~~~ENDOFSTREAM~~~')) {
         mesRes.value = ''
@@ -754,6 +758,7 @@ const closePhotoDialog = () => {
 const closeConversationIdDialog = () => {
   conversationIdTrigger.value = false
 }
+
 
 const reloadPage = () => {
   chatBotStore.reloadForConvesationId()
@@ -946,7 +951,7 @@ const reloadPage = () => {
                   class="btn  me-5" @click="logOut">Sign Out
               </button>
               <button
-                  :class="[`bg-${theme.name}-400`]"
+                  :class="[`bg-${theme.name}-300`]"
                   class="btn   w-[200px]" @click="homeStore.closeSignOutDialog()">
                 Cancel
               </button>
@@ -975,7 +980,7 @@ const reloadPage = () => {
                   class="btn btn-sm" @click="openFileDialog">Upload
               </button>
               <button
-                  :class="[`bg-${theme.name}-400`]"
+                  :class="[`bg-${theme.name}-300`]"
                   class="btn btn-sm ms-2"
                   @click="chatBotStore.openCameraModal(true)"
               >
@@ -1005,7 +1010,9 @@ const reloadPage = () => {
           </template>
           <template #footer>
             <div class="flex justify-center">
-              <button class="btn btn-primary btn-sm px-6" @click="reloadPage">
+              <button :class="[`bg-${theme.name}-300`]"
+                      class="btn btn-sm px-6"
+                      @click="reloadPage">
                 <span class="material-icons-outlined text-white">refresh</span>
               </button>
             </div>
@@ -1014,9 +1021,9 @@ const reloadPage = () => {
       </teleport>
     </div>
   </div>
-  <div v-else>
-    <loading-overlay/>
-  </div>
+  <!--  <div v-else>-->
+  <!--    <loading-overlay/>-->
+  <!--  </div>-->
 </template>
 
 <style scoped>

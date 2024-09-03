@@ -250,10 +250,10 @@ const routes = [
 ] as any[]
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(import.meta.env.BASE_URL),
     // @ts-ignore
     // base: process.env.VITE_APP_BASE_URL || '/',
-    base: '/',
+    // base: '/',
     routes,
     scrollBehavior() {
         // always scroll to top
