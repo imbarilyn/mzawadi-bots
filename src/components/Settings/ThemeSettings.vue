@@ -5,28 +5,15 @@ import ThemesSidebar, {type ThemeColors} from "@/components/Settings/ThemesSideb
 import {useChatbotStore} from "@/stores/chatbot";
 import {useNotificationsStore} from "@/stores/notifications";
 import LoadingOverlay from "@/components/LoadingOverlay.vue";
+import DialogModal from "@/components/DialogModal.vue";
+import theme from "tailwindcss/defaultTheme";
 
 
 const notificationStore = useNotificationsStore()
 const chatbotStore = useChatbotStore()
 const rotateBtn = ref<boolean>(false)
 
-onMounted(() => {
-  rotateBtn.value = true
-  getSelectedTheme()
-  themeContainer.value = chatbotStore.themes
-  console.log('themeContainer', themeContainer.value)
-})
-
-
-const themeContainer = ref()
-
-const showThemes = ref<boolean>(false)
-const selectThemes = () => {
-  showThemes.value = !showThemes.value
-  console.log(showThemes.value)
-}
-
+// Fetch the preset theme before admin adds a theme
 const getSelectedTheme = () => {
   try {
     chatbotStore.getTheme()
@@ -86,15 +73,18 @@ const postTheme = () => {
       .then((resp) => {
         console.log(resp)
         if (resp.result === 'ok') {
-          notificationStore.addNotification('Theme Successfully set', 'success')
-          getSelectedTheme()
-
-
+          notificationStore.addNotification(`${themePayload.value.name} theme Successfully set`, 'success')
+          // themeContainer.value = resp.data
         } else {
-          notificationStore.addNotification('An error occurred while setting theme try again', 'error')
+          notificationStore.addNotification(`An error occurred while setting ${themePayload.value.name} theme try again`, 'error')
         }
       })
   return
+
+}
+
+const closeAddThemeModal = () => {
+  openAddThemeModal.value = false
 }
 </script>
 
@@ -122,7 +112,7 @@ const postTheme = () => {
         </div>
       </div>
       <div class="absolute  right-0 top-12">
-        <ThemesSidebar @selected-theme="selectedTheme"/>
+        <ThemesSidebar @selected-theme="selectedTheme" @add-theme="addTheme"/>
       </div>
       <div>
         <PreviewSettings :chatBubble="themeContainer.chatBubble" :name="themeContainer.name"
