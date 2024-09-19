@@ -120,19 +120,16 @@ const onCopyClick = () => {
     alert('Your browser does not support this feature. Please use a different browser.')
     return
   }
-  navigator.clipboard.writeText(props?.originalMessage as string)
+  // navigator.clipboard.writeText(props?.originalMessage as string)
+
+  console.log('Original message', props.originalMessage)
+  navigator.clipboard.writeText(props.originalMessage as string)
   isTextCopied.value = true
 
   setTimeout(() => {
     isTextCopied.value = false
   }, 2000)
 }
-chatbotStore.getTheme()
-
-
-// const onCopyTextMouseLeave = () => {
-//   isTextCopied.value = false;
-// };
 </script>
 
 <template>
