@@ -124,9 +124,6 @@ chatBotStore
         console.log(chatBotStore.chatHistoryArray)
       }
     })
-const confirmSignOut = () => {
-  homeStore.signOutDialog.isOpen = true
-}
 
 const logOut = () => {
   localStorage.clear()
@@ -687,42 +684,46 @@ document.addEventListener('scroll', (_evt) => {
 
   // we know that the user has reached at the bottom if the current scroll position is greater than or equal to the conversation container height minus the viewport height
   // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
-  if (conversationContainerRef.value)
-    isBottom.value =
-        conversationContainerRef.value?.scrollTop >=
-        conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight
+  if (conversationContainerRef.value) {
+    isBottom.value = conversationContainerRef.value?.scrollTop >= conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight
 
-  // console.log({
-  //   'scrollHeight': document.documentElement.scrollHeight,
-  //   'clientHeight': document.documentElement.clientHeight,
-  //   'scrollTop': document.documentElement.scrollTop,
-  // });
+    // isBottom.value =
+    //       conversationContainerRef.value?.scrollTop >=
+    //       conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight
 
-  // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
-  // isScrolling.value = true;
+    // console.log({
+    //   'scrollHeight': document.documentElement.scrollHeight,
+    //   'clientHeight': document.documentElement.clientHeight,
+    //   'scrollTop': document.documentElement.scrollTop,
+    // });
+
+    // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
+    // isScrolling.value = true;
 
   // set is scrolling to true if the user is scrolling to the top and has not reached 0
   isScrolling.value = currentScrollPosition.value > 0 && !isBottom.value
+    // set is scrolling to true if the user is scrolling to the top and has not reached 0
+    isScrolling.value = currentScrollPosition.value > 0 && !isBottom.value
 
-  // console.log('isBottom', isBottom.value);
-  // console.log('isScrolling', isScrolling.value);
-  // console.log('conversationContainerHeight', conversationContainerHeight.value);
-  // console.log('userInputContainerHeight', userInputContainerHeight.value);
-  // console.log('currentScrollPosition', currentScrollPosition.value)
+    // console.log('isBottom', isBottom.value);
+    // console.log('isScrolling', isScrolling.value);
+    // console.log('conversationContainerHeight', conversationContainerHeight.value);
+    // console.log('userInputContainerHeight', userInputContainerHeight.value);
+    // console.log('currentScrollPosition', currentScrollPosition.value)
+  }
 })
 
 // conversationContainerHeight.value = conversationContainerRef.value?.clientHeight || 0;
 
 // console.log('conversationContainerHeight', conversationContainerHeight.value);
 
-setTimeout(() => {
-  scrollToBottom()
-}, 800)
-
 // watch over the conversation array
 watch(conversation.value, () => {
   // get the height of the conversation container
-  conversationContainerHeight.value = conversationContainerRef.value?.clientHeight || 0
+  // conversationContainerHeight.value = conversationContainerRef.value?.clientHeight || 0
+  if (conversationContainerRef.value) {
+    conversationContainerHeight.value = conversationContainerRef.value.clientHeight || 0
+  }
 
   // isBottom.value = conversationContainerRef.value?.scrollTop >= conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight;
 
@@ -732,7 +733,9 @@ watch(conversation.value, () => {
   // if the conversation container height is greater than the viewport height
   // toggleSticky.value =
 })
-
+setTimeout(() => {
+  scrollToBottom()
+}, 1000)
 // const chatBotStore = useChatbotStore()
 
 const showMenuMedium = ref(false)
