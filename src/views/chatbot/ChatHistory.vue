@@ -811,14 +811,14 @@ const reloadPage = () => {
       <div class="py-10 lg:py-14">
         <!-- Title -->
         <div
-            class="sticky top-0 z-10 flex flex-row gap-4 max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center"
+            class="flex gap-4 md:flex-row  flex-col justify-center items-center lg:py-10 bg-white z-10 max-w-4xl mx-auto text-center"
         >
-          <div class="lg:block hidden pb-8">
-            <img class="h-14 w-14 rounded-full" src="@/assets/imgs/chatbot.png"/>
+          <div class="pb-8 md:col-span-1 col-span-2 w-36  flex justify-center items-center">
+            <img v-if="chatbotImg" :src="chatbotImg" alt="chatbot-icon" class="h-full w-full">
+            <img v-else alt="chatbot-icon" class="h-full w-full  rounded-full" src="@/assets/imgs/chatbot.png"/>
           </div>
-
-          <div class="">
-            <h1 :class="titleTextColor" class="text-3xl font-bold sm:text-4xl ps-2">
+          <div class="md:col-span-1 col-span-2">
+            <h1 :class="titleTextColor" class="text-2xl font-bold lg:text-4xl">
               {{ chatbotName }} AI
             </h1>
             <p class="mt-3 text-gray-600 dark:text-gray-400">
@@ -826,7 +826,41 @@ const reloadPage = () => {
               Here to help you with your questions
             </p>
           </div>
+
+
         </div>
+
+      </div>
+      <!--      <div id="btn-medium" class="sticky -top-2 z-20 lg:hidden block ps-6 pt-6">-->
+      <!--        <button @click="expandMenuMedium" @mouseleave="hideExpand" @mouseover="showExpand">-->
+      <!--          <span class="material-icons-outlined">menu</span>-->
+      <!--        </button>-->
+      <!--        <small-->
+      <!--            v-if="showMenuMedium"-->
+      <!--            class="absolute rounded-md left-6 top-12 p-0.5 bg-gray-700 text-white transition ease-in-out duration-300"-->
+      <!--        >expand menu-->
+      <!--        </small>-->
+      <!--      </div>-->
+
+      <div class="py-10 lg:py-10">
+        <!-- Title -->
+        <!--        <div-->
+        <!--            class="sticky top-0 z-10 flex flex-row bg-white gap-4 max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center"-->
+        <!--        >-->
+        <!--          <div class="lg:block hidden pb-8">-->
+        <!--            <img class="h-14 w-14 rounded-full" src="@/assets/imgs/chatbot.png"/>-->
+        <!--          </div>-->
+
+        <!--          <div class="text-center w-full ">-->
+        <!--            <h1 :class="titleTextColor" class="text-2xl font-bold lg:text-4xl ps-8">-->
+        <!--              {{ chatbotName }} AI-->
+        <!--            </h1>-->
+        <!--            <p class="mt-3 text-gray-600 dark:text-gray-400">-->
+        <!--              &lt;!&ndash;            Your AI-powered copilot for the web&ndash;&gt;-->
+        <!--              Here to help you with your questions-->
+        <!--            </p>-->
+        <!--          </div>-->
+        <!--        </div>-->
         <div class="grow mt-14">
           <!-- End Title -->
           <Transition mode="out-in" name="slide-in">
@@ -845,7 +879,7 @@ const reloadPage = () => {
                 <!--                  :is-typing="false"-->
                 <!--                />-->
 
-                <ul class="space-y-5">
+                <ul class="space-y-5 ">
                   <template v-for="(message, index) in conversation" :key="index">
                     <UserBubble
                         v-if="
