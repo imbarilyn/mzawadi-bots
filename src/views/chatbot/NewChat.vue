@@ -82,7 +82,7 @@ console.log(chatUser)
 
 // trying to get conversationId guess what for chatting to happen
 const conversationIdTrigger = ref<boolean>(false)
-console.log(chatUser.value)
+// console.log(authStore.getUserDetails())
 chatBotStore
     .getConvId({
       userName: chatUser.fullNames,
@@ -111,21 +111,11 @@ chatBotStore
       conversationIdTrigger.value = false
     })
 
-//
-// const confirmSignOut = () => {
-//   homeStore.signOutDialog.isOpen = true
-// }
-
 const logOut = () => {
-  if (authStore.userRole === 'user') {
-    localStorage.clear()
-    router.push({name: 'chat-login'})
-    console.log('user is logged out')
-  } else {
-    authStore.logoutAdmin()
-    console.log('Admin logged out')
-    router.push({name: 'admin-login'})
-  }
+
+  localStorage.clear()
+  router.push({name: 'chat-login'})
+  homeStore.signOutDialog.isOpen = false
 }
 
 const appIsFetching = ref(true)
