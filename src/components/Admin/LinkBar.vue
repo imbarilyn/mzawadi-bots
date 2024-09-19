@@ -45,8 +45,6 @@ const onSettingsClick = () => {
       // activate the tab
       await tabsStore.updateActiveTab('Settings')
       console.log(props.name)
-
-
       await router.push({
         name: 'AdminSettingsTab',
         params: {tab: 'General'},

@@ -55,7 +55,6 @@ export const useChatbotStore = defineStore('chatbot', () => {
     }
 
 
-    const pageSlug = computed(() => pgSlug.value.replace(/^\//, ''))
     const stringArray = ref<string[]>([])
     const oldString = ref<string>('')
     const newString = ref<string>('')
@@ -295,7 +294,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
                 })
             })
             const resp = await response.json()
-            console.log('after getting history', resp)
+            console.log('Chat history titles', resp)
             return resp
         } catch (error) {
             console.log(error)
@@ -316,7 +315,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
             })
             const resp = await response.json()
             // chatDisplay.value.splice(0, chatDisplay.value.length)
-            console.log(resp)
+            console.log('chat history', resp)
             const {data, result} = resp
             chatDisplayArray.value = data
             return resp
@@ -360,6 +359,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
         const authStore = useAuthStore()
         console.log(authStore.chatBotUser)
         console.log(themePayload)
+        console.log(pgSlug.value)
         try {
             const response = await fetch(`${BOT_URL}/page-settings/themes/add-theme/`, {
                 method: 'POST',
@@ -368,7 +368,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
                     Authorization: `${authStore.token}`
                 },
                 mode: 'cors',
-                body: JSON.stringify({...themePayload.value, pageSlug: pageSlug.value})
+                body: JSON.stringify({...themePayload.value, pageSlug: pgSlug.value})
             })
             const resp = await response.json()
             console.log(resp)
@@ -381,8 +381,9 @@ export const useChatbotStore = defineStore('chatbot', () => {
 
     async function getTheme() {
         // remove the slash
-
+        console.log(pgSlug.value)
         const authStore = useAuthStore()
+        console.log(pgSlug.value)
         try {
             const response = await fetch(`${BOT_URL}/page-settings/themes/get-theme/?pageSlug=${pageSlug.value}`, {
                 method: 'GET',
