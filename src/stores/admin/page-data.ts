@@ -4,6 +4,7 @@ import {type Page, useAdminHomeStore} from './home'
 import {useAppHomeStore} from '../home'
 import {useNotificationsStore} from '../notifications'
 import {useAuthStore} from '../auth'
+import {jwtDecode} from "jwt-decode";
 
 export interface PageContent {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -119,7 +120,9 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
         const appHomeStore = useAppHomeStore()
         const notificationStore = useNotificationsStore()
         const authStore = useAuthStore()
-
+        const decode = jwtDecode(authStore.token)
+        console.log("**pages*** token", decode)
+        console.log(authStore.token)
         appHomeStore.setIsAppFetching(true)
 
         try {
@@ -139,9 +142,8 @@ export const usePageContentStore = defineStore('pageContentStore', () => {
             setPageContentItems(pageOptions, pageContent)
         } catch (error) {
             console.error(error)
-
             notificationStore.addNotification(
-                'An error occurred while fetching the page content items.',
+                'An error occurred while fetching the page content items!!!!!',
                 'error'
             )
         } finally {
