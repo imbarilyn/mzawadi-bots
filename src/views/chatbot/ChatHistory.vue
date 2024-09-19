@@ -700,8 +700,6 @@ document.addEventListener('scroll', (_evt) => {
     // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
     // isScrolling.value = true;
 
-  // set is scrolling to true if the user is scrolling to the top and has not reached 0
-  isScrolling.value = currentScrollPosition.value > 0 && !isBottom.value
     // set is scrolling to true if the user is scrolling to the top and has not reached 0
     isScrolling.value = currentScrollPosition.value > 0 && !isBottom.value
 
