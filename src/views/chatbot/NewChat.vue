@@ -897,10 +897,10 @@ const reloadPage = () => {
                 />
               </svg>
             </button>
-            <div v-if="isBottom" class="py-4 bg-gradient-to-t from-requested-color block"></div>
+            <div v-if="isBottom" class="py-4 "></div>
             <div
                 :class="!isBottom ? inputBg : 'bg-requested-color'"
-                class="w-full px-4 md:px-6 pb-8 flex-1"
+                class="w-full px-4 md:px-6 pb-8 flex-1 bg-white"
             >
               <div class="grid grid-cols-1 w-11/12 md:w-10/12 mx-auto">
                 <UserInput
