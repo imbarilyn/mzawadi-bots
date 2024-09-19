@@ -17,6 +17,7 @@ import {useChatbotStore} from "@/stores/chatbot";
 interface DynamicPageProps {
   page?: string
   pageId?: string
+  cbName: string
 }
 
 const props = defineProps<DynamicPageProps>()
@@ -57,18 +58,15 @@ const tab = ref<Tab | null>(null)
 const sidebarDataChanged = ref(false)
 
 const url = ref<string | null>(null)
-const theme = ref()
+// const theme = ref()
 onMounted(() => {
   chatbotStore.getTheme()
       .then((resp) => {
-        console.log("Dynamic page", resp)
-        const {result, data} = resp
-        if (result === 'ok') {
-          theme.value = {...data}
-          console.log(theme.value?.sideNavColor)
-          notificationsStore.addNotification('Theme Settings fetched successfully', 'success')
+        console.log('theme', resp)
+        if (resp?.result === 'ok') {
+          notificationsStore.addNotification('Theme Successfully fetched', 'success')
         } else {
-          notificationsStore.addNotification('An error occurred fetching Theme Settings', 'error')
+          notificationsStore.addNotification('An error occurred fetching theme', 'error')
         }
       })
   pageContentStore.fetchPageContentItems().then(() => {
@@ -98,8 +96,9 @@ onMounted(() => {
         tab.value = tabsStore.getTabByTo(page.value as string)
 
         url.value = `/${currentPage.value?.path}`
-        chatbotStore.pgSlug = url.value
-
+        // const pageSlug = computed(() => url.value?.replace(/^\//, ''))
+        // console.log(pageSlug.value)
+        // chatbotStore.pgSlug = pageSlug.value as string
         if (!pageContent.value) {
           router.replace({name: 'not-found'})
         }
