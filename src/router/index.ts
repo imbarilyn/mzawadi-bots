@@ -118,7 +118,8 @@ const routes = [
                         component: () => import('../views/Admin/DynamicPage.vue'),
                         props: (route: any) => {
                             return {
-                                pageId: route.params.pageId
+                                pageId: route.params.pageId,
+                                cbName: route.params.pgSlug
                             }
                         }
                     },
