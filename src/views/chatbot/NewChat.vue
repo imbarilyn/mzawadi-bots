@@ -219,6 +219,7 @@ onMounted(() => {
         .then(() => {
           // pageContent.value = pageContentStore.getPageContentByPageId(pageId.value)
           pageContent.value = pageContentStore.getPageContentByChatbotName(props.cbName)
+          // console.log(pageContent.value)
 
           if (!pageContent.value) {
             router.replace({name: 'not-found'})
@@ -228,7 +229,7 @@ onMounted(() => {
             const chatbotUrl = pageContent.value?.iconName
             console.log(chatbotUrl)
             chatbotImg.value = `${import.meta.env.VITE_IMG_BASE_URL}/${chatbotUrl}`
-            console.log(chatbotImg.value)
+            console.log("chatbot image**", chatbotImg.value)
 
             console.log('pageContent', pageContent.value)
             // if (!pageContent.value) {
@@ -564,9 +565,6 @@ watch(
 
       currentAiMsg.value.message = currentMsg
 
-      console.log(currentMsg)
-      console.log(currentAiMsg.value.message)
-
       if (value.includes('~~~ENDOFSTREAM~~~')) {
         mesRes.value = ''
         isGeneratingResponse.value = false
@@ -597,15 +595,15 @@ const scrollToBottom = () => {
 
   console.log('isBottom', isBottom.value)
 
-  if (currentScrollPosition.value > 0 && !isBottom.value) {
+  if (currentScrollPosition.value > 0) {
     isScrollable.value = true
-    const conversationCon = document.querySelector('#user-input-placeholder')
-    conversationCon?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'end',
-      inline: 'nearest'
-    })
   }
+  const conversationCon = document.querySelector('#user-input-placeholder')
+  conversationCon?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'end',
+    inline: 'nearest'
+  })
 
   // if (isScrolling.value) {
   //   return;
@@ -660,7 +658,8 @@ document.addEventListener('scroll', (_evt) => {
   // we know that the user has reached at the bottom if the current scroll position is greater than or equal to the conversation container height minus the viewport height
   // isBottom.value = currentScrollPosition.value >= (conversationContainerHeight.value - viewportHeight.value);
   if (conversationContainerRef.value) {
-    isBottom.value = conversationContainerRef.value?.scrollTop - (conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight) === 0
+    isBottom.value = conversationContainerRef.value?.scrollTop >= conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight
+    // isBottom.value = conversationContainerRef.value?.scrollTop - (conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight) === 0
 
     // console.log({
     //   'scrollHeight': document.documentElement.scrollHeight,
