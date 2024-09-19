@@ -160,7 +160,7 @@ const onCopyClick = () => {
                 v-html="props.chatbotMessage"
             ></div>
 
-            <!--            <span v-if="isTyping" class="loading loading-ring loading-md"></span>-->
+            <span v-if="isTyping" class="loading loading-ring loading-md"></span>
           </template>
           <template v-else>
             <span class="loading loading-ball loading-sm"></span>
