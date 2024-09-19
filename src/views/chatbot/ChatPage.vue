@@ -7,8 +7,6 @@ import {useAuthStore} from '@/stores/auth'
 import {useNotificationsStore} from '@/stores/notifications'
 import {useRouter} from 'vue-router'
 import moment from 'moment'
-import ToastContainer from '@/views/Admin/toasts/ToastContainer.vue'
-import ToastAlert from '@/views/Admin/toasts/ToastAlert.vue'
 import CameraModal from '@/views/Admin/toasts/CameraModal.vue'
 import LoadingOverlay from "@/components/LoadingOverlay.vue";
 
@@ -144,6 +142,7 @@ interface ChatHistory {
 const groupChatbyMonth = () => {
   console.log(chatBotStore.chatHistoryArray)
   const chatHistoryArray: ChatHistory[] = chatBotStore.chatHistoryArray
+  console.log('chatHistoryArray', chatHistoryArray)
   const grouped = chatHistoryArray.reduce(
       (acc, chat) => {
         let date = moment(chat.createdAt).toISOString()
@@ -193,13 +192,29 @@ function getImageSize(image: CapturedImageItem) {
 }
 
 const themeContainer = ref<ThemePayload>()
-const getSelectedTheme = () => {
+// const getSelectedTheme = () => {
+//   try {
+//     chatBotStore.getTheme()
+//         .then((resp) => {
+//           console.log('theme', resp)
+//           if (resp.result === 'ok') {
+//             notificationStore.addNotification('Theme Successfully fetched', 'success')
+//             themeContainer.value = resp.data
+//           }
+//         })
+//   } catch (error) {
+//     console.log('error', error)
+//     notificationStore.addNotification('An error occurred fetching theme', 'error')
+//   }
+//
+// }
+onMounted(() => {
   try {
     chatBotStore.getTheme()
         .then((resp) => {
           console.log('theme', resp)
-          if (resp.result === 'ok') {
-            notificationStore.addNotification('Theme Successfully fetched', 'success')
+          if (resp?.result === 'ok') {
+            // notificationStore.addNotification('Theme Successfully fetched', 'success')
             themeContainer.value = resp.data
           }
         })
@@ -208,21 +223,9 @@ const getSelectedTheme = () => {
     notificationStore.addNotification('An error occurred fetching theme', 'error')
   }
 
-}
-onMounted(() => {
-  getSelectedTheme()
-  themeContainer.value = chatBotStore.themes
-  console.log(themeContainer.value)
+  // themeContainer.value = chatBotStore.themes
+  // console.log(themeContainer.value)
 })
-
-const dataColor = () => {
-  console.log('wewe', themeContainer.value?.name)
-  if (themeContainer.value?.name === 'rose' || themeContainer.value?.name === 'red') {
-    return 'text-gray-600'
-  } else {
-    return `text-${themeContainer.value?.name}-500`
-  }
-}
 </script>
 
 <template>
@@ -240,7 +243,7 @@ const dataColor = () => {
         :class="{ 'w-[70px] ': chatBotStore.collapse }"
         class="hs-overlay duration-500 fixed inset-y-0 left-0 transform hidden top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 lg:block lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
     >
-      <nav class="w-full h-full ps-2 flex flex-col justify-center">
+      <nav class="w-full h-full ps-2 flex flex-col justify-center bg-requested-color">
         <div class="mt-3">
           <button
               class="ps-2"
@@ -378,18 +381,18 @@ const dataColor = () => {
         </template>
       </Transition>
     </RouterView>
-    <ToastContainer v-if="notificationStore.hasNotifications">
-      <!--        <ToastAlert text="Page name is required" type="error" id=""/>-->
-      <template v-for="notification in notificationStore.getNotifications" :key="notification.id">
-        <ToastAlert
-            v-if="notification.id && notification.isShown"
-            :id="notification.id"
-            :is-shown="notification.isShown"
-            :message="notification.message"
-            :type="notification.type"
-        />
-      </template>
-    </ToastContainer>
+    <!--    <ToastContainer v-if="notificationStore.hasNotifications">-->
+    <!--      &lt;!&ndash;        <ToastAlert text="Page name is required" type="error" id=""/>&ndash;&gt;-->
+    <!--      <template v-for="notification in notificationStore.getNotifications" :key="notification.id">-->
+    <!--        <ToastAlert-->
+    <!--            v-if="notification.id && notification.isShown"-->
+    <!--            :id="notification.id"-->
+    <!--            :is-shown="notification.isShown"-->
+    <!--            :message="notification.message"-->
+    <!--            :type="notification.type"-->
+    <!--        />-->
+    <!--      </template>-->
+    <!--    </ToastContainer>-->
   </div>
   <div v-else>
     <loading-overlay/>

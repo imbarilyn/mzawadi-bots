@@ -129,15 +129,9 @@ const confirmSignOut = () => {
 }
 
 const logOut = () => {
-  if (authStore.userRole === 'user') {
-    localStorage.clear()
-    router.push({name: 'chat-login'})
-    console.log('user is logged out')
-  } else {
-    authStore.logoutAdmin()
-    console.log('Admin logged out')
-    router.push({name: 'admin-login'})
-  }
+  localStorage.clear()
+  router.push({name: 'chat-login'})
+  homeStore.signOutDialog.isOpen = false
 }
 
 const appIsFetching = ref(true)
@@ -172,12 +166,13 @@ onMounted(() => {
   chatBotStore.getTheme()
       .then((resp) => {
         console.log(resp)
-        const {result, data} = resp
+        const {result, data} = resp as { result: string; data: ThemePayload }
         if (result === 'ok') {
           theme.value = {...data}
-          notificationsStore.addNotification('Theme Settings fetched successfully', 'success')
+          // notificationsStore.addNotification('Theme Settings fetched successfully', 'success')
         } else {
-          notificationsStore.addNotification('An error occurred fetching Theme Settings', 'error')
+          console.log(result)
+          // notificationsStore.addNotification('An error occurred fetching Theme Settings', 'error')
         }
       })
 
