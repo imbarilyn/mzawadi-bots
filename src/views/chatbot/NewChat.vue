@@ -762,7 +762,7 @@ const reloadPage = () => {
   <div
       v-if="theme"
       :class="[bgImg ? 'page-bg-color' : 'bg-requested-color']"
-      class="chat-page relative flex min-h-full w-full"
+      class="chat-page relative flex min-h-full w-full bg-white"
   >
     <div
         id="main-container"
