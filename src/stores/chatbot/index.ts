@@ -385,7 +385,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
         const authStore = useAuthStore()
         console.log(pgSlug.value)
         try {
-            const response = await fetch(`${BOT_URL}/page-settings/themes/get-theme/?pageSlug=${pageSlug.value}`, {
+            const response = await fetch(`${BOT_URL}/page-settings/themes/get-theme/?pageSlug=${pgSlug.value}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
