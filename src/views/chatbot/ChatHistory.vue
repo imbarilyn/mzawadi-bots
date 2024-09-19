@@ -797,19 +797,17 @@ const reloadPage = () => {
         :class="[chatBotStore.collapse ? '' : 'lg:ps-64']"
         class="relative min-h-screen flex-1"
     >
-      <div id="btn-medium" class="sticky top-0 z-20 lg:hidden block ps-2 pt-6">
-        <button @click="expandMenuMedium" @mouseleave="hideExpand" @mouseover="showExpand">
-          <span class="material-icons-outlined">menu</span>
-        </button>
-        <small
-            v-if="showMenuMedium"
-            class="absolute rounded-md left-6 top-12 p-0.5 bg-gray-700 text-white transition ease-in-out duration-300"
-        >expand menu
-        </small>
-      </div>
-
-      <div class="py-10 lg:py-14">
-        <!-- Title -->
+      <div class="sticky top-0  z-20 bg-white lg:flex-row">
+        <div id="btn-medium" class="lg:hidden block ps-2 pt-2 lg:pt-6">
+          <button @click="expandMenuMedium" @mouseleave="hideExpand" @mouseover="showExpand">
+            <span class="material-icons-outlined">menu</span>
+          </button>
+          <small
+              v-if="showMenuMedium"
+              class="absolute rounded-md left-6 top-12 p-0.5 bg-gray-700 text-white transition ease-in-out duration-300"
+          >expand menu
+          </small>
+        </div>
         <div
             class="flex gap-4 md:flex-row  flex-col justify-center items-center lg:py-10 bg-white z-10 max-w-4xl mx-auto text-center"
         >
@@ -911,7 +909,7 @@ const reloadPage = () => {
                         :icon-name="pageContent?.iconName"
                         :is-copyable="index !== 0"
                         :is-typing="message.value?.isTyping"
-                        :original-message="message.value?.originalMessage"
+                        :original-message="message.value.message"
                         :themeName="theme.name"
                     />
 
@@ -948,9 +946,9 @@ const reloadPage = () => {
               />
             </svg>
           </button>
-          <div v-if="isBottom" class="py-4 bg-gradient-to-t from-requested-color block"></div>
+          <div v-if="isBottom" class="py-4"></div>
           <div
-              class="w-full px-4 md:px-6 pb-8 flex-1"
+              class="w-full px-4 md:px-6 bg-white pb-8 flex-1"
           >
             <div class="grid grid-cols-1 w-11/12 md:w-10/12 mx-auto">
               <UserInput
@@ -969,7 +967,7 @@ const reloadPage = () => {
           </div>
         </div>
       </div>
-      <div id="user-input-placeholder bg-red-500"></div>
+      <div id="user-input-placeholder"></div>
     </div>
     <teleport to="body">
       <DialogModal
