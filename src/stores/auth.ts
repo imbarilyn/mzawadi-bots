@@ -3,8 +3,9 @@ import {computed, type Ref, ref} from 'vue'
 import {useStorage} from '@vueuse/core'
 import moment from 'moment'
 import {jwtDecode} from 'jwt-decode'
+import {usePageContentStore} from "@/stores/admin/page-data";
+import {useChatbotStore} from "@/stores/chatbot";
 // import { usePageContentStore } from '../../stores/admin/page-data'; // Adjust the path as necessary
-import {usePageContentStore} from '@/stores/admin/page-data'
 // import { usePageContentStore } from '../../stores/admin/page-data'; // Adjust the path as necessary// import {ResetPasswordPayload} from "../views/
 // auth/ResetPasswordPage.vue";
 
@@ -151,16 +152,59 @@ export const useAuthStore = defineStore('auth', () => {
                     pageSlug: createAccountPayload.pageSlug
                 })
             })
-
             const resp = await response.json()
-            // console.log('login data', resp)
+            // const {result, data, pageContent, pageOptions, iconName, token} = resp
+            // console.log(result)
+            // if (result === 'ok') {
+            //     const pageContentStore = usePageContentStore()
+            //     pageContentStore.setPageContentItems([pageOptions], pageContent)
+            //     setUserDetails({
+            //         fullNames: createAccountPayload.fullNames,
+            //         phoneNo: createAccountPayload.phoneNo,
+            //         memberNo: createAccountPayload.memberNo,
+            //         pageSlug: createAccountPayload.pageSlug,
+            //         role: 'user',
+            //         iconName: iconName
+            //     } as UserInfo)
+            //     token.value.setItem('token', token)
+            //     console.log(result)
+            //     hasEverLoggedIn.value = true
+            //     userRole.value = 'user'
+            //     memberData.value = JSON.stringify({
+            //         ...createAccountPayload
+            //     })
+            //     // set token to localstorage
+            //     token.value.setItem('token', token)
+            //     console.log('token', token)
+            //     return {
+            //         success: true,
+            //         error: null,
+            //         response: {pageContent, pageOptions}
+            //     }
+            // } else {
+            //     console.log('error in accessing chat bot', 'error')
+            //     return {
+            //         error: data,
+            //         success: false
+            //     }
+            // }
 
-            const {result, data, pageContent, pageOptions, iconName} = resp
-
+            // fullNames:
+            //     phoneNo: usr.phoneNo ?? '',
+            //         memberNo: usr.memberNo ?? '',
+            //     role: usr.role ?? '',
+            //     iconName: usr.iconName ?? '',
+            //     pageSlug: usr.pageSlug ?? ''
+            console.log(resp)
+            const pageContentStore = usePageContentStore()
+            const chatbotStore = useChatbotStore()
+            const {result, data, pageContent, pageOptions, iconName, token} = resp
             if (result === 'ok') {
-                const pageContentStore = usePageContentStore()
+                setToken(token)
+                chatbotStore.pgSlug = createAccountPayload.pageSlug
                 pageContentStore.setPageContentItems([pageOptions], pageContent)
-
+                // console.log(pageContentStore.pageContentItems)
+                // console.log(createAccountPayload)
                 setUserDetails({
                     fullNames: createAccountPayload.fullNames,
                     phoneNo: createAccountPayload.phoneNo,
@@ -169,32 +213,24 @@ export const useAuthStore = defineStore('auth', () => {
                     role: 'user',
                     iconName: iconName
                 } as UserInfo)
-
                 hasEverLoggedIn.value = true
                 userRole.value = 'user'
                 memberData.value = JSON.stringify({
                     ...createAccountPayload
                 })
-
+                console.log(token.value)
                 return {
                     success: true,
-                    error: null,
                     response: {pageContent, pageOptions}
                 }
             } else {
-                console.log('error in accessing chat bot', 'error')
                 return {
-                    error: data,
-                    success: false
+                    success: false,
+                    response: {error: data}
                 }
             }
         } catch (e) {
-            console.log('error creating profile', 'error')
-
-            return {
-                error: 'Error creating profile',
-                success: false
-            }
+            console.log(e)
         }
     }
 
@@ -370,6 +406,7 @@ export const useAuthStore = defineStore('auth', () => {
             pageSlug: usr.pageSlug ?? ''
             // userId: userId ?? ''
         })
+        console.log(chatBotUser.value)
     }
 
     function getUserDetails() {

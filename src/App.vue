@@ -1,8 +1,12 @@
 <script lang="ts" setup>
 import {RouterView} from "vue-router";
 import {useAppHomeStore} from "./stores/home";
+import ToastAlert from "@/views/Admin/toasts/ToastAlert.vue";
+import ToastContainer from "@/views/Admin/toasts/ToastContainer.vue";
+import {useNotificationsStore} from "@/stores/notifications";
 
 const appHomeStore = useAppHomeStore();
+const notificationStore = useNotificationsStore()
 
 </script>
 
@@ -24,6 +28,18 @@ const appHomeStore = useAppHomeStore();
       </div>
     </template>
   </RouterView>
+  <ToastContainer v-if="notificationStore.hasNotifications">
+    <!--        <ToastAlert text="Page name is required" type="error" id=""/>-->
+    <template v-for="notification in notificationStore.getNotifications" :key="notification.id">
+      <ToastAlert
+          v-if="notification.id && notification.isShown"
+          :id="notification.id"
+          :is-shown="notification.isShown"
+          :message="notification.message"
+          :type="notification.type"
+      />
+    </template>
+  </ToastContainer>
 </template>
 
 <style scoped></style>
