@@ -981,7 +981,7 @@ onUnmounted(() => {
       class="relative text-sm border-2 bg-white rounded-xl shadow-lg shadow-slate-300/10 flex flex-row items-center m-0 p-4 pb-14"
       @click.stop="addFocus"
   >
-    <div class="w-full">
+    <div class="w-full ">
       <div>
         <textarea
             ref="textareaRef"

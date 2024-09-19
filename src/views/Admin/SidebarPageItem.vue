@@ -2,6 +2,7 @@
 import {useRouter} from 'vue-router'
 import {useTabsStore} from '../../stores/admin/tabs'
 import {onMounted} from 'vue'
+import {useChatbotStore} from "@/stores/chatbot";
 
 interface SidebarPageItem {
   name: string
@@ -15,6 +16,7 @@ const props = defineProps<SidebarPageItem>()
 
 const router = useRouter()
 const tabsStore = useTabsStore()
+const chatbotStore = useChatbotStore()
 const onClick = () => {
   // navigate to the tab
 
@@ -43,7 +45,7 @@ const onClick = () => {
 
       await router.push({
         name: 'DynamicPage',
-        params: {pageId: props.pageId}
+        params: {pageId: props.pageId, cbName: chatbotStore.pgSlug}
         // query: { pageId: props.pageId }
       })
       // router.go(0);

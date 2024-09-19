@@ -6,7 +6,6 @@ import {useChatbotStore} from "@/stores/chatbot";
 import {useNotificationsStore} from "@/stores/notifications";
 import LoadingOverlay from "@/components/LoadingOverlay.vue";
 import DialogModal from "@/components/DialogModal.vue";
-import theme from "tailwindcss/defaultTheme";
 
 
 const notificationStore = useNotificationsStore()
@@ -14,27 +13,26 @@ const chatbotStore = useChatbotStore()
 const rotateBtn = ref<boolean>(false)
 
 // Fetch the preset theme before admin adds a theme
-const getSelectedTheme = () => {
-  try {
-    chatbotStore.getTheme()
-        .then((resp) => {
-          console.log('theme', resp)
-          if (resp.result === 'ok') {
-            notificationStore.addNotification('Theme Successfully fetched', 'success')
-            themeContainer.value = resp.data
-          }
-        })
-  } catch (error) {
-    console.log('error', error)
-    notificationStore.addNotification('An error occurred fetching theme', 'error')
-  }
-
-}
+// const getSelectedTheme = () => {
+//   try {
+//     chatbotStore.getTheme()
+//         .then((resp) => {
+//           console.log('theme', resp)
+//           if (resp.result === 'ok') {
+//             notificationStore.addNotification('Theme Successfully fetched', 'success')
+//             themeContainer.value = resp.data
+//           }
+//         })
+//   } catch (error) {
+//     console.log('error', error)
+//     notificationStore.addNotification('An error occurred fetching theme', 'error')
+//   }
+//
+// }
 onMounted(() => {
   rotateBtn.value = true
-  getSelectedTheme()
   themeContainer.value = chatbotStore.themes
-  console.log('themeContainer', themeContainer.value)
+  console.log(themeContainer.value)
 })
 
 
