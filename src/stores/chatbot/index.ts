@@ -446,6 +446,5 @@ export const useChatbotStore = defineStore('chatbot', () => {
         themeSetting,
         getTheme,
         themes,
-        pageSlug
     }
 })
