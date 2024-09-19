@@ -331,27 +331,37 @@ const selectChatbotUser = (val: any) => {
                   {{ phoneNoErrorMessage }}
                 </small>
               </div>
-
-              <div class="flex flex-col space-y-1">
-                <label class="label font-semibold text-sm" for="password">Member Number</label>
-                <input
-                  id="text"
-                  v-model="loginData.memberNo"
-                  :class="{
-                    'input-error': memberNumberMeta.validated && !memberNumberMeta.valid,
-                    'input-primary': memberNumberMeta.validated && memberNumberMeta.valid
-                  }"
-                  class="input input-primary input-bordered w-full text-sm"
-                  placeholder="Member Number (Optional)"
-                  type="text"
-                />
-                <small
-                  v-if="memberNumberMeta.validated && !memberNumberMeta.valid"
-                  class="text-sm text-rose-500"
-                >
-                  {{ memberNumberErrorMessage }}
-                </small>
+              <div>
+                <MyRadioGroup
+                    :chatbot-user-type="chatbotUserType"
+                    @change="selectChatbotUser"/>
               </div>
+
+              <Transition name="bounce">
+                <div v-if="isMember" class="flex flex-col space-y-1">
+                  <label class="label font-semibold text-sm" for="password">Member Number</label>
+                  <input
+                      id="text"
+                      v-model="loginData.memberNo"
+                      :class="{
+                                  'input-error': memberNumberMeta.validated && !memberNumberMeta.valid,
+                                  'input-primary': memberNumberMeta.validated && memberNumberMeta.valid
+                                }"
+                      :required="isMember"
+                      class="input input-primary input-bordered w-full text-sm"
+                      placeholder="Member Number"
+                      type="text"
+                  />
+                  <small
+                      v-if="memberNumberMeta.validated && !memberNumberMeta.valid"
+                      class="text-sm text-rose-500"
+                  >
+                    {{ memberNumberErrorMessage }}
+                  </small>
+                </div>
+
+              </Transition>
+
 
               <div class="flex flex-col space-y-1 my-1">
                 <button
