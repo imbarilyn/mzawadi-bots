@@ -394,9 +394,18 @@ export const useChatbotStore = defineStore('chatbot', () => {
                 mode: 'cors',
             })
             const resp = await response.json()
-            console.log("themeSetting store", resp)
-            setThemes(resp.data)
-            return resp
+            if (resp.result === 'ok') {
+                setThemes(resp.data)
+                return {
+                    result: 'ok',
+                    data: resp.data
+                }
+            } else {
+                return {
+                    result: 'error',
+                    data: resp.data
+                }
+            }
         } catch (error) {
             console.log(error)
         }
