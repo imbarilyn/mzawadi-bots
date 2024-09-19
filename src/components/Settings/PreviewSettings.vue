@@ -15,11 +15,12 @@ const chatbotStore = useChatbotStore()
 const notificationStore = useNotificationsStore()
 const pageContent = ref<PageContent | null>(null)
 onMounted(async () => {
+  console.log('pgSlug in themes', chatbotStore.pgSlug)
   // const pageSlug = chatbotStore.pgSlug.replace(/^\//, '')
   try {
     await pageContentStore.fetchPageContentItems()
     setTimeout(() => {
-      pageContent.value = pageContentStore.getPageContentByPageSlug(chatbotStore.pageSlug)
+      pageContent.value = pageContentStore.getPageContentByPageSlug(chatbotStore.pgSlug)
       // console.log('pageContent', pageContent.value)
       // console.log(pageContent.value?.chatbotName.length)
     }, 1000)
