@@ -38,20 +38,19 @@ const viewHistory = (convId: string) => {
 </script>
 
 <template>
-  <div class="w-52 flex flex-row text-sm pb-2 overflow-hidden">
-    <button
-        id="histButton"
-        :class="[chatBotStore.getActiveHistory === props.id? props.botBubbleColor: '']"
-        class="btn btn-ghost btn-sm"
-        @click="viewHistory(props.conversationId)"
-    >
+  <div :class="[chatBotStore.getActiveHistory === props.id? props.botBubbleColor: '']"
+       class="grid grid-cols-12 btn btn-ghost btn-sm text-sm gap-1"
+       @click="viewHistory(props.conversationId)">
+    <div class="col-span-2 flex flex-row items-center">
       <span
           class="material-icons-outlined !text-sm text-neutral-600"> chat_bubble_outline </span>
-      <span
-          class="text-neutral-600">{{
+    </div>
+    <div class="col-span-10 flex flex-row">
+      <p
+          class="text-neutral-600 line-clamp-1  text-start">{{
           props.title
-        }}</span>
-    </button>
+        }}</p>
+    </div>
   </div>
 </template>
 
