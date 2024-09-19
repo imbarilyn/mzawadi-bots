@@ -335,7 +335,7 @@ const handleSidebarDataChanged = (value: boolean) => {
 
 <template>
   <Transition mode="out-in" name="slide-in">
-    <template v-if="!appIsFetching && theme">
+    <template v-if="!appIsFetching && chatbotStore.themes">
       <div class="flex-1 overflow-hidden">
         <LinkBar
             v-if="currentPage && url"
@@ -378,36 +378,36 @@ const handleSidebarDataChanged = (value: boolean) => {
                 <template v-if="staticGreeting && chatbotName && promptPlaceholder">
                   <ChatbotBubble
                       :key="1"
-                      :chatBubbleBg="theme.chatBubble"
+                      :chatBubbleBg="chatbotStore.themes.chatBubble"
                       :chatbot-message="staticGreeting"
                       :chatbot-name="chatbotName"
                       :disclosure-message="pageContent?.closureMessage"
                       :has-disclosure-message="pageContent?.displayClosureMessage"
                       :is-typing="false"
-                      :themeName="theme.name"
+                      :themeName="chatbotStore.themes.name"
                   />
 
                   <UserBubble
-                      :themeName="theme.name"
+                      :themeName="chatbotStore.themes.name"
                       :user-message="`What is this?`"
-                      :userBubbleBg="theme.userBubble"
+                      :userBubbleBg="chatbotStore.themes.userBubble"
                       user-name="John Doe"/>
                   <ChatbotBubble
                       :key="2"
-                      :chatBubbleBg="theme.chatBubble"
+                      :chatBubbleBg="chatbotStore.themes.chatBubble"
                       :chatbot-message="`Sorry! I can't help you with that at the moment. Please try again later.`"
                       :chatbot-name="chatbotName"
                       :disclosure-message="pageContent?.closureMessage"
                       :has-disclosure-message="pageContent?.displayClosureMessage"
                       :icon-name="pageContent?.iconName"
                       :is-typing="false"
-                      :themeName="theme.name"
+                      :themeName="chatbotStore.themes.name"
                       is-copyable
                   />
                   <UserInput
                       :prompt-placeholder="promptPlaceholder"
-                      :textareaColor="theme.textAreaColor"
-                      :themeName="theme.name" disabled user-input=""/>
+                      :textareaColor="chatbotStore.themes.textAreaColor"
+                      :themeName="chatbotStore.themes.name" disabled user-input=""/>
                 </template>
               </ul>
               <!--              </div>-->
