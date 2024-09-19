@@ -685,15 +685,14 @@ document.addEventListener('scroll', (_evt) => {
 
 // console.log('conversationContainerHeight', conversationContainerHeight.value);
 
-setTimeout(() => {
-  scrollToBottom()
-  console.log('timeout for scroll to Bottom')
-}, 800)
 
 // watch over the conversation array
 watch(conversation.value, () => {
   // get the height of the conversation container
-  conversationContainerHeight.value = conversationContainerRef.value?.clientHeight || 0
+  if (conversationContainerRef.value) {
+    conversationContainerHeight.value = conversationContainerRef.value.clientHeight || 0
+  }
+
 
   // isBottom.value = conversationContainerRef.value?.scrollTop >= conversationContainerRef.value?.scrollHeight - conversationContainerRef.value?.clientHeight;
 
@@ -703,6 +702,11 @@ watch(conversation.value, () => {
   // if the conversation container height is greater than the viewport height
   // toggleSticky.value =
 })
+
+setTimeout(() => {
+  scrollToBottom()
+  console.log('timeout for scroll to Bottom')
+}, 1000)
 
 // const chatBotStore = useChatbotStore()
 
