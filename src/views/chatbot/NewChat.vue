@@ -575,7 +575,7 @@ watch(
                 chatBotStore.chatHistoryArray = response.data
                 console.log(chatBotStore.chatHistoryArray)
                 console.log('trying to fetch history in chatHistory')
-                notificationsStore.addNotification('Recent chat added successfully', 'success')
+                // notificationsStore.addNotification('Recent chat added successfully', 'success')
               } else {
                 notificationsStore.addNotification('Unable to add recent chat', 'error')
               }
@@ -756,6 +756,10 @@ const reloadPage = () => {
   chatBotStore.reloadForConvesationId()
   closeConversationIdDialog()
 }
+
+window.addEventListener('beforeunload', () => {
+  socket.disconnect()
+})
 </script>
 
 <template>
