@@ -143,17 +143,6 @@ const routes = [
         component: () => import('../views/ChatPage.vue'),
         children: [
             {
-                path: ':chatbotId/:pageId',
-                name: 'chatbot-page',
-                component: () => import('../views/Chats/ChatbotPage.vue'),
-                props: (route: any) => {
-                    return {
-                        chatbotId: route.params.chatbotId,
-                        pageId: route.params.pageId
-                    }
-                }
-            },
-            {
                 path: ':chatbotId/:pageId/lets-chat',
                 name: 'lets-chat',
                 component: () => import('../views/Auth/Users/UserLoginPage.vue'),
