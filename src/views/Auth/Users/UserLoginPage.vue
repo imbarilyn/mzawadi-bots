@@ -70,13 +70,20 @@ watch(
 )
 
 const fullNamesValidator = (value: string) => {
+  const specialCharacterRegExp = /[!@#$%^&*(),.?":{}|<>]/
+  const emailRegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
   if (!value) {
     return 'Full names required'
   }
 
-  // if (value.length < 4) {
-  //   return 'Password must be at least 4 characters';
-  // }
+  if (emailRegExp.test(value)) {
+    return 'Full names should not be an email'
+  }
+
+  if (specialCharacterRegExp.test(value)) {
+    return 'Full names should not contain special characters'
+  }
+
 
   if (value.length < 3) {
     return 'Full names too short'
