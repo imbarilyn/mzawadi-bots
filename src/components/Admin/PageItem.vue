@@ -96,8 +96,7 @@ const onDropdownItemClick = (
 const handleEditClick = () => {
   router.push({
     name: 'DynamicPage',
-    params: {page: props.page.path},
-    query: {pageId: props.page.id, editPage: 'true'}
+    params: {pageId: props.page.id, cbName: props.page.path},
   })
 }
 
@@ -110,10 +109,12 @@ const handleDeleteClick = () => {
 
 <template>
   <div
-      class="card overflow-hidden shadow rounded-lg hover:shadow-lg hover:scale-110 border-primary transition duration-300 ease-in-out h-48 md:h-52 page-item-bg animate-scale-up-center active:scale-95"
+      class="card shadow min-w-48 rounded-lg hover:shadow-lg hover:scale-110  transition duration-300 ease-in-out h-48 md:h-52 page-item-bg animate-scale-up-center active:scale-95"
+
+
   >
     <div :class="bgColor" class="relative flex items-center justify-center h-40" @click="onClick">
-      <div class="absolute inset-y-0 -right-4 flex items-center justify-center">
+      <div class="absolute inset-y-0 right-2 flex items-center justify-center">
         <svg
             :class="textColor"
             class="rounded-t-lg w-28 drop-shadow-lg opacity-20"
@@ -202,12 +203,12 @@ c24 -17 30 -62 10 -82 -17 -17 -1749 -17 -1766 0 -20 20 -14 65 10 82 20 14
         {{ props.page.name }}
       </h6>
     </div>
-    <div class="py-3 px-4 flex flex-row w-full justify-between items-center">
+    <div class="py-3 relative px-4 flex flex-row w-full justify-between items-center">
       <div class="dropdown dropdown-top dropdown-end">
         <label class="btn btn-circle btn-xs btn-ghost m-1" tabindex="0">
           <span aria-expanded="false" class="material-icons-round text-gray-400"> more_vert </span>
         </label>
-        <ul class="z-30 shadow menu dropdown-content bg-base-100 rounded-box w-24" tabindex="0">
+        <ul class="absolute z-40 shadow menu dropdown-content bg-base-100 rounded-box w-24" tabindex="0">
           <li v-for="item in dropdownItems" :key="item.name">
             <a class="menu-item text-xs" href="#" @click.stop="onDropdownItemClick($event, item)">
               {{ item.name }}
@@ -216,16 +217,6 @@ c24 -17 30 -62 10 -82 -17 -17 -1749 -17 -1766 0 -20 20 -14 65 10 82 20 14
         </ul>
       </div>
     </div>
-    <!--    <div class="flex justify-between w-full mx-auto my-auto x-divider divide-gray-600">-->
-    <!--      <span-->
-    <!--        class="material-icons-outlined p-4 ark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 text-gray-500 hover:text-gray-800 hover:cursor-pointer"-->
-    <!--        >edit</span-->
-    <!--      >-->
-    <!--      <span-->
-    <!--        class="material-icons-outlined p-4 ark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 text-gray-500 hover:text-gray-800 hover:cursor-pointer"-->
-    <!--        >delete</span-->
-    <!--      >-->
-    <!--    </div>-->
   </div>
 </template>
 

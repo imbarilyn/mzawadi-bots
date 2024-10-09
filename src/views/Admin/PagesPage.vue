@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import PageItem from '../../components/Admin/PageItem.vue'
-import { useAdminHomeStore } from '../../stores/admin/home'
-import { onBeforeMount, ref } from 'vue'
+import {useAdminHomeStore} from '../../stores/admin/home'
+import {onBeforeMount, ref} from 'vue'
 import LoadingOverlay from '../../components/LoadingOverlay.vue'
 
 const adminHome = useAdminHomeStore()
@@ -29,18 +29,18 @@ onBeforeMount(() => {
               </h1>
 
               <div
-                v-if="!adminHome.pages.length"
-                class="my-4 bg-neutral-200 rounded-xl p-4 flex items-center justify-center"
+                  v-if="!adminHome.pages.length"
+                  class="my-4 bg-neutral-200 rounded-xl p-4 flex items-center justify-center"
               >
                 <p
-                  class="text-neutral-500 dark:text-neutral-300 text-xs flex items-center justify-center"
+                    class="text-neutral-500 dark:text-neutral-300 text-xs flex items-center justify-center"
                 >
                   <span class="material-icons-round mr-2">description</span>
                   Created bots will appear here
                 </p>
               </div>
               <ul v-else class="my-4 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <PageItem v-for="page in adminHome.pages" :key="page.id" :page="page" />
+                <PageItem v-for="page in adminHome.pages" :key="page.id" :page="page"/>
               </ul>
             </div>
           </div>
@@ -48,7 +48,7 @@ onBeforeMount(() => {
       </section>
     </template>
     <template v-else-if="appIsFetching">
-      <LoadingOverlay />
+      <LoadingOverlay/>
     </template>
   </Transition>
 </template>
