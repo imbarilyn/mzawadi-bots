@@ -39,12 +39,11 @@ const showNewChat = () => {
 const reloadChat = () => {
   const textArea = document.getElementById('user-input')
   textArea?.focus()
-  router.push({
-    name: 'newChat',
-    params: {cbName: chatBotStore.pgSlug}
-  })
-
-
+  // router.push({
+  //   name: 'newChat',
+  //   params: {cbName: chatBotStore.pgSlug}
+  // })
+  location.reload()
 }
 const chatBotStore = useChatbotStore()
 // const collapse = ref<boolean>(false)
