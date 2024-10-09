@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {onMounted, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import {useAdminHomeStore} from '@/stores/admin/home'
 import {type ThemePayload, useChatbotStore} from '@/stores/chatbot'
 import ConversationHistoryPage from '@/views/chatbot/ConversationHistoryPage.vue'
@@ -36,6 +36,9 @@ const showNewChat = () => {
   newChat.value = true
 }
 
+const DOMAIN_URL = import.meta.env.VITE_APP_DOMAIN_URL
+const chatBotStore = useChatbotStore()
+
 const reloadChat = () => {
   const textArea = document.getElementById('user-input')
   textArea?.focus()
@@ -45,7 +48,7 @@ const reloadChat = () => {
   // })
   location.reload()
 }
-const chatBotStore = useChatbotStore()
+
 // const collapse = ref<boolean>(false)
 const collapseSidebar = () => {
   // const main_container = document.getElementById('main-container')
@@ -225,6 +228,8 @@ onMounted(() => {
   // themeContainer.value = chatBotStore.themes
   // console.log(themeContainer.value)
 })
+
+const isNewChat = computed(() => location.href === `${DOMAIN_URL}/${chatBotStore.pgSlug}`)
 </script>
 
 <template>
@@ -269,7 +274,7 @@ onMounted(() => {
         <div class="mt-7 mb-4 relative">
           <button
               :class="[chatBotStore.collapse? 'btn-circle px-2': '', themeContainer.chatBubble]"
-              :disabled="chatBotStore.reloadNeChat"
+              :disabled="isNewChat"
               class="btn btn-sm hover:bg-rose-6 hover:shadow-2xl rounded-full"
               @click="reloadChat"
               @mouseleave="hideNewChat"
