@@ -47,7 +47,7 @@ const viewHistory = (convId: string) => {
     </div>
     <div class="col-span-10 flex flex-row">
       <p
-          class="text-neutral-600 line-clamp-1  text-start">{{
+          class=" line-clamp-1  text-start">{{
           props.title
         }}</p>
     </div>
