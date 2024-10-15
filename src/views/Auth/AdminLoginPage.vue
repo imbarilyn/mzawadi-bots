@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useField } from 'vee-validate'
-import { useRouter } from 'vue-router'
-import { reactive, ref, watch } from 'vue'
-import { useAuthStore } from '../../stores/auth'
-import { useNotificationsStore } from '@/stores/notifications'
+import {useField} from 'vee-validate'
+import {useRouter} from 'vue-router'
+import {reactive, ref, watch} from 'vue'
+import {useAuthStore} from '../../stores/auth'
+import {useNotificationsStore} from '@/stores/notifications'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -39,10 +39,10 @@ const {
 } = useField('email', emailValidator)
 
 watch(
-  () => loginData.email,
-  (value) => {
-    email.value = value
-  }
+    () => loginData.email,
+    (value) => {
+      email.value = value
+    }
 )
 
 const passwordValidator = (value: string) => {
@@ -68,10 +68,10 @@ const {
 } = useField('password', passwordValidator)
 
 watch(
-  () => loginData.password,
-  (value) => {
-    password.value = value
-  }
+    () => loginData.password,
+    (value) => {
+      password.value = value
+    }
 )
 
 const isLoadingResource = ref(false)
@@ -86,27 +86,27 @@ const onLoginClick = () => {
   isLoadingResource.value = true
 
   authStore
-    .adminLogin(loginData)
-    .then((response) => {
-      isLoadingResource.value = false
-      console.log(response)
-      if (response.success) {
-        notificationStore.addNotification('You are successfully logged in', 'success')
-        router.push({ name: 'AdminHome' })
-      } else {
-        notificationStore.addNotification('Login failed', 'error')
-      }
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+      .adminLogin(loginData)
+      .then((response) => {
+        isLoadingResource.value = false
+        console.log(response)
+        if (response.success) {
+          notificationStore.addNotification('You are successfully logged in', 'success')
+          router.push({name: 'AdminHome'})
+        } else {
+          notificationStore.addNotification('Login failed', 'error')
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
 }
 </script>
 
 <template>
   <main class="w-full mx-auto p-6 flex items-center justify-center h-screen">
     <div
-      class="w-full md:w-6/12 lg:w-5/12 xl:w-4/12 px-4 md:px-2 lg:px-0 mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700"
+        class="w-full md:w-6/12 lg:w-5/12 xl:w-4/12 px-4 md:px-2 lg:px-0 mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700"
     >
       <div class="p-4 sm:p-7">
         <div class="text-center">
@@ -125,15 +125,15 @@ const onLoginClick = () => {
                   <!--                  </router-link>-->
                 </div>
                 <input
-                  id="email"
-                  v-model="loginData.email"
-                  :class="{
+                    id="email"
+                    v-model="loginData.email"
+                    :class="{
                     'input-error': emailMeta.validated && !emailMeta.valid,
                     'input-primary': emailMeta.validated && emailMeta.valid
                   }"
-                  class="input input-primary input-bordered w-full text-sm"
-                  placeholder="Email"
-                  type="text"
+                    class="input input-primary input-bordered w-full text-sm"
+                    placeholder="Email"
+                    type="text"
                 />
                 <small v-if="emailMeta.validated && !emailMeta.valid" class="text-sm text-rose-500">
                   {{ emailErrorMessage }}
@@ -143,19 +143,19 @@ const onLoginClick = () => {
               <div class="flex flex-col space-y-1">
                 <label class="label font-semibold text-sm" for="password"> Password </label>
                 <input
-                  id="password"
-                  v-model="loginData.password"
-                  :class="{
+                    id="password"
+                    v-model="loginData.password"
+                    :class="{
                     'input-error': passwordMeta.validated && !passwordMeta.valid,
                     'input-primary': passwordMeta.validated && passwordMeta.valid
                   }"
-                  class="input input-primary input-bordered w-full text-sm"
-                  placeholder="Password"
-                  type="password"
+                    class="input input-primary input-bordered w-full text-sm"
+                    placeholder="Password"
+                    type="password"
                 />
                 <small
-                  v-if="passwordMeta.validated && !passwordMeta.valid"
-                  class="text-sm text-rose-500"
+                    v-if="passwordMeta.validated && !passwordMeta.valid"
+                    class="text-sm text-rose-500"
                 >
                   {{ passwordErrorMessage }}
                 </small>
@@ -163,14 +163,14 @@ const onLoginClick = () => {
 
               <div class="flex flex-col space-y-1 my-1">
                 <button
-                  :disabled="isLoadingResource"
-                  class="btn btn-primary btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
-                  type="submit"
-                  @click="onLoginClick"
+                    :disabled="isLoadingResource"
+                    class="btn btn-primary btn-sm md:btn-md normal-case text-xs md:text-sm w-full"
+                    type="submit"
+                    @click="onLoginClick"
                 >
                   <span
-                    v-if="isLoadingResource"
-                    class="loading loading-md loading-spinner text-neutral-400"
+                      v-if="isLoadingResource"
+                      class="loading loading-md loading-spinner text-neutral-400"
                   ></span>
                   Sign in
                 </button>

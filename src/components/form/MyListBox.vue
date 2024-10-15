@@ -29,6 +29,7 @@ watch(() => props.selectedValue, (newVal) => {
 });
 
 watch(() => selectedOption.value, (newVal) => {
+  console.log(newVal)
   emits('change', newVal);
 });
 </script>
