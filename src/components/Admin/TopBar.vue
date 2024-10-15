@@ -4,6 +4,7 @@ import {onUpdated, ref} from 'vue'
 import {useAdminHomeStore} from '../../stores/admin/home'
 import {useRouter} from 'vue-router'
 import {usePageContentStore} from "@/stores/admin/page-data";
+import {useAuthStore} from "@/stores/auth";
 
 const tabsStore = useTabsStore()
 const homeStore = useAdminHomeStore()
@@ -56,6 +57,13 @@ const onSettingsClick = () => {
 }
 
 const activeTab = tabsStore.getActiveTab
+const authStore = useAuthStore()
+const logout = () => {
+  authStore.logoutAdmin()
+  setTimeout(() => {
+    router.push({name: 'admin-login'})
+  }, 1000)
+}
 </script>
 
 
@@ -71,7 +79,7 @@ const activeTab = tabsStore.getActiveTab
 
     <div class="flex flex-row items-center w-full justify-between px-3">
       <div class="animate-slide-right flex items-center justify-center">
-        <span class="self-center text-2xl font-poppins-bold whitespace-nowrap dark:text-white">{{
+        <span class="self-center md:text-lg text-2xl font-poppins-bold whitespace-nowrap dark:text-white">{{
             activeTab?.name
           }}</span>
       </div>
@@ -83,14 +91,20 @@ const activeTab = tabsStore.getActiveTab
               @click="openSearchModal"
           >
             <i class="material-icons text-neutral-400 !text-2xl">search</i>
-            <span class="hidden md:inline-block"> Search </span>
+            <span class="hidden lg:inline-block"> Search </span>
           </button>
           <button
               class="btn btn-sm btn-ghost rounded-full md:rounded-md normal-case font-medium"
               @click="openModal"
           >
             <i class="material-icons text-neutral-400 !text-2xl">add_box</i>
-            <span class="hidden md:inline-block"> New Bot </span>
+            <span class="hidden lg:inline-block"> New Bot </span>
+          </button>
+          <button class="btn btn-sm btn-ghost font-medium"
+                  @click="logout"
+          >
+            <span class="material-icons-outlined text-neutral-400 !text-2xl">logout</span>
+            <span class="hidden lg:inline-block">Logout</span>
           </button>
         </div>
       </div>
