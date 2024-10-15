@@ -26,7 +26,7 @@ const homeStore = useAdminHomeStore()
 const pageContentStore = usePageContentStore()
 const chatBotStore = useChatbotStore()
 const router = useRouter()
-const sesh_id = ref('')
+const conversation_id = ref('')
 const chatbotImg = ref('')
 
 // mesRes declaration
@@ -63,10 +63,47 @@ socket.on('connect_error', (error) => {
 })
 
 // establish connection
+
+const isfirstAttempt = ref(false)
 socket.on('connect', () => {
-  console.log('connected!')
+  console.log('connected')
+  isfirstAttempt.value = true
 })
-console.log("There is a connection")
+
+socket.on('check_connection', (response) => {
+  console.log('checking-connection', response)
+  session_id.value = response.sessionId
+  isConnected.value = response.isConnected
+})
+
+const maxAttempts = 4
+const checkInterval = 1000
+let attemptCount = 0
+
+const checkConnection = () => {
+  if (isConnected.value) {
+    clearInterval(connectionChecker)
+  } else {
+    attemptCount++
+    showNotConnectedDialog.value = true
+    if (attemptCount > maxAttempts) {
+      clearInterval(connectionChecker)
+      window.location.reload()
+      showNotConnectedDialog.value = false
+    }
+  }
+}
+
+const connectionChecker = setInterval(checkConnection, checkInterval)
+
+if (!isfirstAttempt.value) {
+  connectionChecker
+}
+
+const session_id = ref('')
+const isConnected = ref(false)
+
+
 chatBotStore
     .getConversationHistory(props.cbName, authStore.getMemberData.phoneNo)
     .then((response) => {
@@ -81,7 +118,7 @@ const chatUser: any = authStore.getUserDetails()
 console.log(chatUser)
 
 // trying to get conversationId guess what for chatting to happen
-const conversationIdTrigger = ref<boolean>(false)
+const showNotConnectedDialog = ref<boolean>(false)
 // console.log(authStore.getUserDetails())
 chatBotStore
     .getConvId({
@@ -92,27 +129,47 @@ chatBotStore
     })
     .then((response) => {
       if (response.conversationId) {
-        sesh_id.value = response.conversationId
+        conversation_id.value = response.conversationId
         console.log('Conversation-Id', response.conversationId)
-        console.log(sesh_id.value)
-        notificationsStore.addNotification('The chat bot is ready', 'success')
+        // notificationsStore.addNotification('The chat bot is ready', 'success')
       } else {
         notificationsStore.addNotification('The chat bot is not ready, kindly reload', 'error')
-        setTimeout(() => {
-          conversationIdTrigger.value = true
-        }, 1000)
+        // setTimeout(() => {
+        //   conversationIdTrigger.value = true
+        // }, 1000)
       }
     })
     .catch((err) => {
       console.log(err)
       return
     })
-    .finally(() => {
-      conversationIdTrigger.value = false
-    })
+// .finally(() => {
+//   showNotConnectedDialog.value = false
+// })
+
+
+// attempt connection for the first time if  not connected
+
+
+// const checkIsConnected = setInterval(() => {
+//   if (!isConnected.value) {
+//     console.log('not connected')
+//     showNotConnectedDialog.value = true
+//     count.value++
+//     console.log('count is **', count.value)
+//   }
+// }, 1000)
+
+// watch(() => count.value, (value) => {
+//   if (value > 4) {
+//     console.log("just reload")
+//     clearInterval(checkIsConnected)
+//     showNotConnectedDialog.value = false
+//     window.location.reload()
+//   }
+// })
 
 const logOut = () => {
-
   localStorage.clear()
   router.push({name: 'chat-login'})
   homeStore.signOutDialog.isOpen = false
@@ -156,6 +213,7 @@ chatBotStore.getTheme()
       }
     })
 onMounted(() => {
+  connectionChecker
   if (authStore.memberData !== '') {
     authStore
         .createAccount({
@@ -503,19 +561,19 @@ const handleUserInput = (
     //emit request to the server
     if (authStore.userRole === 'user') {
       // const userData = JSON.parse(authStore.chatBotUser) as UserInfo
-      console.log(sesh_id.value)
+      console.log(conversation_id.value)
       socket.emit('message', {
         //sending request to the socket
         message: formatted,
         pageSlug: props.cbName,
-        conversationId: sesh_id.value
+        conversationId: conversation_id.value
       })
     } else {
       socket.emit('message', {
         //sending request to the socket
         message: formatted,
         pageSlug: props.cbName,
-        conversationId: sesh_id.value
+        conversationId: conversation_id.value
       })
     }
 
@@ -747,14 +805,14 @@ const closePhotoDialog = () => {
   chatBotStore.isFile = false
 }
 
-const closeConversationIdDialog = () => {
-  conversationIdTrigger.value = false
+const closeNotConnectedDialog = () => {
+  showNotConnectedDialog.value = false
 }
 
 
 const reloadPage = () => {
   chatBotStore.reloadForConvesationId()
-  closeConversationIdDialog()
+  closeNotConnectedDialog()
 }
 
 window.addEventListener('beforeunload', () => {
@@ -988,28 +1046,26 @@ window.addEventListener('beforeunload', () => {
             </div>
           </template>
         </DialogModal>
-        <DialogModal :is-open="conversationIdTrigger" @closeModal="closeConversationIdDialog">
+        <DialogModal :is-open="showNotConnectedDialog" @closeModal="closeNotConnectedDialog">
           <template #title>
             <div class="w-full flex justify-end">
-              <button class="btn btn-sm btn-ghost btn-circle" @click="closeConversationIdDialog">
+              <button class="btn btn-sm btn-ghost btn-circle" @click="closeNotConnectedDialog">
                 <span class="material-icons-outlined">close</span>
               </button>
             </div>
             <div class="flex justify-center">
-              <span class="material-icons-outlined !text-6xl pb-2">&#x1F622;</span>
+              <span class="loading loading-bars loading-lg"></span>
             </div>
           </template>
           <template #body>
-            <div class="flex justify-center">
-              <h1 class="text-xl font-bold">Oh no! The chatbot is not ready</h1>
-            </div>
-            <div class="flex justify-center">
-              <p class="text-lg font-semibold">Kindly refresh</p>
+            <div class="flex flex-col justify-center items-center">
+              <p class="text-lg">Establishing connection</p>
+              <!--              <p class="text-sm">Kindly wait as we establish connection</p>-->
             </div>
           </template>
           <template #footer>
             <div class="flex justify-center">
-              <button :class="[`bg-${theme.name}-300`]"
+              <button :class="[`bg-${theme.name}-500`]"
                       class="btn btn-sm px-6"
                       @click="reloadPage">
                 <span class="material-icons-outlined text-white">refresh</span>
