@@ -61,33 +61,33 @@ console.log(chatUser)
 // trying to get conversationId guess what for chatting to happen
 const showNotConnectedDialog = ref<boolean>(false)
 console.log(chatUser.value)
-chatBotStore
-    .getConvId({
-      userName: chatUser.fullNames,
-      phoneNo: chatUser.phoneNo,
-      memberNo: chatUser.memberNo,
-      pageSlug: chatUser.pageSlug
-    })
-    .then((response) => {
-      if (response.conversationId) {
-        conversation_id.value = response.conversationId
-        console.log('Coversation-Id', response.conversationId)
-        console.log(conversation_id.value)
-        notificationsStore.addNotification('The chat bot is ready', 'success')
-      } else {
-        notificationsStore.addNotification('The chat bot is not ready, kindly reload', 'error')
-        setTimeout(() => {
-          showNotConnectedDialog.value = true
-        }, 1000)
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-      return
-    })
-    .finally(() => {
-      showNotConnectedDialog.value = false
-    })
+// chatBotStore
+//     .getConvId({
+//       userName: chatUser.fullNames,
+//       phoneNo: chatUser.phoneNo,
+//       memberNo: chatUser.memberNo,
+//       pageSlug: chatUser.pageSlug
+//     })
+//     .then((response) => {
+//       if (response.conversationId) {
+//         conversation_id.value = response.conversationId
+//         console.log('Coversation-Id', response.conversationId)
+//         console.log(conversation_id.value)
+//         notificationsStore.addNotification('The chat bot is ready', 'success')
+//       } else {
+//         notificationsStore.addNotification('The chat bot is not ready, kindly reload', 'error')
+//         setTimeout(() => {
+//           showNotConnectedDialog.value = true
+//         }, 1000)
+//       }
+//     })
+//     .catch((err) => {
+//       console.log(err)
+//       return
+//     })
+//     .finally(() => {
+//       showNotConnectedDialog.value = false
+//     })
 
 //establish connections with socket io
 const socket = io('wss://towersaccosocket.mzawadi.com/', {
@@ -205,10 +205,16 @@ const inputBg = ref<string>('bg-requested-color')
 
 const bgImg = ref('')
 const theme = ref<ThemePayload>()
+chatBotStore.chatDisplayArray.forEach((chat) => {
+  const userMessage = ref<Conversation>({
+    message: chat.content,
+    isUser: chat.isUser === '1',
+    uniqueId: _.uniqueId('user-')
+  })
+  conversation.value.push(userMessage)
+})
+
 onMounted(() => {
-  // socket.on('disconnect', () => {
-  //   console.log('connection disconnect')
-  // })
   connectionChecker
   console.log('Inside the before mount')
   console.log('emitted', props.cbName)
@@ -364,10 +370,7 @@ const conversationContainerRef = ref<HTMLDivElement | null>()
 const userInputContainerHeight = computed(() => {
   return userInputContainerHeightRef.value?.clientHeight || 0
 })
-const userInputContainerHeightRef = ref<HTMLDivElement | null>()
-const conversation = ref<Ref<Conversation>[]>([])
-const aiResponses = ref<string[]>([])
-const isGeneratingResponse = ref(false)
+
 
 // create sample conversations from the sample data
 
@@ -573,14 +576,14 @@ const handleUserInput = (
         //sending request to the socket
         message: formatted,
         pageSlug: props.cbName,
-        conversationId: conversation_id.value
+        conversationId: props.convId
       })
     } else {
       socket.emit('message', {
         //sending request to the socket
         message: formatted,
         pageSlug: props.cbName,
-        conversationId: conversation_id.value
+        conversationId: props.convId
       })
     }
 
