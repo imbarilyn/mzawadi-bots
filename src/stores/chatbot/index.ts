@@ -63,7 +63,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
     const collapse = ref<boolean>(false)
     const chatHistoryArray = ref<ChatHistory[]>([])
     const chatDisplayArray = ref<ChatDisplay[]>([])
-    const activeHistory = ref<number>()
+    const activeHistory = ref<string>()
     const reloadNeChat = ref<boolean>(false)
     const isMedium = ref<boolean>(false)
     const openPhoto = ref({
@@ -107,8 +107,8 @@ export const useChatbotStore = defineStore('chatbot', () => {
         return activeHistory.value
     })
 
-    const setActiveHistory = (id: number) => {
-        activeHistory.value = id
+    const setActiveHistory = (convId: string) => {
+        activeHistory.value = convId
     }
 
     const setNewChatButton = (value: boolean) => {
@@ -279,7 +279,6 @@ export const useChatbotStore = defineStore('chatbot', () => {
     }
 
     async function getConversationHistory(pageSlug: string, phoneNo: string) {
-        const notification = useNotificationsStore()
         console.log('Getting History', {pageSlug, phoneNo})
         pgSlug.value = pageSlug
         try {
@@ -304,7 +303,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
 
     async function displayHistory(convId: string) {
         const notification = useNotificationsStore()
-        console.log(pgSlug.value)
+        console.log('display Hist', convId)
         try {
             const response = await fetch(`${BOT_URL}/chat-history/${pgSlug.value}/chats/${convId}/`, {
                 method: 'GET',
@@ -446,5 +445,6 @@ export const useChatbotStore = defineStore('chatbot', () => {
         themeSetting,
         getTheme,
         themes,
+
     }
 })
