@@ -10,19 +10,28 @@ interface PageItem {
   name: string
   path: string
   id: string
+  botUrl: string
 }
 
 const props = defineProps<{
   page: PageItem
 }>()
-
+const botSrc = ref()
 const {bgColor, textColor, setColor} = useColorGenerator(props.page.name)
+const getBotUrl = () => {
+  const botUrlArray = botImageGenerator()
+  botSrc.value = botUrlArray[Math.floor(Math.random() * botUrlArray.length)]
+}
+console.log('bot-url', props.page.botUrl)
+
 const chatbotStore = useChatbotStore()
 
 onMounted(() => {
   chatbotStore.pgSlug = props.page.path
   console.log(chatbotStore.pgSlug)
   setColor()
+  getBotUrl()
+
 })
 
 const router = useRouter()

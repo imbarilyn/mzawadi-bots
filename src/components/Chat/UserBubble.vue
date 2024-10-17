@@ -83,7 +83,6 @@ const pauseAudio = () => {
               class="flex flex-col mt-10 space-y-3 text-sm rounded-t-2xl rounded-bl-2xl p-2"
           >
             <div
-
                 class="font-medium" v-html="props.userMessage"></div>
             <div class="mt-3">
               <template v-if="hasAudio">
