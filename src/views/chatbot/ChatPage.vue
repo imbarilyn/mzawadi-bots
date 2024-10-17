@@ -218,6 +218,15 @@ const themeContainer = ref<ThemePayload>()
 //
 // }
 onMounted(() => {
+  chatBotStore.displayHistory(route.params.convId as string).then((response) => {
+    console.log('response!!', response)
+  })
+  setActiveTabHistory(route.params.convId as string)
+
+  // chatBotStore.displayHistory().then((response) => {
+  //   console.log('response!!', response)
+  // })
+
   try {
     chatBotStore.getTheme()
         .then((resp) => {
