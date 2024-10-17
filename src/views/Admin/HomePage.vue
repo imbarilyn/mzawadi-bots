@@ -22,8 +22,8 @@ onMounted(() => {
 const pageItems = computed(() => {
   console.log(adminHome.pages)
   return adminHome.pages.slice(0, 5)
-
 })
+
 
 // await adminHome.fetchPages();
 // await tabsStore.fetchTabs();

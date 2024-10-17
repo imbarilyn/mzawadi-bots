@@ -21,7 +21,7 @@ interface DynamicPageProps {
 }
 
 const props = defineProps<DynamicPageProps>()
-
+console.log(props)
 const route = useRoute()
 const router = useRouter()
 const tabsStore = useTabsStore()

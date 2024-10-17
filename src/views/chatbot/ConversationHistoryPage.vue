@@ -15,30 +15,17 @@ interface ConversationHistoryPageProps {
   botBubbleColor: string
 }
 
-const notification = useNotificationsStore()
-
 const props = defineProps<ConversationHistoryPageProps>()
-console.log("*************", props)
 const viewHistory = (convId: string) => {
-  chatBotStore.setNewChatButton(false)
-  chatBotStore.displayHistory(convId).then((response) => {
-    console.log('response', response)
-    if (response.result === 'ok') {
-      chatBotStore.chatDisplayArray = response.data
-      console.log('chatDisplay', chatBotStore.chatDisplayArray)
-      router.push({
-        name: 'chatHistory',
-        params: {convId: convId, cbName: chatBotStore.pgSlug}
-      })
-    } else {
-      notification.addNotification('error occurred', 'error')
-    }
+  router.push({
+    name: 'chatHistory',
+    params: {convId: convId, cbName: chatBotStore.pgSlug}
   })
 }
 </script>
 
 <template>
-  <div :class="[chatBotStore.getActiveHistory === props.id? props.botBubbleColor: '']"
+  <div :class="[chatBotStore.getActiveHistory === props.conversationId? props.botBubbleColor: '']"
        class="grid grid-cols-12 btn btn-ghost btn-sm text-sm gap-1"
        @click="viewHistory(props.conversationId)">
     <div class="col-span-2 flex flex-row items-center">
