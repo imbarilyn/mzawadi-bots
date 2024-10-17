@@ -19,7 +19,9 @@ import {type ThemePayload, useChatbotStore} from '@/stores/chatbot'
 
 interface ChatbotPageProps {
   cbName: string
+  convId: string
 }
+
 
 const notificationsStore = useNotificationsStore()
 const authStore = useAuthStore()
@@ -29,6 +31,10 @@ const chatBotStore = useChatbotStore()
 const router = useRouter()
 const conversation_id = ref('')
 const chatbotImg = ref('')
+const userInputContainerHeightRef = ref<HTMLDivElement | null>()
+const conversation = ref<Ref<Conversation>[]>([])
+const aiResponses = ref<string[]>([])
+const isGeneratingResponse = ref(false)
 
 // mesRes declaration
 // step 1="plan.duration"
