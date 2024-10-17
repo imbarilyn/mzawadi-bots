@@ -571,7 +571,6 @@ const handleUserInput = (
     //emit request to the server
     if (authStore.userRole === 'user') {
       // const userData = JSON.parse(authStore.chatBotUser) as UserInfo
-      console.log(conversation_id.value)
       socket.emit('message', {
         //sending request to the socket
         message: formatted,
@@ -611,15 +610,6 @@ socket.on('message', (response) => {
   const parsedResponse = JSON.parse(response)
   console.log(parsedResponse.message)
   mesRes.value += parsedResponse.message
-})
-
-chatBotStore.chatDisplayArray.forEach((chat) => {
-  const userMessage = ref<Conversation>({
-    message: chat.content,
-    isUser: chat.isUser === '1',
-    uniqueId: _.uniqueId('user-')
-  })
-  conversation.value.push(userMessage)
 })
 
 watch(
