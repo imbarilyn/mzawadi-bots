@@ -326,7 +326,7 @@ const isNewChat = computed(() => location.href === `${DOMAIN_URL}/${chatBotStore
                 class="backdrop-blur z-10 font-bold text-md sticky top-0 pb-2">
               {{ date }}
             </h1>
-            <div v-for="chat in chats" :key="chat.Id" @click="setActiveTabHistory(chat.Id)">
+            <div v-for="chat in chats" :key="chat.Id" @click="setActiveTabHistory(chat.conversationId)">
               <ConversationHistoryPage
                   :id="chat.Id"
                   :botBubbleColor="themeContainer.chatBubble"
