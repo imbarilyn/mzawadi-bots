@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {useChatbotStore} from '@/stores/chatbot'
-import {useNotificationsStore} from '@/stores/notifications'
 import {useRouter} from 'vue-router'
 
 const chatBotStore = useChatbotStore()
@@ -22,6 +21,7 @@ const viewHistory = (convId: string) => {
     params: {convId: convId, cbName: chatBotStore.pgSlug}
   })
 }
+
 </script>
 
 <template>

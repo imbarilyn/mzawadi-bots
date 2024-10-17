@@ -5,7 +5,7 @@ import {type ThemePayload, useChatbotStore} from '@/stores/chatbot'
 import ConversationHistoryPage from '@/views/chatbot/ConversationHistoryPage.vue'
 import {useAuthStore} from '@/stores/auth'
 import {useNotificationsStore} from '@/stores/notifications'
-import {useRouter} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import moment from 'moment'
 import CameraModal from '@/views/Admin/toasts/CameraModal.vue'
 import LoadingOverlay from "@/components/LoadingOverlay.vue";
@@ -19,7 +19,7 @@ export interface CapturedImageItem {
 const homeStore = useAdminHomeStore()
 const authStore = useAuthStore()
 const notificationStore = useNotificationsStore()
-const router = useRouter()
+const route = useRoute()
 const currentYear = new Date().getFullYear()
 const hideSetting = () => {
   setting.value = false
@@ -38,6 +38,7 @@ const showNewChat = () => {
 
 const DOMAIN_URL = import.meta.env.VITE_APP_DOMAIN_URL
 const chatBotStore = useChatbotStore()
+const router = useRouter()
 
 const reloadChat = () => {
   const textArea = document.getElementById('user-input')
@@ -46,7 +47,13 @@ const reloadChat = () => {
   //   name: 'newChat',
   //   params: {cbName: chatBotStore.pgSlug}
   // })
-  location.reload()
+  router.push({
+    name: 'newChat',
+    params: {
+      cbName: chatBotStore.pgSlug
+
+    }
+  })
 }
 
 // const collapse = ref<boolean>(false)
